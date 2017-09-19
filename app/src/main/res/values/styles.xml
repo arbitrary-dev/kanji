@@ -1,11 +1,19 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppThemeDay" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">#3F51B5</item>
         <item name="colorPrimaryDark">#303F9F</item>
         <item name="colorAccent">#FF4081</item>
 
         <item name="android:windowBackground">@android:color/white</item>
+    </style>
+
+    <style name="AppThemeNight" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#000</item>
+        <item name="colorPrimaryDark">#000</item>
+        <item name="colorAccent">#FF4081</item>
+
+        <item name="android:windowBackground">@android:color/black</item>
     </style>
 
 </resources>

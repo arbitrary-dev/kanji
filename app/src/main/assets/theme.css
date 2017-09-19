@@ -7,3 +7,12 @@ img {
     top: 50%;
     transform: translate(-50%, -50%);
 }
+
+.night {
+    color: white;
+    background: black;
+}
+
+.night img {
+    filter: invert(100%);
+}

@@ -7,7 +7,7 @@ An app to learn japanese writing.
 ## v1.0 TODO
 - [X] Animated kanji writing order (&copy;[CJKI](http://cjki.org)) with a possibility of repeat
 - [X] Share action handling
-- [ ] Night mode
+- [X] Night mode
 - [ ] ~1k built-in kanji
 - [ ] Download missing kanji from [WWWJDIC](http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1B)
 - [ ] Kanji etymology from [Richard Sears](http://www.chineseetymology.org)

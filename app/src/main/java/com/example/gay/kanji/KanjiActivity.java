@@ -2,6 +2,7 @@ package com.example.gay.kanji;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,10 +29,23 @@ import static android.view.View.VISIBLE;
 public class KanjiActivity extends AppCompatActivity {
 
     private static final String TAG = "KanjiActivity";
+    private static final String PREF_NIGHT_MODE = "nightMode";
+
+    private boolean mNightMode;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+
+        MenuItem nightDayItem = menu.findItem(R.id.night_day_mode);
+        if (mNightMode) {
+            nightDayItem.setIcon(R.drawable.ic_brightness_5_white_24dp);
+            nightDayItem.setTitle(R.string.day_mode);
+        } else {
+            nightDayItem.setIcon(R.drawable.ic_brightness_3_white_24dp);
+            nightDayItem.setTitle(R.string.night_mode);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -39,6 +53,11 @@ public class KanjiActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences settings = getPreferences(0);
+        mNightMode = settings.getBoolean(PREF_NIGHT_MODE, false);
+        setTheme(mNightMode ? R.style.AppThemeNight : R.style.AppThemeDay);
+
         setContentView(R.layout.activity_main);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -46,7 +65,7 @@ public class KanjiActivity extends AppCompatActivity {
 
         final WebView wv = (WebView) findViewById(R.id.webView1);
         wv.getSettings().setJavaScriptEnabled(true);
-        wv.loadUrl("file:///android_asset/index.html");
+        wv.loadUrl("file:///android_asset/index-" + (mNightMode ? "night" : "day") + ".html");
 
         // TODO move to KanjiWebView
         wv.setWebViewClient(new WebViewClient(){
@@ -87,6 +106,12 @@ public class KanjiActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.night_day_mode:
+                getPreferences(0).edit().putBoolean(PREF_NIGHT_MODE, !mNightMode).apply();
+                Log.d(TAG, "onOptionsItemSelected setNightMode(" + !mNightMode + ")");
+                recreate();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
