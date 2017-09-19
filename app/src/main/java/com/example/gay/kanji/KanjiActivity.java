@@ -20,10 +20,11 @@ import static android.content.Intent.ACTION_SEND;
 import static android.content.Intent.EXTRA_TEXT;
 import static android.os.Environment.DIRECTORY_PICTURES;
 import static android.os.Environment.getExternalStoragePublicDirectory;
+import static android.view.View.VISIBLE;
 
-public class MainActivity extends AppCompatActivity {
+public class KanjiActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "KanjiActivity";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         wv.getSettings().setJavaScriptEnabled(true);
         wv.loadUrl("file:///android_asset/index.html");
 
+        // TODO move to KanjiWebView
         wv.setWebViewClient(new WebViewClient(){
             public void onPageFinished(WebView view, String url){
                 // TODO move sharedText up and iterate over it chars until we found one
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 File extStorage = getExternalStoragePublicDirectory(DIRECTORY_PICTURES);
                 File path = new File(extStorage, "Kanji"); // TODO get appName resource
 
+                // TODO check if Storage permission was granted
                 // TODO fallback to local storage
                 if (!path.exists() && path.mkdirs())
                     Log.d(TAG, "External storage was created: " + path);
@@ -62,7 +65,9 @@ public class MainActivity extends AppCompatActivity {
 
                 Boolean res = prepareKanji(path, kanji);
 
-                if (res) wv.loadUrl("javascript:updateSrc(\"" + path + "\", '" + kanji + "')");
+                if (res) wv.loadUrl("javascript:init(\"" + path + "\", '" + kanji + "')");
+
+                wv.setVisibility(VISIBLE);
             }
         });
     }
@@ -81,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         if (file.exists()) {
             Log.d(TAG, "Found: " + file);
         } else {
-            Log.w(TAG, "Not found: " + file);
+            Log.d(TAG, "Not found: " + file);
             return unzip(filename, path);
         }
 
@@ -89,6 +94,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Boolean unzip(String filename, File path) {
+        if (!path.exists()) {
+            Log.e(TAG, "Folder doesn't exists: " + path.getAbsolutePath());
+            return false;
+        }
+
         try {
             InputStream zipFile = getAssets().open("kanji.zip");
             ZipInputStream zis = new ZipInputStream(new BufferedInputStream(zipFile));
