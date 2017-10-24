@@ -8,7 +8,7 @@ An app to learn japanese writing.
 - [X] Animated kanji writing order (&copy;[CJKI](http://cjki.org)) with a possibility of repeat
 - [X] Share action handling
 - [X] Night mode
-- [ ] ~1k built-in kanji
+- [X] ~1k built-in kanji
 - [ ] Kanji etymology from [Richard Sears](http://www.chineseetymology.org) (cache it)
 - [ ] Download missing kanji from [WWWJDIC](http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1B)
 - [ ] Hiragana &amp; Katakana
