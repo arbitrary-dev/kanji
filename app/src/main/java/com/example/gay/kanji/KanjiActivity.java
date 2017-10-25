@@ -1,8 +1,12 @@
 package com.example.gay.kanji;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +15,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -22,6 +30,8 @@ import java.util.zip.ZipInputStream;
 
 import static android.content.Intent.ACTION_SEND;
 import static android.content.Intent.EXTRA_TEXT;
+import static android.net.ConnectivityManager.TYPE_MOBILE;
+import static android.net.ConnectivityManager.TYPE_WIFI;
 import static android.os.Environment.DIRECTORY_PICTURES;
 import static android.os.Environment.getExternalStoragePublicDirectory;
 import static android.view.View.VISIBLE;
@@ -100,9 +110,56 @@ public class KanjiActivity extends AppCompatActivity {
                 if (res) {
                     mWebView.loadUrl("javascript:init(\"" + path + "\", '" + kanji + "')");
                     mWebView.setVisibility(VISIBLE);
+
+                    etymology(kanji);
                 }
             }
         });
+    }
+
+    private void etymology(Character kanji) {
+        // TODO refactor into separate headless Fragment
+        new GetEtymologyTask().execute("http://www.chineseetymology.org/CharacterEtymology.aspx?characterInput=" + kanji);
+    }
+
+    private class GetEtymologyTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo ni = cm.getActiveNetworkInfo();
+
+            if (ni == null || !ni.isConnected()) {
+                Log.d(TAG, "Can't retrieve etymology: No Internet connection");
+                cancel(true);
+                return;
+            }
+
+            int type = ni.getType();
+            if (type != TYPE_WIFI && type != TYPE_MOBILE) {
+                Log.d(TAG, "Can't retrieve etymology: No Internet connection");
+                cancel(true);
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                Document doc = Jsoup.connect(params[0]).get();
+                Elements es = doc.select("#etymologyLabel p");
+                return es.text();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.d(TAG, "etymology: " + result);
+            mWebView.loadUrl("javascript:etymology(\"" + result + "\")");
+            // TODO cache it in sqlite3
+        }
     }
 
     @Override

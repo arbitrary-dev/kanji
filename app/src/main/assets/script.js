@@ -1,3 +1,5 @@
+idText = "text"
+
 function clickHandler(e) {
     var t = e.target
 
@@ -13,8 +15,14 @@ function init(path, kanji) {
     img.onclick = clickHandler
 
     var txt = document.createElement("p")
+    txt.id = idText
     txt.innerHTML = kanji
 
-    document.body.appendChild(txt)
     document.body.appendChild(img)
+    document.body.appendChild(txt)
+}
+
+function etymology(text) {
+    var txt = document.getElementById(idText)
+    txt.innerHTML += " &ndash; " + text
 }
