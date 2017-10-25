@@ -32,6 +32,7 @@ public class KanjiActivity extends AppCompatActivity {
     private static final String PREF_NIGHT_MODE = "nightMode";
 
     private boolean mNightMode;
+    private WebView mWebView;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -63,12 +64,12 @@ public class KanjiActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        final WebView wv = (WebView) findViewById(R.id.webView1);
-        wv.getSettings().setJavaScriptEnabled(true);
-        wv.loadUrl("file:///android_asset/index-" + (mNightMode ? "night" : "day") + ".html");
+        mWebView = (WebView) findViewById(R.id.webView1);
+        mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.loadUrl("file:///android_asset/index-" + (mNightMode ? "night" : "day") + ".html");
 
         // TODO move to KanjiWebView
-        wv.setWebViewClient(new WebViewClient(){
+        mWebView.setWebViewClient(new WebViewClient(){
             public void onPageFinished(WebView view, String url){
                 // TODO move sharedText up and iterate over it chars until we found one
                 // TODO make error when none of sharedText chars exist in DB
@@ -96,9 +97,10 @@ public class KanjiActivity extends AppCompatActivity {
 
                 Boolean res = prepareKanji(path, kanji);
 
-                if (res) wv.loadUrl("javascript:init(\"" + path + "\", '" + kanji + "')");
-
-                wv.setVisibility(VISIBLE);
+                if (res) {
+                    mWebView.loadUrl("javascript:init(\"" + path + "\", '" + kanji + "')");
+                    mWebView.setVisibility(VISIBLE);
+                }
             }
         });
     }
