@@ -4,6 +4,8 @@ Kanji
 
 An app to learn japanese writing.
 
+![screenshot](https://github.com/arbitrary-dev/kanji/raw/master/screenshot.jpg "screenshot")
+
 ## v1.0 TODO
 - [X] Animated kanji writing order (&copy;[CJKI](http://cjki.org))
 - [X] Share action handling
