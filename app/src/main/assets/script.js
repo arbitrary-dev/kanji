@@ -19,6 +19,7 @@ function init(path, kanji) {
     txt.innerHTML = kanji
 
     document.body.appendChild(img)
+    // TODO make it initially oneline with ellipsis, expand on click, but keep it selectable
     document.body.appendChild(txt)
 }
 
