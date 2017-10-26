@@ -157,6 +157,8 @@ public class KanjiActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            if (result == null || result.trim().isEmpty())
+                return;
             Log.d(TAG, "etymology: " + result);
             mWebView.loadUrl("javascript:etymology(\"" + result + "\")");
             // TODO cache it in sqlite3
