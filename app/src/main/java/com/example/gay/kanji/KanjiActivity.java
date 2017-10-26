@@ -146,6 +146,7 @@ public class KanjiActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
             try {
                 Document doc = Jsoup.connect(params[0]).get();
+                // TODO integration test
                 Elements es = doc.select("#etymologyLabel p");
                 return es.text();
             } catch (IOException e) {
