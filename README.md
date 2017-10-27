@@ -2,7 +2,8 @@ Kanji
 =====
 ![travis-ci](https://travis-ci.org/arbitrary-dev/kanji.svg?branch=master)
 
-An app to learn japanese writing.
+An Android app to learn japanese writing.
+[Download APK](https://github.com/arbitrary-dev/kanji/raw/master/app/kanji-0.1.apk)
 
 ![screenshot](https://github.com/arbitrary-dev/kanji/raw/master/screenshot.jpg "screenshot")
 
