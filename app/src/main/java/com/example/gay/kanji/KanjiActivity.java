@@ -1,9 +1,12 @@
 package com.example.gay.kanji;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -15,6 +18,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.example.gay.kanji.KanjiContract.KanjiEntry;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -126,6 +131,47 @@ public class KanjiActivity extends AppCompatActivity {
 
         private static final String SERVICE_LINK = "http://www.chineseetymology.org/CharacterEtymology.aspx?characterInput=";
 
+        private KanjiDbHelper dbHelper = new KanjiDbHelper(getApplicationContext());
+        private SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        private String getFromCache(Character kanji) {
+            String result = null;
+            Cursor cursor = null;
+
+            try {
+                cursor = db.query(
+                    KanjiEntry.TABLE,
+                    new String[] { KanjiEntry.COL_ETYMOLOGY },
+                    KanjiEntry.COL_SYMBOL + " = ?",
+                    new String[] { kanji.toString() },
+                    null, null, null,
+                    "1"
+                );
+
+                if (cursor.moveToNext()) {
+                    int colEtymology = cursor.getColumnIndex(KanjiEntry.COL_ETYMOLOGY);
+                    result = cursor.getString(colEtymology);
+                    Log.d(TAG, "Etymology retrieved from cache: " + result);
+                } else {
+                    Log.d(TAG, "No cached etymology for " + kanji);
+                }
+            } finally {
+                if (cursor != null)
+                    cursor.close();
+            }
+
+            return result;
+        }
+
+        private void putToCache(Character kanji, String etymology) {
+            ContentValues values = new ContentValues();
+            values.put(KanjiEntry.COL_SYMBOL, kanji.toString());
+            values.put(KanjiEntry.COL_ETYMOLOGY, etymology);
+
+            db.insert(KanjiEntry.TABLE, null, values);
+            Log.d(TAG, "Cached etymology for " + kanji);
+        }
+
         private boolean isConnected() {
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo ni = cm.getActiveNetworkInfo();
@@ -140,7 +186,7 @@ public class KanjiActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Character... params) {
             Character kanji = params[0];
-            String result = null;
+            String result = getFromCache(kanji);
 
             if (result == null) {
                 if (isConnected()) {
@@ -150,6 +196,11 @@ public class KanjiActivity extends AppCompatActivity {
                         Elements es = doc.select("#etymologyLabel p");
 
                         result = es.text().trim();
+
+                        if (!result.isEmpty()) {
+                            Log.d(TAG, "Etymology retrieved from Internet: " + result);
+                            putToCache(kanji, result);
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -163,11 +214,9 @@ public class KanjiActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            if (result == null || result.isEmpty())
-                return;
-            Log.d(TAG, "etymology: " + result);
-            mWebView.loadUrl("javascript:etymology(\"" + result + "\")");
-            // TODO cache it in sqlite3
+            dbHelper.close();
+            if (result != null && !result.isEmpty())
+                mWebView.loadUrl("javascript:etymology(\"" + result + "\")");
         }
     }
 
