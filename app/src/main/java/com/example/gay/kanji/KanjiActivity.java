@@ -119,45 +119,51 @@ public class KanjiActivity extends AppCompatActivity {
 
     private void etymology(Character kanji) {
         // TODO refactor into separate headless Fragment
-        new GetEtymologyTask().execute("http://www.chineseetymology.org/CharacterEtymology.aspx?characterInput=" + kanji);
+        new GetEtymologyTask().execute(kanji);
     }
 
-    private class GetEtymologyTask extends AsyncTask<String, Void, String> {
+    private class GetEtymologyTask extends AsyncTask<Character, Void, String> {
 
-        @Override
-        protected void onPreExecute() {
+        private static final String SERVICE_LINK = "http://www.chineseetymology.org/CharacterEtymology.aspx?characterInput=";
+
+        private boolean isConnected() {
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo ni = cm.getActiveNetworkInfo();
 
-            if (ni == null || !ni.isConnected()) {
-                Log.d(TAG, "Can't retrieve etymology: No Internet connection");
-                cancel(true);
-                return;
-            }
+            if (ni == null || !ni.isConnected())
+                return false;
 
             int type = ni.getType();
-            if (type != TYPE_WIFI && type != TYPE_MOBILE) {
-                Log.d(TAG, "Can't retrieve etymology: No Internet connection");
-                cancel(true);
-            }
+            return type == TYPE_WIFI || type == TYPE_MOBILE;
         }
 
         @Override
-        protected String doInBackground(String... params) {
-            try {
-                Document doc = Jsoup.connect(params[0]).get();
-                // TODO integration test
-                Elements es = doc.select("#etymologyLabel p");
-                return es.text();
-            } catch (IOException e) {
-                e.printStackTrace();
+        protected String doInBackground(Character... params) {
+            Character kanji = params[0];
+            String result = null;
+
+            if (result == null) {
+                if (isConnected()) {
+                    try {
+                        Document doc = Jsoup.connect(SERVICE_LINK + kanji).get();
+                        // TODO integration test
+                        Elements es = doc.select("#etymologyLabel p");
+
+                        result = es.text().trim();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.e(TAG, "Can't retrieve etymology: No Internet connection");
+                }
             }
-            return null;
+
+            return result;
         }
 
         @Override
         protected void onPostExecute(String result) {
-            if (result == null || result.trim().isEmpty())
+            if (result == null || result.isEmpty())
                 return;
             Log.d(TAG, "etymology: " + result);
             mWebView.loadUrl("javascript:etymology(\"" + result + "\")");
