@@ -41,6 +41,8 @@ import static android.os.Environment.DIRECTORY_PICTURES;
 import static android.os.Environment.getExternalStoragePublicDirectory;
 import static android.view.View.VISIBLE;
 
+// FIXME text selection block style should match nightmode too and not to offset
+//       main layout.
 public class KanjiActivity extends AppCompatActivity {
 
     private static final String TAG = "KanjiActivity";
@@ -83,6 +85,11 @@ public class KanjiActivity extends AppCompatActivity {
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.loadUrl("file:///android_asset/index-" + (mNightMode ? "night" : "day") + ".html");
 
+        // TODO smart loading
+        //      There'd be a loader icon first 1-2 seconds waiting for
+        //      everything to be loaded, if etymology misses the time and still
+        //      loading, then everything is revealed, but etymology will have a
+        //      "Loading..." placeholder.
         // TODO move to KanjiWebView
         mWebView.setWebViewClient(new WebViewClient(){
             public void onPageFinished(WebView view, String url){
