@@ -16,14 +16,14 @@ function init(path, kanji) {
 
     var txt = document.createElement("p")
     txt.id = idText
-    txt.innerHTML = kanji
 
     document.body.appendChild(img)
     // TODO make it initially oneline with ellipsis, expand on click, but keep it selectable
     document.body.appendChild(txt)
+
+    setText(kanji)
 }
 
-function etymology(text) {
-    var txt = document.getElementById(idText)
-    txt.innerHTML += " &ndash; " + text
+function setText(text) {
+    document.getElementById(idText).innerHTML = text
 }

@@ -134,15 +134,23 @@ public class KanjiActivity extends AppCompatActivity {
         new GetEtymologyTask().execute(kanji);
     }
 
-    private class GetEtymologyTask extends AsyncTask<Character, Void, String> {
+    private class GetEtymologyTask extends AsyncTask<Character, String, String> {
 
-        private static final String SERVICE_LINK = "http://www.chineseetymology.org/CharacterEtymology.aspx?characterInput=";
+        private Character kanji = null;
+        private String etymology = null;
+        // TODO on, kun & meaning
+        private String on = null, kun = null, meaning = null;
+
+        private static final String SERVICE_LINK =
+            "http://www.chineseetymology.org/CharacterEtymology.aspx?characterInput=";
 
         private KanjiDbHelper dbHelper = new KanjiDbHelper(getApplicationContext());
         private SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        private String getFromCache(Character kanji) {
-            String result = null;
+        private void retrieveEtymology() {
+
+            // query from cache
+
             Cursor cursor = null;
 
             try {
@@ -157,8 +165,8 @@ public class KanjiActivity extends AppCompatActivity {
 
                 if (cursor.moveToNext()) {
                     int colEtymology = cursor.getColumnIndex(KanjiEntry.COL_ETYMOLOGY);
-                    result = cursor.getString(colEtymology);
-                    Log.d(TAG, "Etymology retrieved from cache: " + result);
+                    etymology = cursor.getString(colEtymology);
+                    Log.d(TAG, "Etymology retrieved from cache: " + etymology);
                 } else {
                     Log.d(TAG, "No cached etymology for " + kanji);
                 }
@@ -167,46 +175,29 @@ public class KanjiActivity extends AppCompatActivity {
                     cursor.close();
             }
 
-            return result;
-        }
+            // retrieve from web
 
-        private void putToCache(Character kanji, String etymology) {
-            ContentValues values = new ContentValues();
-            values.put(KanjiEntry.COL_SYMBOL, kanji.toString());
-            values.put(KanjiEntry.COL_ETYMOLOGY, etymology);
-
-            db.insert(KanjiEntry.TABLE, null, values);
-            Log.d(TAG, "Cached etymology for " + kanji);
-        }
-
-        private boolean isConnected() {
-            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo ni = cm.getActiveNetworkInfo();
-
-            if (ni == null || !ni.isConnected())
-                return false;
-
-            int type = ni.getType();
-            return type == TYPE_WIFI || type == TYPE_MOBILE;
-        }
-
-        @Override
-        protected String doInBackground(Character... params) {
-            Character kanji = params[0];
-            String result = getFromCache(kanji);
-
-            if (result == null) {
+            if (etymology == null) {
                 if (isConnected()) {
                     try {
                         Document doc = Jsoup.connect(SERVICE_LINK + kanji).get();
                         // TODO integration test
                         Elements es = doc.select("#etymologyLabel p");
 
-                        result = es.text().trim();
+                        etymology = es.text().trim();
 
-                        if (!result.isEmpty()) {
-                            Log.d(TAG, "Etymology retrieved from Internet: " + result);
-                            putToCache(kanji, result);
+                        if (!etymology.isEmpty()) {
+                            Log.d(TAG, "Etymology retrieved from Internet: " + etymology);
+                            publishProgress(formText());
+
+                            // cache
+
+                            ContentValues values = new ContentValues();
+                            values.put(KanjiEntry.COL_SYMBOL, kanji.toString());
+                            values.put(KanjiEntry.COL_ETYMOLOGY, etymology);
+
+                            db.insert(KanjiEntry.TABLE, null, values);
+                            Log.d(TAG, "Cached etymology for " + kanji);
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -215,15 +206,69 @@ public class KanjiActivity extends AppCompatActivity {
                     Log.e(TAG, "Can't retrieve etymology: No Internet connection");
                 }
             }
+        }
 
-            return result;
+        private boolean isConnected() {
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo ni = cm != null ? cm.getActiveNetworkInfo() : null;
+
+            if (ni == null || !ni.isConnected())
+                return false;
+
+            int type = ni.getType();
+            return type == TYPE_WIFI || type == TYPE_MOBILE;
+        }
+
+        private void append(StringBuilder sb, String text) {
+            if (sb.length() > 0)
+                sb.append(", ");
+            sb.append(text);
+        }
+
+        private String formText() {
+            StringBuilder result = new StringBuilder();
+            result.append(kanji);
+            result.append(" &ndash; ");
+
+            if (etymology != null)
+                result.append(etymology);
+
+            if (on != null || kun != null || meaning != null){
+                if (etymology != null)
+                    result.append("<br>");
+                StringBuilder jdic = new StringBuilder();
+                append(jdic, on);
+                append(jdic, kun);
+                append(jdic, meaning);
+                result.append(jdic);
+            }
+
+            return result.toString();
+        }
+
+        @Override
+        protected String doInBackground(Character... params) {
+            kanji = params[0];
+
+            retrieveEtymology();
+
+            return formText();
+        }
+
+        private void setWebViewText(String text) {
+            mWebView.loadUrl("javascript:setText(\"" + text + "\")");
         }
 
         @Override
         protected void onPostExecute(String result) {
             dbHelper.close();
-            if (result != null && !result.isEmpty())
-                mWebView.loadUrl("javascript:etymology(\"" + result + "\")");
+            setWebViewText(result);
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            if (values.length > 0)
+                setWebViewText(values[0]);
         }
     }
 
