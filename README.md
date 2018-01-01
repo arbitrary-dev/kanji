@@ -13,6 +13,7 @@ An Android app to learn japanese writing.
 - [X] Night mode
 - [X] ~1k built-in kanji
 - [X] Kanji etymology from [Richard Sears](http://www.chineseetymology.org)
+- [ ] ON/KUN reading and meaning from [WWWJDIC](http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1B)
 - [ ] Search widget &amp; screen swiping to walk the characters in search string
 - [ ] Hiragana &amp; Katakana
 - [ ] Download missing kanji from [WWWJDIC](http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1B)
