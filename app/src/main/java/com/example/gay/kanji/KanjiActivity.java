@@ -134,7 +134,7 @@ public class KanjiActivity extends AppCompatActivity {
         new GetEtymologyTask().execute(kanji);
     }
 
-    private class GetEtymologyTask extends AsyncTask<Character, String, String> {
+    private class GetEtymologyTask extends AsyncTask<Character, Void, Void> {
 
         private Character kanji = null;
         private String etymology = null;
@@ -188,7 +188,7 @@ public class KanjiActivity extends AppCompatActivity {
 
                         if (!etymology.isEmpty()) {
                             Log.d(TAG, "Etymology retrieved from Internet: " + etymology);
-                            publishProgress(formText());
+                            publishProgress();
 
                             // cache
 
@@ -225,50 +225,57 @@ public class KanjiActivity extends AppCompatActivity {
             sb.append(text);
         }
 
-        private String formText() {
-            StringBuilder result = new StringBuilder();
-            result.append(kanji);
-            result.append(" &ndash; ");
+        @Override
+        protected Void doInBackground(Character... params) {
+            kanji = params[0];
+            publishProgress();
+            retrieveEtymology();
+            return null;
+        }
 
-            if (etymology != null)
-                result.append(etymology);
+        private static final String LOADING = "...";
 
-            if (on != null || kun != null || meaning != null){
-                if (etymology != null)
-                    result.append("<br>");
+        private void updateWebViewText(boolean done) {
+            StringBuilder text = new StringBuilder();
+
+            boolean e = etymology != null;
+            boolean okm = on != null || kun != null || meaning != null;
+
+            if (e)
+                text.append(etymology);
+            else if (!done)
+                text.append(LOADING);
+
+            if (okm) {
+                if (text.length() > 0)
+                    text.append("<br>");
                 StringBuilder jdic = new StringBuilder();
                 append(jdic, on);
                 append(jdic, kun);
                 append(jdic, meaning);
-                result.append(jdic);
+                text.append(jdic);
+            } else if (e && !done) {
+                text.append("<br>");
+                text.append(LOADING);
             }
 
-            return result.toString();
-        }
+            if (text.length() > 0)
+                text.insert(0, " &ndash; ");
 
-        @Override
-        protected String doInBackground(Character... params) {
-            kanji = params[0];
+            text.insert(0, kanji);
 
-            retrieveEtymology();
-
-            return formText();
-        }
-
-        private void setWebViewText(String text) {
             mWebView.loadUrl("javascript:setText(\"" + text + "\")");
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Void result) {
             dbHelper.close();
-            setWebViewText(result);
+            updateWebViewText(true);
         }
 
         @Override
-        protected void onProgressUpdate(String... values) {
-            if (values.length > 0)
-                setWebViewText(values[0]);
+        protected void onProgressUpdate(Void... values) {
+            updateWebViewText(false);
         }
     }
 
