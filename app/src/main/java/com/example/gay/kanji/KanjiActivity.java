@@ -1,15 +1,8 @@
 package com.example.gay.kanji;
 
 import android.annotation.SuppressLint;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,11 +12,8 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.example.gay.kanji.KanjiContract.KanjiEntry;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
+import com.example.gay.kanji.data.DataRetriever;
+import com.example.gay.kanji.data.DataTask;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -35,8 +25,6 @@ import java.util.zip.ZipInputStream;
 
 import static android.content.Intent.ACTION_SEND;
 import static android.content.Intent.EXTRA_TEXT;
-import static android.net.ConnectivityManager.TYPE_MOBILE;
-import static android.net.ConnectivityManager.TYPE_WIFI;
 import static android.os.Environment.DIRECTORY_PICTURES;
 import static android.os.Environment.getExternalStoragePublicDirectory;
 import static android.view.View.VISIBLE;
@@ -50,6 +38,7 @@ public class KanjiActivity extends AppCompatActivity {
 
     private boolean mNightMode;
     private WebView mWebView;
+    private DataTask dataTask;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -123,160 +112,10 @@ public class KanjiActivity extends AppCompatActivity {
                     mWebView.loadUrl("javascript:init(\"" + path + "\", '" + kanji + "')");
                     mWebView.setVisibility(VISIBLE);
 
-                    etymology(kanji);
+                    dataTask = DataRetriever.retrieve(mWebView, kanji);
                 }
             }
         });
-    }
-
-    private void etymology(Character kanji) {
-        // TODO refactor into separate headless Fragment
-        new GetEtymologyTask().execute(kanji);
-    }
-
-    private class GetEtymologyTask extends AsyncTask<Character, Void, Void> {
-
-        private Character kanji = null;
-        private String etymology = null;
-        // TODO on, kun & meaning
-        private String on = null, kun = null, meaning = null;
-
-        private static final String SERVICE_LINK =
-            "http://www.chineseetymology.org/CharacterEtymology.aspx?characterInput=";
-
-        private KanjiDbHelper dbHelper = new KanjiDbHelper(getApplicationContext());
-        private SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        private void retrieveEtymology() {
-
-            // query from cache
-
-            Cursor cursor = null;
-
-            try {
-                cursor = db.query(
-                    KanjiEntry.TABLE,
-                    new String[] { KanjiEntry.COL_ETYMOLOGY },
-                    KanjiEntry.COL_SYMBOL + " = ?",
-                    new String[] { kanji.toString() },
-                    null, null, null,
-                    "1"
-                );
-
-                if (cursor.moveToNext()) {
-                    int colEtymology = cursor.getColumnIndex(KanjiEntry.COL_ETYMOLOGY);
-                    etymology = cursor.getString(colEtymology);
-                    Log.d(TAG, "Etymology retrieved from cache: " + etymology);
-                } else {
-                    Log.d(TAG, "No cached etymology for " + kanji);
-                }
-            } finally {
-                if (cursor != null)
-                    cursor.close();
-            }
-
-            // retrieve from web
-
-            if (etymology == null) {
-                if (isConnected()) {
-                    try {
-                        Document doc = Jsoup.connect(SERVICE_LINK + kanji).get();
-                        // TODO integration test
-                        Elements es = doc.select("#etymologyLabel p");
-
-                        etymology = es.text().trim();
-
-                        if (!etymology.isEmpty()) {
-                            Log.d(TAG, "Etymology retrieved from Internet: " + etymology);
-                            publishProgress();
-
-                            // cache
-
-                            ContentValues values = new ContentValues();
-                            values.put(KanjiEntry.COL_SYMBOL, kanji.toString());
-                            values.put(KanjiEntry.COL_ETYMOLOGY, etymology);
-
-                            db.insert(KanjiEntry.TABLE, null, values);
-                            Log.d(TAG, "Cached etymology for " + kanji);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Log.e(TAG, "Can't retrieve etymology: No Internet connection");
-                }
-            }
-        }
-
-        private boolean isConnected() {
-            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo ni = cm != null ? cm.getActiveNetworkInfo() : null;
-
-            if (ni == null || !ni.isConnected())
-                return false;
-
-            int type = ni.getType();
-            return type == TYPE_WIFI || type == TYPE_MOBILE;
-        }
-
-        private void append(StringBuilder sb, String text) {
-            if (sb.length() > 0)
-                sb.append(", ");
-            sb.append(text);
-        }
-
-        @Override
-        protected Void doInBackground(Character... params) {
-            kanji = params[0];
-            publishProgress();
-            retrieveEtymology();
-            return null;
-        }
-
-        private static final String LOADING = "...";
-
-        private void updateWebViewText(boolean done) {
-            StringBuilder text = new StringBuilder();
-
-            boolean e = etymology != null;
-            boolean okm = on != null || kun != null || meaning != null;
-
-            if (e)
-                text.append(etymology);
-            else if (!done)
-                text.append(LOADING);
-
-            if (okm) {
-                if (text.length() > 0)
-                    text.append("<br>");
-                StringBuilder jdic = new StringBuilder();
-                append(jdic, on);
-                append(jdic, kun);
-                append(jdic, meaning);
-                text.append(jdic);
-            } else if (e && !done) {
-                text.append("<br>");
-                text.append(LOADING);
-            }
-
-            if (text.length() > 0)
-                text.insert(0, " &ndash; ");
-
-            text.insert(0, kanji);
-
-            mWebView.loadUrl("javascript:setText(\"" + text + "\")");
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            dbHelper.close();
-            updateWebViewText(true);
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            updateWebViewText(false);
-        }
     }
 
     @Override
