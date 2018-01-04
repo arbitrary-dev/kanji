@@ -15,7 +15,7 @@ abstract class InterruptibleRunnable implements Runnable {
         }
     }
 
-    protected void checkIfInterrupted() throws InterruptedException {
+    void checkIfInterrupted() throws InterruptedException {
         if (Thread.interrupted())
             throw new InterruptedException();
     }
