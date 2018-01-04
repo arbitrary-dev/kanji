@@ -2,7 +2,6 @@ package com.example.gay.kanji.data;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.os.Process;
 import android.util.Log;
 
 import com.example.gay.kanji.App;
@@ -13,8 +12,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-
-import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
 
 class EtymologyRunnable extends InterruptibleRunnable {
 
@@ -36,12 +33,9 @@ class EtymologyRunnable extends InterruptibleRunnable {
     @Override
     protected void runInner() throws InterruptedException {
 
-        checkIfInterrupted();
-
         // setup
 
         task.setThreadEtymology(Thread.currentThread());
-        Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND);
 
         // query from cache
 
