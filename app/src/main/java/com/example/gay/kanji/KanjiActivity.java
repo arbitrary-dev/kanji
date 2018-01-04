@@ -44,6 +44,8 @@ public class KanjiActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
 
+        // TODO text editing button
+
         MenuItem nightDayItem = menu.findItem(R.id.night_day_mode);
         if (mNightMode) {
             nightDayItem.setIcon(R.drawable.ic_brightness_5_white_24dp);
