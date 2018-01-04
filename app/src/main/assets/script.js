@@ -1,3 +1,4 @@
+idImage = "image"
 idText = "text"
 
 function clickHandler(e) {
@@ -7,9 +8,9 @@ function clickHandler(e) {
     t.src += '_'
 }
 
-function init(path, kanji) {
+function init(kanji) {
     var img = document.createElement("img")
-    img.src = "file://" + path + "/" + kanji + ".gif"
+    img.id = idImage
     img.onclick = clickHandler
 
     var txt = document.createElement("p")
@@ -20,6 +21,12 @@ function init(path, kanji) {
     document.body.appendChild(txt)
 
     setText(kanji)
+}
+
+function setGif(path) {
+    var img = document.getElementById(idImage)
+    img.src = path
+    img.style.visibility = "visible"
 }
 
 function setText(text) {

@@ -3,7 +3,6 @@ package com.example.gay.kanji;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,18 +14,8 @@ import android.webkit.WebViewClient;
 
 import com.example.gay.kanji.data.DataRetriever;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 import static android.content.Intent.ACTION_SEND;
 import static android.content.Intent.EXTRA_TEXT;
-import static android.os.Environment.DIRECTORY_PICTURES;
-import static android.os.Environment.getExternalStoragePublicDirectory;
 import static android.view.View.VISIBLE;
 
 // FIXME text selection block style should match nightmode too and not to offset
@@ -81,27 +70,10 @@ public class KanjiActivity extends AppCompatActivity {
                     }
                 }
 
-                File extStorage = getExternalStoragePublicDirectory(DIRECTORY_PICTURES);
-                ApplicationInfo appInfo = getApplicationContext().getApplicationInfo();
-                String appName = getPackageManager().getApplicationLabel(appInfo).toString();
-                Log.d(TAG, "Application name: " + appName);
-                File path = new File(extStorage, appName);
+                mWebView.loadUrl("javascript:init('" + kanji + "')");
+                mWebView.setVisibility(VISIBLE);
 
-                // TODO check if Storage permission was granted
-                // TODO fallback to local storage
-                if (!path.exists() && path.mkdirs())
-                    Log.d(TAG, "External storage was created: " + path);
-
-                Log.d(TAG, "Kanji: " + kanji);
-
-                Boolean res = prepareKanji(path, kanji);
-
-                if (res) {
-                    mWebView.loadUrl("javascript:init(\"" + path + "\", '" + kanji + "')");
-                    mWebView.setVisibility(VISIBLE);
-
-                    DataRetriever.retrieve(mWebView, kanji);
-                }
+                DataRetriever.retrieve(mWebView, kanji);
             }
         });
     }
@@ -143,62 +115,6 @@ public class KanjiActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private Boolean prepareKanji(File path, Character kanji) {
-        String filename = kanji + ".gif";
-        File file = new File(path, filename);
-
-        if (file.exists()) {
-            Log.d(TAG, "Found: " + file);
-        } else {
-            Log.d(TAG, "Not found: " + file);
-            return unzip(filename, path);
-        }
-
-        return true;
-    }
-
-    private Boolean unzip(String filename, File path) {
-        if (!path.exists()) {
-            Log.e(TAG, "Folder doesn't exists: " + path.getAbsolutePath());
-            return false;
-        }
-
-        try {
-            InputStream zipFile = getAssets().open("kanji.zip");
-
-            try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(zipFile))) {
-                ZipEntry ze;
-                int count;
-                byte[] buffer = new byte[8192];
-                while ((ze = zis.getNextEntry()) != null) {
-                    String name = ze.getName();
-
-                    if (!name.equals(filename))
-                        continue;
-
-                    Log.d(TAG, "Found ZipEntry(" + name + ")");
-
-                    File file = new File(path, name);
-                    try (FileOutputStream fout = new FileOutputStream(file)) {
-                        while ((count = zis.read(buffer)) != -1)
-                            fout.write(buffer, 0, count);
-                    }
-
-                    Log.d(TAG, "ZipEntry(" + name + ") was copied to " + file);
-
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        // TODO fallback to downloading from WWWJDIC
-        Log.w(TAG, "No ZipEntry(" + filename + ") was found.");
-
-        return false;
     }
 
     @Override

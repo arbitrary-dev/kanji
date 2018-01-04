@@ -15,10 +15,12 @@ class DataTask {
 
     private WeakReference<WebView> wvRef;
     private Character kanji;
+    private String gif;
 
     private final Map<TaskRunnable, Thread> runnable2thread = new LinkedHashMap<>();
 
     DataTask() {
+        runnable2thread.put(new KanjiRunnable(this), null);
         runnable2thread.put(new EtymologyRunnable(this), null);
     }
 
@@ -33,6 +35,7 @@ class DataTask {
             setThread(runnable, null);
 
         kanji = null;
+        gif = null;
         etymology = null;
 
         if (wvRef != null) {
@@ -71,6 +74,15 @@ class DataTask {
 
     void setEtymology(String etymology) {
         this.etymology = etymology;
+        DataRetriever.update(this);
+    }
+
+    String getGif() {
+        return gif;
+    }
+
+    void setGif(String gif) {
+        this.gif = gif;
         DataRetriever.update(this);
     }
 }

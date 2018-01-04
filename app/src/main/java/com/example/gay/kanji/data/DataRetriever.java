@@ -118,6 +118,12 @@ public class DataRetriever {
 
                     WebView wv = task.getWebView();
                     wv.loadUrl("javascript:setText(\"" + text + "\")");
+
+                    // GIF
+
+                    String gif = task.getGif();
+                    if (gif != null)
+                        wv.loadUrl("javascript:setGif(\"" + gif + "\")");
                 }
             }
         ).sendToTarget();
