@@ -13,7 +13,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.gay.kanji.data.DataRetriever;
-import com.example.gay.kanji.data.DataTask;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -38,7 +37,6 @@ public class KanjiActivity extends AppCompatActivity {
 
     private boolean mNightMode;
     private WebView mWebView;
-    private DataTask dataTask;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -73,6 +71,8 @@ public class KanjiActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 
         mWebView = (WebView) findViewById(R.id.webView1);
+        if (mWebView == null)
+            throw new RuntimeException("No WebView");
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.loadUrl("file:///android_asset/index-" + (mNightMode ? "night" : "day") + ".html");
 
@@ -114,7 +114,7 @@ public class KanjiActivity extends AppCompatActivity {
                     mWebView.loadUrl("javascript:init(\"" + path + "\", '" + kanji + "')");
                     mWebView.setVisibility(VISIBLE);
 
-                    dataTask = DataRetriever.retrieve(mWebView, kanji);
+                    DataRetriever.retrieve(mWebView, kanji);
                 }
             }
         });
@@ -163,9 +163,8 @@ public class KanjiActivity extends AppCompatActivity {
 
         try {
             InputStream zipFile = getAssets().open("kanji.zip");
-            ZipInputStream zis = new ZipInputStream(new BufferedInputStream(zipFile));
 
-            try {
+            try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(zipFile))) {
                 ZipEntry ze;
                 int count;
                 byte[] buffer = new byte[8192];
@@ -178,20 +177,15 @@ public class KanjiActivity extends AppCompatActivity {
                     Log.d(TAG, "Found ZipEntry(" + name + ")");
 
                     File file = new File(path, name);
-                    FileOutputStream fout = new FileOutputStream(file);
-                    try {
+                    try (FileOutputStream fout = new FileOutputStream(file)) {
                         while ((count = zis.read(buffer)) != -1)
                             fout.write(buffer, 0, count);
-                    } finally {
-                        fout.close();
                     }
 
                     Log.d(TAG, "ZipEntry(" + name + ") was copied to " + file);
 
                     return true;
                 }
-            } finally {
-                zis.close();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

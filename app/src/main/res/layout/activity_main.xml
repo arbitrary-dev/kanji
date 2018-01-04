@@ -13,7 +13,7 @@
         android:background="?attr/colorPrimary"
         app:titleTextColor="@android:color/white"
         app:subtitleTextColor="@android:color/white"
-        android:elevation="4dp" /> <!-- TODO split into different layout for modern SDK -->
+        android:elevation="4dp" /> <!-- TODO split into different layout to support API 19 -->
 
     <WebView
         android:id="@+id/webView1"

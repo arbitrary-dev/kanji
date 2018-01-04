@@ -34,7 +34,7 @@ public class DataRetriever {
 
     private DataRetriever() { }
 
-    static public DataTask retrieve(WebView wv, Character kanji) {
+    static public void retrieve(WebView wv, Character kanji) {
         Log.d(TAG, "retrieve: " + kanji);
 
         DataTask task = getTask();
@@ -43,8 +43,6 @@ public class DataRetriever {
         task.init(wv, kanji);
 
         instance.threadPool.execute(task.getEtymologyRunnable());
-
-        return task;
     }
 
     static void update(final DataTask task) {
@@ -57,11 +55,11 @@ public class DataRetriever {
 
                 private boolean isReady(String s) { return !(s == null || s.isEmpty()); }
 
-                private void append(StringBuilder sb, String text) {
+            /*  private void append(StringBuilder sb, String text) {
                     if (sb.length() > 0)
                         sb.append(", ");
                     sb.append(text);
-                }
+                } */
 
                 @Override
                 public void run() {
@@ -69,20 +67,20 @@ public class DataRetriever {
 
                     Character kanji = task.getKanji();
                     String etymology = task.getEtymology();
-                    String on = "", kun = "", meaning = ""; // TODO
-                    boolean loading =
-                        etymology == null
-                        || on == null || kun == null || meaning == null;
+                    // TODO on, kun & meaning
+                    // String on = "", kun = "", meaning = "";
+                    boolean loading = etymology == null;
+                    //  || on == null || kun == null || meaning == null;
 
                     boolean e = isReady(etymology);
-                    boolean okm = isReady(on) || isReady(kun) || isReady(meaning);
+                    // boolean okm = isReady(on) || isReady(kun) || isReady(meaning);
 
                     if (e)
                         text.append(etymology);
                     else if (loading)
                         text.append(LOADING);
 
-                    if (okm) {
+                /*  if (okm) {
                         if (text.length() > 0)
                             text.append("<br>");
                         StringBuilder jdic = new StringBuilder();
@@ -93,7 +91,7 @@ public class DataRetriever {
                     } else if (e && loading) {
                         text.append("<br>");
                         text.append(LOADING);
-                    }
+                    } */
 
                     if (text.length() > 0)
                         text.insert(0, " &ndash; ");

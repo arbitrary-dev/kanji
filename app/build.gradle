@@ -5,7 +5,8 @@ android {
     buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.example.gay.kanji"
-        minSdkVersion 15
+        minSdkVersion 21
+        //noinspection OldTargetApi
         targetSdkVersion 23
         versionCode 1
         versionName "0.1"

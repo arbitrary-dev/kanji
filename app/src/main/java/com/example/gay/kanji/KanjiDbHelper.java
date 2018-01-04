@@ -6,12 +6,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.gay.kanji.KanjiContract.KanjiEntry;
 
-public class KanjiDbHelper extends SQLiteOpenHelper {
+class KanjiDbHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "kanji.db";
 
-    public KanjiDbHelper(Context context) {
+    KanjiDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

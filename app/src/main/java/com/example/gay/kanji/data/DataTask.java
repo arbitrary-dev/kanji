@@ -4,7 +4,7 @@ import android.webkit.WebView;
 
 import java.lang.ref.WeakReference;
 
-public class DataTask {
+class DataTask {
 
     private final DataRetriever retriever = DataRetriever.getInstance();
 
@@ -44,7 +44,7 @@ public class DataTask {
         return kanji;
     }
 
-    public Thread getThreadEtymology() {
+    Thread getThreadEtymology() {
         synchronized (retriever) {
             return threadEtymology;
         }
