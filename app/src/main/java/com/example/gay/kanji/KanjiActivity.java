@@ -32,7 +32,7 @@ import static android.view.View.VISIBLE;
 //       main layout.
 public class KanjiActivity extends AppCompatActivity {
 
-    private static final String TAG = "KanjiActivity";
+    private static final String TAG = "ACTV";
     private static final String PREF_NIGHT_MODE = "nightMode";
 
     private boolean mNightMode;

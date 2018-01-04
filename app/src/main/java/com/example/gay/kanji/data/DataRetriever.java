@@ -42,7 +42,7 @@ public class DataRetriever {
         task.recycle();
         task.init(wv, kanji);
 
-        instance.threadPool.execute(task.getEtymologyRunnable());
+        instance.threadPool.execute(task.etymologyRunnable);
     }
 
     static void update(final DataTask task) {
@@ -53,7 +53,7 @@ public class DataRetriever {
 
                 private static final String LOADING = "...";
 
-                private boolean isReady(String s) { return !(s == null || s.isEmpty()); }
+                private boolean isAvailable(String s) { return !(s == null || s.isEmpty()); }
 
             /*  private void append(StringBuilder sb, String text) {
                     if (sb.length() > 0)
@@ -72,8 +72,8 @@ public class DataRetriever {
                     boolean loading = etymology == null;
                     //  || on == null || kun == null || meaning == null;
 
-                    boolean e = isReady(etymology);
-                    // boolean okm = isReady(on) || isReady(kun) || isReady(meaning);
+                    boolean e = isAvailable(etymology);
+                    // boolean okm = isAvailable(on) || isAvailable(kun) || isAvailable(meaning);
 
                     if (e)
                         text.append(etymology);

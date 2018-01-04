@@ -14,7 +14,7 @@ class DataTask {
     private WeakReference<WebView> wvRef;
     private Character kanji;
 
-    private final Runnable etymologyRunnable = new EtymologyRunnable(this);
+    final Runnable etymologyRunnable = new EtymologyRunnable(this);
 
     void init(WebView wv, Character kanji) {
         this.wvRef = new WeakReference<>(wv);
@@ -30,10 +30,6 @@ class DataTask {
             wvRef = null;
         }
         kanji = null;
-    }
-
-    Runnable getEtymologyRunnable() {
-        return etymologyRunnable;
     }
 
     WebView getWebView() {
