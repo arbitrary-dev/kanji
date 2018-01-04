@@ -3,6 +3,7 @@ package com.example.gay.kanji;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -99,7 +100,10 @@ public class KanjiActivity extends AppCompatActivity {
                 }
 
                 File extStorage = getExternalStoragePublicDirectory(DIRECTORY_PICTURES);
-                File path = new File(extStorage, "Kanji"); // TODO get appName resource
+                ApplicationInfo appInfo = getApplicationContext().getApplicationInfo();
+                String appName = getPackageManager().getApplicationLabel(appInfo).toString();
+                Log.d(TAG, "Application name: " + appName);
+                File path = new File(extStorage, appName);
 
                 // TODO check if Storage permission was granted
                 // TODO fallback to local storage
