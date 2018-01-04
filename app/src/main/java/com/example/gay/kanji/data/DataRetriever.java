@@ -43,7 +43,8 @@ public class DataRetriever {
         task.recycle();
         task.init(wv, kanji);
 
-        instance.threadPool.execute(task.etymologyRunnable);
+        for (TaskRunnable runnable : task.getRunnables())
+            instance.threadPool.execute(runnable);
     }
 
     static public void stop() {
@@ -52,10 +53,13 @@ public class DataRetriever {
         if (task == null)
             return;
 
-        instance.threadPool.remove(task.etymologyRunnable);
-        Thread et = task.getThreadEtymology();
-        if (et != null)
-            et.interrupt();
+        for (TaskRunnable runnable : task.getRunnables()) {
+            instance.threadPool.remove(runnable);
+            Thread et = task.getThread(runnable);
+            if (et != null)
+                et.interrupt();
+        }
+
         task.recycle();
     }
 

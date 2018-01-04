@@ -3,18 +3,24 @@ package com.example.gay.kanji.data;
 import android.webkit.WebView;
 
 import java.lang.ref.WeakReference;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 class DataTask {
 
     private final DataRetriever retriever = DataRetriever.getInstance();
 
-    private Thread threadEtymology;
     private String etymology;
 
     private WeakReference<WebView> wvRef;
     private Character kanji;
 
-    final Runnable etymologyRunnable = new EtymologyRunnable(this);
+    private final Map<TaskRunnable, Thread> runnable2thread = new LinkedHashMap<>();
+
+    DataTask() {
+        runnable2thread.put(new EtymologyRunnable(this), null);
+    }
 
     void init(WebView wv, Character kanji) {
         this.wvRef = new WeakReference<>(wv);
@@ -23,7 +29,8 @@ class DataTask {
 
     // TODO unit test
     void recycle() {
-        setThreadEtymology(null);
+        for (TaskRunnable runnable : getRunnables())
+            setThread(runnable, null);
 
         kanji = null;
         etymology = null;
@@ -42,15 +49,19 @@ class DataTask {
         return kanji;
     }
 
-    Thread getThreadEtymology() {
+    Set<TaskRunnable> getRunnables() {
+        return runnable2thread.keySet();
+    }
+
+    Thread getThread(TaskRunnable runnable) {
         synchronized (retriever) {
-            return threadEtymology;
+            return runnable2thread.get(runnable);
         }
     }
 
-    void setThreadEtymology(Thread threadEtymology) {
+    void setThread(TaskRunnable runnable, Thread thread) {
         synchronized (retriever) {
-            this.threadEtymology = threadEtymology;
+            runnable2thread.put(runnable, thread);
         }
     }
 
