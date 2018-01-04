@@ -16,7 +16,7 @@ import java.io.IOException;
 
 import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
 
-class EtymologyRunnable implements Runnable {
+class EtymologyRunnable extends InterruptibleRunnable {
 
     private static final String TAG = "ETYM";
 
@@ -33,30 +33,31 @@ class EtymologyRunnable implements Runnable {
         this.task = task;
     }
 
-    public void run() {
+    @Override
+    protected void runInner() throws InterruptedException {
+
+        checkIfInterrupted();
 
         // setup
 
-        // TODO handle interruption
         task.setThreadEtymology(Thread.currentThread());
         Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND);
 
         // query from cache
 
-        Cursor cursor = null;
         Character kanji = task.getKanji();
         String etymology = null;
 
-        try {
-            cursor = App.getReadableDatabase().query(
-                KanjiEntry.TABLE,
-                new String[] { KanjiEntry.COL_ETYMOLOGY },
-                KanjiEntry.COL_SYMBOL + " = ?",
-                new String[] { kanji.toString() },
-                null, null, null,
-                "1"
-            );
+        checkIfInterrupted();
 
+        try (Cursor cursor = App.getReadableDatabase().query(
+            KanjiEntry.TABLE,
+            new String[] { KanjiEntry.COL_ETYMOLOGY },
+            KanjiEntry.COL_SYMBOL + " = ?",
+            new String[] { kanji.toString() },
+            null, null, null,
+            "1"
+        )) {
             if (cursor.moveToNext()) {
                 int colEtymology = cursor.getColumnIndex(KanjiEntry.COL_ETYMOLOGY);
                 etymology = cursor.getString(colEtymology);
@@ -64,16 +65,17 @@ class EtymologyRunnable implements Runnable {
             } else {
                 Log.d(TAG, "No cached etymology for " + kanji);
             }
-        } finally {
-            if (cursor != null)
-                cursor.close();
         }
 
         // retrieve from web
 
         if (etymology == null) {
+            checkIfInterrupted();
+
             if (App.isConnected()) {
                 try {
+                    checkIfInterrupted();
+
                     Document doc = Jsoup.connect(link(kanji)).get();
                     // TODO integration test
                     Elements es = doc.select("#etymologyLabel p");
@@ -89,6 +91,8 @@ class EtymologyRunnable implements Runnable {
                         values.put(KanjiEntry.COL_SYMBOL, kanji.toString());
                         values.put(KanjiEntry.COL_ETYMOLOGY, etymology);
 
+                        checkIfInterrupted();
+
                         long id = App.getWritableDatabase().insert(KanjiEntry.TABLE, null, values);
                         if (id == -1)
                             Log.e(TAG, "Failed to cache etymology for " + kanji);
@@ -102,6 +106,8 @@ class EtymologyRunnable implements Runnable {
                 Log.e(TAG, "Can't retrieve etymology: No Internet connection");
             }
         }
+
+        checkIfInterrupted();
 
         task.setEtymology(etymology);
     }

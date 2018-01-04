@@ -57,6 +57,12 @@ public class KanjiActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DataRetriever.stop();
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {

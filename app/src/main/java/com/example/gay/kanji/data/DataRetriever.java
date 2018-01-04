@@ -45,6 +45,19 @@ public class DataRetriever {
         instance.threadPool.execute(task.etymologyRunnable);
     }
 
+    static public void stop() {
+        DataTask task = instance.task;
+
+        if (task == null)
+            return;
+
+        instance.threadPool.remove(task.etymologyRunnable);
+        Thread et = task.getThreadEtymology();
+        if (et != null)
+            et.interrupt();
+        task.recycle();
+    }
+
     static void update(final DataTask task) {
         Log.d(TAG, "update: " + task);
         Message.obtain(
