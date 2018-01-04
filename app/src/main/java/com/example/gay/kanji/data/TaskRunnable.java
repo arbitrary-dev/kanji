@@ -3,7 +3,13 @@ package com.example.gay.kanji.data;
 import android.os.Process;
 import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
 
-abstract class InterruptibleRunnable implements Runnable {
+abstract class TaskRunnable implements Runnable {
+
+    final DataTask task;
+
+    TaskRunnable(DataTask task) {
+        this.task = task;
+    }
 
     abstract protected void runInner() throws InterruptedException;
 
@@ -11,7 +17,11 @@ abstract class InterruptibleRunnable implements Runnable {
     public void run() {
         try {
             checkIfInterrupted();
+
+            // setup
+            task.setThread(this, Thread.currentThread());
             Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND);
+
             runInner();
         } catch (InterruptedException e) {
             e.printStackTrace();

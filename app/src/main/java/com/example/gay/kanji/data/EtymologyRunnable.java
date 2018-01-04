@@ -15,7 +15,7 @@ import java.io.IOException;
 
 import static com.example.gay.kanji.data.DataRetriever.NO_DATA;
 
-class EtymologyRunnable extends InterruptibleRunnable {
+class EtymologyRunnable extends TaskRunnable {
 
     private static final String TAG = "ETYM";
 
@@ -26,18 +26,12 @@ class EtymologyRunnable extends InterruptibleRunnable {
         );
     }
 
-    private final DataTask task;
-
     EtymologyRunnable(DataTask task) {
-        this.task = task;
+        super(task);
     }
 
     @Override
     protected void runInner() throws InterruptedException {
-
-        // setup
-
-        task.setThreadEtymology(Thread.currentThread());
 
         // query from cache
 
