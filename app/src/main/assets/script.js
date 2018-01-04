@@ -2,11 +2,9 @@ idText = "text"
 
 function clickHandler(e) {
     var t = e.target
-
-    if (t.src.endsWith(".gif"))
+    if (!t.src.endsWith("_"))
         t.src += '?'
-
-    t.src += 'a'
+    t.src += '_'
 }
 
 function init(path, kanji) {

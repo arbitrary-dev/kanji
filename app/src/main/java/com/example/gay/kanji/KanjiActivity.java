@@ -39,30 +39,6 @@ public class KanjiActivity extends AppCompatActivity {
     private boolean mNightMode;
     private WebView mWebView;
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-
-        // TODO text editing button
-
-        MenuItem nightDayItem = menu.findItem(R.id.night_day_mode);
-        if (mNightMode) {
-            nightDayItem.setIcon(R.drawable.ic_brightness_5_white_24dp);
-            nightDayItem.setTitle(R.string.day_mode);
-        } else {
-            nightDayItem.setIcon(R.drawable.ic_brightness_3_white_24dp);
-            nightDayItem.setTitle(R.string.night_mode);
-        }
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        DataRetriever.stop();
-    }
-
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +66,7 @@ public class KanjiActivity extends AppCompatActivity {
         //      "Loading..." placeholder.
         // TODO move to KanjiWebView
         mWebView.setWebViewClient(new WebViewClient(){
-            public void onPageFinished(WebView view, String url){
+            public void onPageFinished(WebView view, String url) {
                 // TODO move sharedText up and iterate over it chars until we found one
                 // TODO make error when none of sharedText chars exist in DB
                 Character kanji = '字';
@@ -130,6 +106,31 @@ public class KanjiActivity extends AppCompatActivity {
         });
     }
 
+    /** Cleans all non-japanese symbols from the {@code input} */
+    private String clean(String input) {
+        return input == null
+            ? null
+            : input.replaceAll("[^\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]", "");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+
+        // TODO text editing button
+
+        MenuItem nightDayItem = menu.findItem(R.id.night_day_mode);
+        if (mNightMode) {
+            nightDayItem.setIcon(R.drawable.ic_brightness_5_white_24dp);
+            nightDayItem.setTitle(R.string.day_mode);
+        } else {
+            nightDayItem.setIcon(R.drawable.ic_brightness_3_white_24dp);
+            nightDayItem.setTitle(R.string.night_mode);
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -142,13 +143,6 @@ public class KanjiActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    /** Cleans all non-japanese symbols from the {@code input} */
-    private String clean(String input) {
-        return input == null
-                ? null
-                : input.replaceAll("[^\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]", "");
     }
 
     private Boolean prepareKanji(File path, Character kanji) {
@@ -205,5 +199,11 @@ public class KanjiActivity extends AppCompatActivity {
         Log.w(TAG, "No ZipEntry(" + filename + ") was found.");
 
         return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        DataRetriever.stop();
+        super.onDestroy();
     }
 }

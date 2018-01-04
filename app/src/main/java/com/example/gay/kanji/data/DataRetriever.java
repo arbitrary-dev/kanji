@@ -15,6 +15,8 @@ public class DataRetriever {
 
     private static final String TAG = "RETRV";
 
+    static final String NO_DATA = "";
+
     private static final DataRetriever instance = new DataRetriever();
 
     static DataRetriever getInstance() { return instance; }
@@ -28,8 +30,7 @@ public class DataRetriever {
     }
 
     private final LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
-    private final ThreadPoolExecutor threadPool =
-        new ThreadPoolExecutor(2, 2, 1, SECONDS, queue);
+    private final ThreadPoolExecutor threadPool = new ThreadPoolExecutor(4, 4, 1, SECONDS, queue);
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     private DataRetriever() { }
@@ -111,7 +112,8 @@ public class DataRetriever {
 
                     text.insert(0, kanji);
 
-                    task.getWebView().loadUrl("javascript:setText(\"" + text + "\")");
+                    WebView wv = task.getWebView();
+                    wv.loadUrl("javascript:setText(\"" + text + "\")");
                 }
             }
         ).sendToTarget();

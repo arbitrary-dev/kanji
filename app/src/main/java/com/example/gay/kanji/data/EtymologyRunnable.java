@@ -13,6 +13,8 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 
+import static com.example.gay.kanji.data.DataRetriever.NO_DATA;
+
 class EtymologyRunnable extends InterruptibleRunnable {
 
     private static final String TAG = "ETYM";
@@ -98,6 +100,7 @@ class EtymologyRunnable extends InterruptibleRunnable {
                 }
             } else {
                 Log.e(TAG, "Can't retrieve etymology: No Internet connection");
+                etymology = NO_DATA;
             }
         }
 

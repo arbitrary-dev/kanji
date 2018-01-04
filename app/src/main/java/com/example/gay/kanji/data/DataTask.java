@@ -21,15 +21,17 @@ class DataTask {
         this.kanji = kanji;
     }
 
+    // TODO unit test
     void recycle() {
         setThreadEtymology(null);
+
+        kanji = null;
         etymology = null;
 
         if (wvRef != null) {
             wvRef.clear();
             wvRef = null;
         }
-        kanji = null;
     }
 
     WebView getWebView() {
