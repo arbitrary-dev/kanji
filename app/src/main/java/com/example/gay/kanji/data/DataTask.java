@@ -20,6 +20,7 @@ class DataTask {
     private final Map<TaskRunnable, Thread> runnable2thread = new LinkedHashMap<>();
 
     DataTask() {
+        runnable2thread.put(new LoadingRunnable(this), null);
         runnable2thread.put(new KanjiRunnable(this), null);
         runnable2thread.put(new EtymologyRunnable(this), null);
     }
