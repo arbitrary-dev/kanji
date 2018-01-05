@@ -19,11 +19,8 @@ class EtymologyRunnable extends TaskRunnable {
 
     private static final String TAG = "ETYM";
 
-    private static String link(Character kanji) {
-        return String.format(
-            "http://www.chineseetymology.org/CharacterEtymology.aspx?characterInput=%s",
-            kanji
-        );
+    private static String url(Character kanji) {
+        return "http://www.chineseetymology.org/CharacterEtymology.aspx?characterInput=" + kanji;
     }
 
     EtymologyRunnable(DataTask task) {
@@ -66,7 +63,7 @@ class EtymologyRunnable extends TaskRunnable {
                 try {
                     checkIfInterrupted();
 
-                    Document doc = Jsoup.connect(link(kanji)).get();
+                    Document doc = Jsoup.connect(url(kanji)).get();
                     // TODO integration test
                     Elements es = doc.select("#etymologyLabel p");
 
