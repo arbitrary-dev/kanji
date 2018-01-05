@@ -17,7 +17,7 @@ class KanjiDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(KanjiEntry.SQL_CREATE);
+        onUpgrade(db, 0, DATABASE_VERSION);
     }
 
     @Override

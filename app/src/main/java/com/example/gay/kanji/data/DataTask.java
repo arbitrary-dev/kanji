@@ -11,11 +11,11 @@ class DataTask {
 
     private final DataRetriever retriever = DataRetriever.getInstance();
 
-    private String etymology;
-
     private WeakReference<WebView> wvRef;
+
     private Character kanji;
     private String gif;
+    private String etymology;
 
     private final Map<TaskRunnable, Thread> runnable2thread = new LinkedHashMap<>();
 
@@ -35,14 +35,14 @@ class DataTask {
         for (TaskRunnable runnable : getRunnables())
             setThread(runnable, null);
 
-        kanji = null;
-        gif = null;
-        etymology = null;
-
         if (wvRef != null) {
             wvRef.clear();
             wvRef = null;
         }
+
+        kanji = null;
+        gif = null;
+        etymology = null;
     }
 
     WebView getWebView() {
