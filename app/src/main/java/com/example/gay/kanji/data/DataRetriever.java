@@ -73,11 +73,11 @@ public class DataRetriever {
 
                 private boolean isAvailable(String s) { return !(s == null || s.isEmpty()); }
 
-            /*  private void append(StringBuilder sb, String text) {
-                    if (sb.length() > 0)
-                        sb.append(", ");
+                private void append(StringBuilder sb, String text) {
+                    sb.append("<span>");
                     sb.append(text);
-                } */
+                    sb.append("</span>");
+                }
 
                 @Override
                 public void run() {
@@ -85,20 +85,20 @@ public class DataRetriever {
 
                     Character kanji = task.getKanji();
                     String etymology = task.getEtymology();
-                    // TODO on, kun & meaning
-                    // String on = "", kun = "", meaning = "";
-                    boolean loading = etymology == null;
-                    //  || on == null || kun == null || meaning == null;
+                    String on = task.getOn(), kun = task.getKun(), meaning = task.getMeaning();
+                    boolean loading =
+                        etymology == null
+                        || on == null || kun == null || meaning == null;
 
                     boolean e = isAvailable(etymology);
-                    // boolean okm = isAvailable(on) || isAvailable(kun) || isAvailable(meaning);
+                    boolean okm = isAvailable(on) || isAvailable(kun) || isAvailable(meaning);
 
                     if (e)
                         text.append(etymology);
                     else if (loading)
                         text.append(LOADING);
 
-                /*  if (okm) {
+                    if (okm) {
                         if (text.length() > 0)
                             text.append("<br>");
                         StringBuilder jdic = new StringBuilder();
@@ -109,7 +109,7 @@ public class DataRetriever {
                     } else if (e && loading) {
                         text.append("<br>");
                         text.append(LOADING);
-                    } */
+                    }
 
                     if (text.length() > 0)
                         text.insert(0, " &ndash; ");

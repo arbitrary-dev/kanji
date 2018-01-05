@@ -14,8 +14,11 @@ class DataTask {
     private WeakReference<WebView> wvRef;
 
     private Character kanji;
+    // TODO
+    // private Integer idx; // Halpern NJECD Index
     private String gif;
     private String etymology;
+    private String on, kun, meaning;
 
     private final Map<TaskRunnable, Thread> runnable2thread = new LinkedHashMap<>();
 
@@ -23,6 +26,7 @@ class DataTask {
         runnable2thread.put(new LoadingRunnable(this), null);
         runnable2thread.put(new KanjiRunnable(this), null);
         runnable2thread.put(new EtymologyRunnable(this), null);
+        runnable2thread.put(new WwwjdicRunnable(this), null);
     }
 
     void init(WebView wv, Character kanji) {
@@ -41,6 +45,7 @@ class DataTask {
         }
 
         kanji = null;
+        // idx = null;
         gif = null;
         etymology = null;
     }
@@ -83,5 +88,37 @@ class DataTask {
 
     void setGif(String gif) {
         this.gif = gif;
+    }
+/*
+    Integer getIdx() {
+        return idx;
+    }
+
+    void setIdx(Integer idx) {
+        this.idx = idx;
+    }*/
+
+    String getOn() {
+        return on;
+    }
+
+    void setOn(String on) {
+        this.on = on;
+    }
+
+    String getKun() {
+        return kun;
+    }
+
+    void setKun(String kun) {
+        this.kun = kun;
+    }
+
+    String getMeaning() {
+        return meaning;
+    }
+
+    void setMeaning(String meaning) {
+        this.meaning = meaning;
     }
 }

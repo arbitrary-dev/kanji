@@ -15,6 +15,9 @@ public final class KanjiContract {
 
         public static final String COL_SYMBOL = "symbol";
         public static final String COL_ETYMOLOGY = "etymology";
+        public static final String COL_ON = "oon";
+        public static final String COL_KUN = "kun";
+        public static final String COL_MEANING = "meaning";
 
         static final String SQL_CREATE =
             "CREATE TABLE " + TABLE + " (" +
@@ -36,6 +39,21 @@ public final class KanjiContract {
 
             // 1
             update(SQL_CREATE);
+
+            // 2
+            update(
+                "ALTER TABLE " + TABLE + " RENAME TO " + TABLE + "_old",
+                "CREATE TABLE " + TABLE + " (" +
+                    COL_SYMBOL + " TEXT CONSTRAINT pk PRIMARY KEY ASC, " +
+                    COL_ETYMOLOGY + " TEXT, " +
+                    COL_ON + " TEXT, " +
+                    COL_KUN + " TEXT, " +
+                    COL_MEANING + " TEXT)",
+                "INSERT INTO " + TABLE + " (" +
+                    COL_SYMBOL + ", " + COL_ETYMOLOGY + ") " +
+                    "SELECT " + COL_SYMBOL + ", " + COL_ETYMOLOGY + " FROM " + TABLE + "_old",
+                "DROP TABLE " + TABLE + "_old"
+            );
         }
     }
 }
