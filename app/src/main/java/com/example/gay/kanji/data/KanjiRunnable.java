@@ -46,6 +46,7 @@ public class KanjiRunnable extends TaskRunnable {
         checkIfInterrupted();
 
         task.setGif(gif);
+        DataRetriever.update(task);
     }
 
     private String prepareKanji(File path, Character kanji) throws InterruptedException {

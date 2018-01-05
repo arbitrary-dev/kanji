@@ -101,5 +101,6 @@ class EtymologyRunnable extends TaskRunnable {
         checkIfInterrupted();
 
         task.setEtymology(etymology);
+        DataRetriever.update(task);
     }
 }

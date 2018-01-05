@@ -75,7 +75,6 @@ class DataTask {
 
     void setEtymology(String etymology) {
         this.etymology = etymology;
-        DataRetriever.update(this);
     }
 
     String getGif() {
@@ -84,6 +83,5 @@ class DataTask {
 
     void setGif(String gif) {
         this.gif = gif;
-        DataRetriever.update(this);
     }
 }
