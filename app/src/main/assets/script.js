@@ -23,8 +23,13 @@ function init(kanji) {
     setText(kanji)
 }
 
+var prevPath
+
 function setGif(path) {
     var img = document.getElementById(idImage)
+    if (path == prevPath)
+        return
+    prevPath = path
     img.src = path
     img.style.visibility = "visible"
 }
