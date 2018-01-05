@@ -37,6 +37,7 @@ class EtymologyRunnable extends TaskRunnable {
 
         checkIfInterrupted();
 
+        Log.d(TAG, "Lookup 「" + kanji + "」 etymology in cache");
         try (Cursor cursor = App.getReadableDatabase().query(
             KanjiEntry.TABLE,
             new String[] { KanjiEntry.COL_ETYMOLOGY },
@@ -63,14 +64,16 @@ class EtymologyRunnable extends TaskRunnable {
                 try {
                     checkIfInterrupted();
 
-                    Document doc = Jsoup.connect(url(kanji)).get();
+                    String url = url(kanji);
+                    Log.d(TAG, "Lookup 「" + kanji + "」 etymology at " + url);
+                    Document doc = Jsoup.connect(url).get();
                     // TODO integration test
                     Elements es = doc.select("#etymologyLabel p");
 
                     etymology = es.text().trim();
 
                     if (!etymology.isEmpty()) {
-                        Log.d(TAG, "Etymology retrieved from Internet: " + etymology);
+                        Log.d(TAG, "Etymology retrieved from web: " + etymology);
 
                         // cache
 
