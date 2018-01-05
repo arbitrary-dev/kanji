@@ -1,6 +1,7 @@
 package com.example.gay.kanji.data;
 
 import android.os.Process;
+
 import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
 
 abstract class TaskRunnable implements Runnable {

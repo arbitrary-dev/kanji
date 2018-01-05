@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.gay.kanji.KanjiContract.KanjiEntry;
 
+import static com.example.gay.kanji.KanjiContract.KanjiEntry.SQL_UPDATES;
+
 class KanjiDbHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
@@ -21,8 +23,15 @@ class KanjiDbHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(KanjiEntry.SQL_DELETE);
         onCreate(db);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        for (int ver = oldVersion + 1; ver <= newVersion; ++ver)
+            for (String sql : SQL_UPDATES.get(ver))
+                db.execSQL(sql);
     }
 }
