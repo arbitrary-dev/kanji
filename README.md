@@ -25,5 +25,5 @@ An Android app to learn japanese writing.
 
 ## FAck Qou!
 
-- *What to do if animation is not clickable and don't support night mode?*  
+- *What to do if animation doesn't support night mode?*  
 Just update [Android System WebView](https://play.google.com/store/apps/details?id=com.google.android.webview)

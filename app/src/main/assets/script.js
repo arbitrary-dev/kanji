@@ -13,7 +13,7 @@ function clickHandlerInfo(e) {
     info.classList.toggle('expand')
 }
 
-// available in ECMA6
+// available since ECMA6
 if (typeof String.prototype.endsWith !== 'function') {
     String.prototype.endsWith = function(suffix) {
         return this.indexOf(suffix, this.length - suffix.length) !== -1;
