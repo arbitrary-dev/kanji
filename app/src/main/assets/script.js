@@ -1,5 +1,7 @@
 var gif = document.createElement('img')
-var info = document.createElement('p')
+gif.id = 'gif'
+var info = document.createElement('div')
+info.id = 'info'
 
 gif.onclick = restartGif
 info.onclick = toggleInfo

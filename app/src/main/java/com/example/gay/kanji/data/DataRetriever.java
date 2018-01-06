@@ -95,28 +95,33 @@ public class DataRetriever {
                     boolean e = isAvailable(etymology);
                     boolean okm = isAvailable(on) || isAvailable(kun) || isAvailable(meaning);
 
-                    if (e)
+                    if (e) {
                         info.append(etymology);
-                    else if (loading)
+                        info.append("</p>");
+                    } else if (loading) {
                         info.append(LOADING);
+                        info.append("</p>");
+                    }
 
                     if (okm) {
-                        if (info.length() > 0)
-                            info.append("<br>");
+                        if (e) info.append("<p>");
                         StringBuilder jdic = new StringBuilder();
                         append(jdic, on);
-                        append(jdic, kun);
+                        append(jdic, highlightSuffixes(kun));
                         append(jdic, meaning);
                         info.append(jdic);
+                        info.append("</p>");
                     } else if (e && loading) {
-                        info.append("<br>");
+                        info.append("<p>");
                         info.append(LOADING);
+                        info.append("</p>");
                     }
 
                     if (info.length() > 0)
                         info.insert(0, " &ndash; ");
 
                     info.insert(0, kanji);
+                    info.insert(0, "<p>"); // FIXME this is shit, do something about it!
 
                     WebView wv = task.getWebView();
                     wv.loadUrl("javascript:setInfo(\"" + info + "\")");
@@ -126,6 +131,10 @@ public class DataRetriever {
                     String gif = task.getGif();
                     if (gif != null)
                         wv.loadUrl("javascript:setGif(\"" + gif + "\")");
+                }
+
+                private String highlightSuffixes(String kun) {
+                    return kun.replaceAll("\\.([^,]+)", "<span class='hlit'>$1</span>");
                 }
             }
         ).sendToTarget();
