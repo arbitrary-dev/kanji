@@ -18,8 +18,8 @@ import static android.content.Intent.ACTION_SEND;
 import static android.content.Intent.EXTRA_TEXT;
 import static android.view.View.VISIBLE;
 
-// FIXME text selection block style should match nightmode too and not to offset
-//       main layout.
+// FIXME text selection block style should match nightmode
+// and do not offset main layout.
 public class KanjiActivity extends AppCompatActivity {
 
     private static final String TAG = "ACTV";
@@ -49,10 +49,11 @@ public class KanjiActivity extends AppCompatActivity {
         mWebView.loadUrl("file:///android_asset/index-" + (mNightMode ? "night" : "day") + ".html");
 
         // TODO smart loading
-        //      There'd be a loader icon first 1-2 seconds waiting for
-        //      everything to be loaded, if etymology misses the time and still
-        //      loading, then everything is revealed, but etymology will have a
-        //      "Loading..." placeholder.
+        // There'd be a loader icon first 1-2 seconds waiting for
+        // everything to be loaded, if etymology misses the time and still
+        // loading, then everything is revealed, but etymology will have a
+        // "Loading..." placeholder.
+
         // TODO move to KanjiWebView
         mWebView.setWebViewClient(new WebViewClient(){
             public void onPageFinished(WebView view, String url) {
@@ -107,6 +108,8 @@ public class KanjiActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.night_day_mode:
+                // TODO preserve view state on night mode and layout switch
+                // View state is info expansion and gif animation.
                 getPreferences(0).edit().putBoolean(PREF_NIGHT_MODE, !mNightMode).apply();
                 Log.d(TAG, "onOptionsItemSelected setNightMode(" + !mNightMode + ")");
                 recreate();

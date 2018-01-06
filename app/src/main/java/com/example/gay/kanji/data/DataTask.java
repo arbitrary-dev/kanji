@@ -14,7 +14,7 @@ class DataTask {
     private WeakReference<WebView> wvRef;
 
     private Character kanji;
-    // TODO
+    // TODO idx
     // private Integer idx; // Halpern NJECD Index
     private String gif;
     private String etymology;
