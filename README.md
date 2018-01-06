@@ -23,7 +23,7 @@ An Android app to learn japanese writing.
 - [ ] ???
 - [ ] Release to [Google Play](https://play.google.com/store)!
 
-## Fuck You!
+## FAck Qou!
 
 - *What to do if animation is not clickable and don't support night mode?*  
 Just update [Android System WebView](https://play.google.com/store/apps/details?id=com.google.android.webview)
