@@ -1,15 +1,15 @@
 var gif = document.createElement('img')
 var info = document.createElement('p')
 
-gif.onclick = clickHandlerGif
-info.onclick = clickHandlerInfo
+gif.onclick = restartGif
+info.onclick = toggleInfo
 
 document.addEventListener('DOMContentLoaded', function(event) {
     document.body.appendChild(gif)
     document.body.appendChild(info)
 })
 
-function clickHandlerInfo(e) {
+function toggleInfo(e) {
     info.classList.toggle('expand')
 }
 
@@ -20,7 +20,7 @@ if (typeof String.prototype.endsWith !== 'function') {
     }
 }
 
-function clickHandlerGif(e) {
+function restartGif(e) {
     if (!gif.src.endsWith('_'))
         gif.src += '?'
     gif.src += '_'
