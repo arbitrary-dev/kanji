@@ -50,10 +50,8 @@ class EtymologyRunnable extends TaskRunnable {
 
                     etymology = es.text().trim();
 
-                    if (!etymology.isEmpty()) {
-                        Log.d(TAG, "Retrieved " + DATA + " from web: " + etymology);
-                        cache.put(KanjiEntry.COL_ETYMOLOGY, etymology);
-                    }
+                    Log.d(TAG, "Retrieved " + DATA + " from web: " + etymology);
+                    cache.put(KanjiEntry.COL_ETYMOLOGY, etymology);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
