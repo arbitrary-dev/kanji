@@ -11,6 +11,8 @@ import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 
+import static com.example.gay.kanji.data.DataRetriever.NO_DATA;
+
 class WwwjdicRunnable extends TaskRunnable {
 
     private static final String TAG = "JDIC";
@@ -90,6 +92,9 @@ class WwwjdicRunnable extends TaskRunnable {
                 }
             } else {
                 Log.e(TAG, "Can't retrieve " + DATA + ": No Internet connection");
+                on = NO_DATA;
+                kun = NO_DATA;
+                meaning = NO_DATA;
             }
         }
 
