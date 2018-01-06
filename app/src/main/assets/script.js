@@ -1,7 +1,12 @@
 idImage = "image"
 idText = "text"
 
-function clickHandler(e) {
+function clickHandlerP(e) {
+    var t = e.target
+    t.classList.toggle("expand")
+}
+
+function clickHandlerImg(e) {
     var t = e.target
     if (!t.src.endsWith("_"))
         t.src += '?'
@@ -11,13 +16,13 @@ function clickHandler(e) {
 function init(kanji) {
     var img = document.createElement("img")
     img.id = idImage
-    img.onclick = clickHandler
+    img.onclick = clickHandlerImg
 
     var txt = document.createElement("p")
     txt.id = idText
+    txt.onclick = clickHandlerP
 
     document.body.appendChild(img)
-    // TODO make it initially oneline with ellipsis, expand on click, but keep it selectable
     document.body.appendChild(txt)
 
     setText(kanji)
