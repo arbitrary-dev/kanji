@@ -22,8 +22,3 @@ An Android app to learn japanese writing.
 - [ ] An advertising clip on [YouTube](https://www.youtube.com) on how to use the app
 - [ ] ???
 - [ ] Release to [Google Play](https://play.google.com/store)!
-
-## FAck Qou!
-
-- *What to do if animation doesn't support night mode?*  
-Just update [Android System WebView](https://play.google.com/store/apps/details?id=com.google.android.webview)
