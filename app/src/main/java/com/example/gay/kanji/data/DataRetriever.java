@@ -83,7 +83,7 @@ public class DataRetriever {
 
                 @Override
                 public void run() {
-                    StringBuilder text = new StringBuilder();
+                    StringBuilder info = new StringBuilder();
 
                     Character kanji = task.getKanji();
                     String etymology = task.getEtymology();
@@ -96,30 +96,30 @@ public class DataRetriever {
                     boolean okm = isAvailable(on) || isAvailable(kun) || isAvailable(meaning);
 
                     if (e)
-                        text.append(etymology);
+                        info.append(etymology);
                     else if (loading)
-                        text.append(LOADING);
+                        info.append(LOADING);
 
                     if (okm) {
-                        if (text.length() > 0)
-                            text.append("<br>");
+                        if (info.length() > 0)
+                            info.append("<br>");
                         StringBuilder jdic = new StringBuilder();
                         append(jdic, on);
                         append(jdic, kun);
                         append(jdic, meaning);
-                        text.append(jdic);
+                        info.append(jdic);
                     } else if (e && loading) {
-                        text.append("<br>");
-                        text.append(LOADING);
+                        info.append("<br>");
+                        info.append(LOADING);
                     }
 
-                    if (text.length() > 0)
-                        text.insert(0, " &ndash; ");
+                    if (info.length() > 0)
+                        info.insert(0, " &ndash; ");
 
-                    text.insert(0, kanji);
+                    info.insert(0, kanji);
 
                     WebView wv = task.getWebView();
-                    wv.loadUrl("javascript:setText(\"" + text + "\")");
+                    wv.loadUrl("javascript:setInfo(\"" + info + "\")");
 
                     // GIF
 

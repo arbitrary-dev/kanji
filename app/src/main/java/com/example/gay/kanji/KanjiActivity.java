@@ -70,7 +70,7 @@ public class KanjiActivity extends AppCompatActivity {
                     }
                 }
 
-                mWebView.loadUrl("javascript:init('" + kanji + "')");
+                mWebView.loadUrl("javascript:setInfo('" + kanji + "')");
                 mWebView.setVisibility(VISIBLE);
 
                 DataRetriever.retrieve(mWebView, kanji);

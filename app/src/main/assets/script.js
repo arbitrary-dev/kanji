@@ -1,44 +1,41 @@
-idImage = "image"
-idText = "text"
+var gif = document.createElement('img')
+var info = document.createElement('p')
 
-function clickHandlerP(e) {
-    var t = e.target
-    t.classList.toggle("expand")
+gif.onclick = clickHandlerGif
+info.onclick = clickHandlerInfo
+
+document.addEventListener('DOMContentLoaded', function(event) {
+    document.body.appendChild(gif)
+    document.body.appendChild(info)
+})
+
+function clickHandlerInfo(e) {
+    info.classList.toggle('expand')
 }
 
-function clickHandlerImg(e) {
-    var t = e.target
-    if (!t.src.endsWith("_"))
-        t.src += '?'
-    t.src += '_'
+// available in ECMA6
+if (typeof String.prototype.endsWith !== 'function') {
+    String.prototype.endsWith = function(suffix) {
+        return this.indexOf(suffix, this.length - suffix.length) !== -1;
+    }
 }
 
-function init(kanji) {
-    var img = document.createElement("img")
-    img.id = idImage
-    img.onclick = clickHandlerImg
-
-    var txt = document.createElement("p")
-    txt.id = idText
-    txt.onclick = clickHandlerP
-
-    document.body.appendChild(img)
-    document.body.appendChild(txt)
-
-    setText(kanji)
+function clickHandlerGif(e) {
+    if (!gif.src.endsWith('_'))
+        gif.src += '?'
+    gif.src += '_'
 }
 
 var prevPath
 
 function setGif(path) {
-    var img = document.getElementById(idImage)
     if (path == prevPath)
         return
     prevPath = path
-    img.src = path
-    img.style.visibility = "visible"
+    gif.src = path
+    gif.style.visibility = 'visible'
 }
 
-function setText(text) {
-    document.getElementById(idText).innerHTML = text
+function setInfo(text) {
+    info.innerHTML = text
 }
