@@ -23,6 +23,7 @@ p {
 
 .expand p {
     white-space: normal;
+    text-overflow: clip;
 }
 
 p > span {
