@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 })
 
 function toggleInfo(e) {
+    // TODO add "Show more..." hint
     info.classList.toggle('expand')
 }
 
