@@ -74,6 +74,8 @@ public class DataRetriever {
                 private boolean isAvailable(String s) { return !(s == null || s.isEmpty()); }
 
                 private void append(StringBuilder sb, String text) {
+                    if (text.isEmpty())
+                        return;
                     sb.append("<span>");
                     sb.append(text);
                     sb.append("</span>");

@@ -68,6 +68,8 @@ class WwwjdicRunnable extends TaskRunnable {
                         Element elKun = doc.select("font:contains([訓])").first();
                         kun = values(elKun);
 
+                        // TODO name reading
+
                         checkIfInterrupted();
 
                         Element elMeaning = doc.select("font:contains([英])").first();
@@ -108,8 +110,12 @@ class WwwjdicRunnable extends TaskRunnable {
     }
 
     private String values(Element el) {
+        if (el == null)
+            return NO_DATA;
+
         StringBuilder sb = new StringBuilder();
         String txt;
+
         while ( (el = el.nextElementSibling()) != null
                 && el.tagName().equals("b")
                 && !(txt = el.text().trim()).isEmpty()) {
@@ -117,6 +123,7 @@ class WwwjdicRunnable extends TaskRunnable {
                 sb.append(", ");
             sb.append(txt);
         }
+
         return sb.toString();
     }
 }
