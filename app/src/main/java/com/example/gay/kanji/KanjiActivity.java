@@ -1,90 +1,28 @@
 package com.example.gay.kanji;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.example.gay.kanji.data.DataRetriever;
-
-import static android.content.Intent.ACTION_SEND;
-import static android.content.Intent.EXTRA_TEXT;
-import static android.view.View.VISIBLE;
 
 // FIXME text selection block style should match nightmode
 // and do not offset main layout.
 public class KanjiActivity extends AppCompatActivity {
 
     private static final String TAG = "ACTV";
-    private static final String PREF_NIGHT_MODE = "nightMode";
 
-    private boolean mNightMode;
-    private WebView mWebView;
-
-    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate()");
-
-        SharedPreferences settings = getPreferences(0);
-        mNightMode = settings.getBoolean(PREF_NIGHT_MODE, false);
-        setTheme(mNightMode ? R.style.AppThemeNight : R.style.AppThemeDay);
-
+        setTheme(App.isNightMode() ? R.style.AppThemeNight : R.style.AppThemeDay);
         setContentView(R.layout.activity_main);
-
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
-
-        mWebView = (WebView) findViewById(R.id.webView1);
-        if (mWebView == null)
-            throw new RuntimeException("No WebView");
-        mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.loadUrl("file:///android_asset/index-" + (mNightMode ? "night" : "day") + ".html");
-
-        // TODO smart loading
-        // There'd be a loader icon first 1-2 seconds waiting for
-        // everything to be loaded, if etymology misses the time and still
-        // loading, then everything is revealed, but etymology will have a
-        // "Loading..." placeholder.
-
-        // TODO move to KanjiWebView
-        mWebView.setWebViewClient(new WebViewClient(){
-            public void onPageFinished(WebView view, String url) {
-                // TODO move sharedText up and iterate over it chars until we found one
-                // TODO make error when none of sharedText chars exist in DB
-                Character kanji = '字';
-
-                Intent intent = getIntent();
-                if (    ACTION_SEND.equals(intent.getAction())
-                        && "text/plain".equals(intent.getType())) {
-                    String sharedText = clean(intent.getStringExtra(EXTRA_TEXT));
-                    if (sharedText != null) {
-                        Log.d(TAG, "sharedText = \"" + sharedText + "\"");
-                        kanji = sharedText.charAt(0);
-                    }
-                }
-
-                mWebView.loadUrl("javascript:setInfo('" + kanji + "')");
-                mWebView.setVisibility(VISIBLE);
-
-                DataRetriever.retrieve(mWebView, kanji);
-            }
-        });
-    }
-
-    /** Cleans all non-japanese symbols from the {@code input} */
-    private String clean(String input) {
-        return input == null
-            ? null
-            : input.replaceAll("[^\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]", "");
     }
 
     @Override
@@ -94,7 +32,7 @@ public class KanjiActivity extends AppCompatActivity {
         // TODO text editing button
 
         MenuItem nightDayItem = menu.findItem(R.id.night_day_mode);
-        if (mNightMode) {
+        if (App.isNightMode()) {
             nightDayItem.setIcon(R.drawable.ic_brightness_5_white_24dp);
             nightDayItem.setTitle(R.string.day_mode);
         } else {
@@ -111,8 +49,7 @@ public class KanjiActivity extends AppCompatActivity {
             case R.id.night_day_mode:
                 // TODO preserve view state on night mode and layout switch
                 // View state is info expansion and gif animation.
-                getPreferences(0).edit().putBoolean(PREF_NIGHT_MODE, !mNightMode).apply();
-                Log.d(TAG, "onOptionsItemSelected setNightMode(" + !mNightMode + ")");
+                App.toggleNightMode();
                 recreate();
                 return true;
 

@@ -1,6 +1,7 @@
 package com.example.gay.kanji;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
@@ -55,5 +56,21 @@ public class App extends Application {
 
     public static InputStream openKanjiZip() throws IOException {
         return instance.getAssets().open("kanji.zip");
+    }
+
+    private static final String PREF_NIGHT_MODE = "nightMode";
+
+    public static boolean isNightMode() {
+        String name = App.class.getName();
+        SharedPreferences settings = instance.getSharedPreferences(name, MODE_PRIVATE);
+        return settings.getBoolean(PREF_NIGHT_MODE, false);
+    }
+
+    public static void toggleNightMode() {
+        String name = App.class.getName();
+        SharedPreferences settings = instance.getSharedPreferences(name, MODE_PRIVATE);
+        boolean result = !isNightMode();
+        settings.edit().putBoolean(PREF_NIGHT_MODE, result).apply();
+        Log.d(TAG, "nightMode toggled to " + result);
     }
 }

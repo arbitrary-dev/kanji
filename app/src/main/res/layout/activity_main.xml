@@ -15,7 +15,7 @@
         app:subtitleTextColor="@android:color/white"
         android:elevation="4dp" /> <!-- TODO split into different layout to support API 19 -->
 
-    <WebView
+    <com.example.gay.kanji.KanjiWebView
         android:id="@+id/webView1"
         android:layout_width="0dp"
         android:layout_height="0dp"
