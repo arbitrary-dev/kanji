@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,14 +15,17 @@ import static android.net.ConnectivityManager.TYPE_WIFI;
 
 public class App extends Application {
 
+    private static final String TAG = "APP";
+
     private static App instance;
     private static KanjiDbHelper dbHelper;
 
     @Override
     public void onCreate() {
+        super.onCreate();
+        Log.d(TAG, "onCreate()");
         instance = this;
         dbHelper = new KanjiDbHelper(getApplicationContext());
-        super.onCreate();
     }
 
     public static SQLiteDatabase getReadableDatabase() {

@@ -32,6 +32,7 @@ public class KanjiActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate()");
 
         SharedPreferences settings = getPreferences(0);
         mNightMode = settings.getBoolean(PREF_NIGHT_MODE, false);
@@ -122,6 +123,7 @@ public class KanjiActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy()");
         DataRetriever.stop();
         super.onDestroy();
     }
