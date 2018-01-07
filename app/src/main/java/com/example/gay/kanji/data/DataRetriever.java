@@ -69,74 +69,78 @@ public class DataRetriever {
             instance.handler,
             new Runnable() {
 
-                private static final String LOADING = "...";
-
-                private boolean isAvailable(String s) { return !(s == null || s.isEmpty()); }
-
-                private void append(StringBuilder sb, String text) {
-                    if (text.isEmpty())
-                        return;
-                    sb.append("<span>");
-                    sb.append(text);
-                    sb.append("</span>");
-                }
-
                 @Override
                 public void run() {
-                    StringBuilder info = new StringBuilder();
-
-                    Character kanji = task.getKanji();
-                    String etymology = task.getEtymology();
-                    String on = task.getOn(), kun = task.getKun(), meaning = task.getMeaning();
-                    boolean loading =
-                        etymology == null
-                        || on == null || kun == null || meaning == null;
-
-                    boolean e = isAvailable(etymology);
-                    boolean okm = isAvailable(on) || isAvailable(kun) || isAvailable(meaning);
-
-                    if (e) {
-                        info.append(etymology);
-                        info.append("</p>");
-                    } else if (loading) {
-                        info.append(LOADING);
-                        info.append("</p>");
-                    }
-
-                    if (okm) {
-                        if (e) info.append("<p>");
-                        StringBuilder jdic = new StringBuilder();
-                        append(jdic, on);
-                        append(jdic, highlightSuffixes(kun));
-                        append(jdic, meaning);
-                        info.append(jdic);
-                        info.append("</p>");
-                    } else if (e && loading) {
-                        info.append("<p>");
-                        info.append(LOADING);
-                        info.append("</p>");
-                    }
-
-                    if (info.length() > 0)
-                        info.insert(0, " &ndash; ");
-
-                    info.insert(0, kanji);
-                    info.insert(0, "<p>"); // FIXME this is shit, do something about it!
-
                     WebView wv = task.getWebView();
-                    wv.loadUrl("javascript:setInfo(\"" + info + "\")");
 
-                    // GIF
+                    String info = formInfo(task);
+                    wv.loadUrl("javascript:setInfo(\"" + info + "\")");
 
                     String gif = task.getGif();
                     if (gif != null)
                         wv.loadUrl("javascript:setGif(\"" + gif + "\")");
                 }
-
-                private String highlightSuffixes(String kun) {
-                    return kun.replaceAll("\\.([^,]+)", "<span class='hlit'>$1</span>");
-                }
             }
         ).sendToTarget();
+    }
+
+    private static final String LOADING = "...";
+
+    private static boolean isAvailable(String s) { return !(s == null || s.isEmpty()); }
+
+    private static String formInfo(DataTask task) {
+        StringBuilder info = new StringBuilder();
+
+        Character kanji = task.getKanji();
+        String etymology = task.getEtymology();
+        String on = task.getOn(), kun = task.getKun(), meaning = task.getMeaning();
+        boolean loading =
+            etymology == null
+            || on == null || kun == null || meaning == null;
+
+        boolean e = isAvailable(etymology);
+        boolean okm = isAvailable(on) || isAvailable(kun) || isAvailable(meaning);
+
+        if (e) {
+            info.append(etymology);
+            info.append("</p>");
+        } else if (loading) {
+            info.append(LOADING);
+            info.append("</p>");
+        }
+
+        if (okm) {
+            if (e || loading) info.append("<p>");
+            StringBuilder jdic = new StringBuilder();
+            appendSpan(jdic, on);
+            appendSpan(jdic, highlightSuffixes(kun));
+            appendSpan(jdic, meaning);
+            info.append(jdic);
+            info.append("</p>");
+        } else if (e && loading) {
+            info.append("<p>");
+            info.append(LOADING);
+            info.append("</p>");
+        }
+
+        if (info.length() > 0)
+            info.insert(0, " &ndash; ");
+
+        info.insert(0, kanji);
+        info.insert(0, "<p>"); // FIXME this is shit, do something about it!
+
+        return info.toString();
+    }
+
+    private static void appendSpan(StringBuilder sb, String text) {
+        if (text.isEmpty())
+            return;
+        sb.append("<span>");
+        sb.append(text);
+        sb.append("</span>");
+    }
+
+    private static String highlightSuffixes(String kun) {
+        return kun.replaceAll("\\.([^,]+)", "<span class='hlit'>$1</span>");
     }
 }
