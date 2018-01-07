@@ -36,11 +36,11 @@ public class DataRetriever {
     private DataRetriever() { }
 
     static public void retrieve(WebView wv, Character kanji) {
+        stop();
+
         Log.d(TAG, "retrieve: " + kanji);
 
         DataTask task = getTask();
-
-        task.recycle();
         task.init(wv, kanji);
 
         for (TaskRunnable runnable : task.getRunnables())
@@ -48,6 +48,7 @@ public class DataRetriever {
     }
 
     static public void stop() {
+        Log.d(TAG, "stop()");
         DataTask task = instance.task;
 
         if (task == null)
