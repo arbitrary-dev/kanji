@@ -43,6 +43,7 @@ public class KanjiWebView extends WebView {
     }
 
     private final WebViewClient webClient = new WebViewClient(){
+
         public void onPageFinished(WebView view, String url) {
             Log.d(TAG, "WebViewClient.onPageFinished()");
 
