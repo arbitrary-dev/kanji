@@ -48,6 +48,9 @@ class DataTask {
         // idx = null;
         gif = null;
         etymology = null;
+        on = null;
+        kun = null;
+        meaning = null;
     }
 
     WebView getWebView() {
