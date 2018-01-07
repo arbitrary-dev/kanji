@@ -67,19 +67,15 @@ public class DataRetriever {
         Log.d(TAG, "update: " + task);
         Message.obtain(
             instance.handler,
-            new Runnable() {
+            () -> {
+                WebView wv = task.getWebView();
 
-                @Override
-                public void run() {
-                    WebView wv = task.getWebView();
+                String info = formInfo(task);
+                wv.loadUrl("javascript:setInfo(\"" + info + "\")");
 
-                    String info = formInfo(task);
-                    wv.loadUrl("javascript:setInfo(\"" + info + "\")");
-
-                    String gif = task.getGif();
-                    if (gif != null)
-                        wv.loadUrl("javascript:setGif(\"" + gif + "\")");
-                }
+                String gif = task.getGif();
+                if (gif != null)
+                    wv.loadUrl("javascript:setGif(\"" + gif + "\")");
             }
         ).sendToTarget();
     }
