@@ -6,6 +6,9 @@ import android.os.Message;
 import android.util.Log;
 import android.webkit.WebView;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -83,50 +86,64 @@ public class DataRetriever {
 
     private static final String LOADING = "...";
 
-    private static boolean isAvailable(String s) { return !(s == null || s.isEmpty()); }
+    private static void addLine(List<String> data, String line) {
+        if (!NO_DATA.equals(line))
+            data.add(line);
+    }
 
+    // TODO unit test
     private static String formInfo(DataTask task) {
+        List<String> data = new LinkedList<>();
+        addLine(data, task.getEtymology());
+        addLine(data, formJdic(task));
+
+        // collapse adjacent nulls and replace with LOADING
+        ListIterator<String> it = data.listIterator();
+        boolean prevWasNull = false;
+        while (it.hasNext()) {
+            String curr = it.next();
+            if (curr == null) {
+                if (prevWasNull) it.remove();
+                else it.set(LOADING);
+                prevWasNull = true;
+            } else {
+                prevWasNull = false;
+            }
+        }
+
+        String kanji = task.getKanji().toString();
+
+        // headline
+        if (data.isEmpty())
+            data.add(kanji);
+        else
+            data.set(0, kanji + " &ndash; " + data.get(0));
+
         StringBuilder info = new StringBuilder();
 
-        Character kanji = task.getKanji();
-        String etymology = task.getEtymology();
-        String on = task.getOn(), kun = task.getKun(), meaning = task.getMeaning();
-        boolean loading =
-            etymology == null
-            || on == null || kun == null || meaning == null;
-
-        boolean e = isAvailable(etymology);
-        boolean okm = isAvailable(on) || isAvailable(kun) || isAvailable(meaning);
-
-        if (e) {
-            info.append(etymology);
-            info.append("</p>");
-        } else if (loading) {
-            info.append(LOADING);
-            info.append("</p>");
-        }
-
-        if (okm) {
-            if (e || loading) info.append("<p>");
-            StringBuilder jdic = new StringBuilder();
-            appendSpan(jdic, on);
-            appendSpan(jdic, highlightSuffixes(kun));
-            appendSpan(jdic, meaning);
-            info.append(jdic);
-            info.append("</p>");
-        } else if (e && loading) {
+        for (String line : data) {
             info.append("<p>");
-            info.append(LOADING);
+            info.append(line);
             info.append("</p>");
         }
-
-        if (info.length() > 0)
-            info.insert(0, " &ndash; ");
-
-        info.insert(0, kanji);
-        info.insert(0, "<p>"); // FIXME this is shit, do something about it!
 
         return info.toString();
+    }
+
+    private static String formJdic(DataTask task) {
+        String on = task.getOn();
+        String kun = task.getKun();
+        String meaning = task.getMeaning();
+
+        if (on == null || kun == null || meaning == null)
+            return null;
+
+        StringBuilder jdic = new StringBuilder();
+        appendSpan(jdic, on);
+        appendSpan(jdic, highlightSuffixes(kun));
+        appendSpan(jdic, meaning);
+
+        return jdic.toString();
     }
 
     private static void appendSpan(StringBuilder sb, String text) {
