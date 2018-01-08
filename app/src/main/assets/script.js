@@ -40,5 +40,6 @@ function setGif(path) {
 }
 
 function setInfo(text) {
+    // TODO collapse only if overlaps with gif
     info.innerHTML = text
 }

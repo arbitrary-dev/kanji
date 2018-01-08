@@ -80,6 +80,9 @@ public class DataRetriever {
                 String gif = task.getGif();
                 if (gif != null)
                     wv.loadUrl("javascript:setGif(\"" + gif + "\")");
+
+                // FIXME no kanji data
+                // TODO replace empty gif with static kanji, iff other data is available
             }
         ).sendToTarget();
     }
