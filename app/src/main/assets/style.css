@@ -5,22 +5,32 @@
     margin: 0;
     width: 100%;
     background: rgba(255, 255, 255, 0.75);
-    overflow: hidden;
 }
 .night #info {
     background: rgba(0, 0, 0, 0.75);
 }
 
-#info.collapse {
+.collapsed #infoInner {
     height: 1.3em;
+    overflow: hidden;
+}
+
+#more {
+    color: #AAA;
+    display: none;
+}
+.night #more {
+    color: #888;
+}
+.collapsed #more {
+    display: block;
 }
 
 p {
     line-height: 1.3em;
     margin: 0 0 0.4em;
 }
-
-.collapse p {
+.collapsed p {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
