@@ -50,10 +50,16 @@ class EtymologyRunnable extends TaskRunnable {
 
                     etymology = es.text().trim();
 
-                    Log.d(TAG, "Retrieved " + DATA + " from the web: " + etymology);
-                    cache.put(KanjiEntry.COL_ETYMOLOGY, etymology);
+                    if (etymology.matches(".*[a-zA-Z].*")) {
+                        Log.d(TAG, "Retrieved " + DATA + " from the web: " + etymology);
+                        cache.put(KanjiEntry.COL_ETYMOLOGY, etymology);
+                    } else {
+                        Log.w(TAG, "No " + DATA + " for 「" + kanji + "」 on the web");
+                        etymology = NO_DATA;
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
+                    etymology = NO_DATA;
                 }
             } else {
                 Log.w(TAG, "Can't retrieve " + DATA + ": No Internet connection");

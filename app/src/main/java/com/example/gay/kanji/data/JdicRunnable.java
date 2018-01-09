@@ -30,7 +30,7 @@ class JdicRunnable extends TaskRunnable {
                  .data("kanjsel", "X")
                  .data("ksrchkey", kanji.toString())
                  .post();
-        boolean notFound = doc.toString().contains("Try again?");
+        boolean notFound = doc.toString().contains("No kanji matched this key.");
         return notFound ? null : doc;
     }
 
@@ -55,6 +55,9 @@ class JdicRunnable extends TaskRunnable {
 
                     if (doc == null) {
                         Log.w(TAG, "No " + DATA + " for 「" + kanji + "」 on the web");
+                        on = NO_DATA;
+                        kun = NO_DATA;
+                        meaning = NO_DATA;
                     } else {
                         // TODO idx
 
@@ -91,6 +94,9 @@ class JdicRunnable extends TaskRunnable {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
+                    on = NO_DATA;
+                    kun = NO_DATA;
+                    meaning = NO_DATA;
                 }
             } else {
                 Log.w(TAG, "Can't retrieve " + DATA + ": No Internet connection");

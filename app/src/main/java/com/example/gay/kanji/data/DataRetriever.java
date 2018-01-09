@@ -76,13 +76,14 @@ public class DataRetriever {
                 WebView wv = task.getWebView();
 
                 String info = formInfo(task);
-                wv.loadUrl("javascript:setInfo(\"" + info + "\")");
-
                 String gif = task.getGif();
-                if (gif != null)
-                    wv.loadUrl("javascript:setGif(\"" + gif + "\")");
 
-                // FIXME no kanji data
+                if (info.length() == "<p>X</p>".length() && gif.equals(NO_DATA))
+                    throw new RuntimeException("Fuck you!"); // TODO make more plausible
+
+                wv.loadUrl("javascript:setInfo(\"" + info + "\")");
+                wv.loadUrl("javascript:setGif(\"" + gif + "\")");
+
                 // TODO replace empty gif with static kanji, iff other data is available
             }
         ).sendToTarget();
