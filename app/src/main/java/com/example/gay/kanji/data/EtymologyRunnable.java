@@ -43,20 +43,20 @@ class EtymologyRunnable extends TaskRunnable {
                     // retrieve from the web
 
                     String url = url(kanji);
-                    Log.d(TAG, "Lookup 「" + kanji + "」 " + DATA + " on web");
+                    Log.d(TAG, "Lookup 「" + kanji + "」 " + DATA + " on the web");
                     Document doc = Jsoup.connect(url).get();
                     // TODO integration test
                     Elements es = doc.select("#etymologyLabel p");
 
                     etymology = es.text().trim();
 
-                    Log.d(TAG, "Retrieved " + DATA + " from web: " + etymology);
+                    Log.d(TAG, "Retrieved " + DATA + " from the web: " + etymology);
                     cache.put(KanjiEntry.COL_ETYMOLOGY, etymology);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
-                Log.e(TAG, "Can't retrieve " + DATA + ": No Internet connection");
+                Log.w(TAG, "Can't retrieve " + DATA + ": No Internet connection");
                 etymology = NO_DATA;
             }
         }

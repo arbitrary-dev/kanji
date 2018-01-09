@@ -32,6 +32,7 @@ function restartGif(e) {
 var prevPath
 
 function setGif(path) {
+    console.log("setGif: " + path)
     if (path == prevPath)
         return
     prevPath = path
@@ -40,6 +41,7 @@ function setGif(path) {
 }
 
 function setInfo(text) {
+    console.log("setInfo: " + text)
     // TODO collapse only if overlaps with gif
     info.innerHTML = text
 }

@@ -23,7 +23,7 @@ class JdicRunnable extends TaskRunnable {
     }
 
     private static Document post(Character kanji) throws IOException {
-        Log.d(TAG, "Lookup 「" + kanji + "」 " + DATA + " on web");
+        Log.d(TAG, "Lookup 「" + kanji + "」 " + DATA + " on the web");
         String url = "http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1D";
         Document doc =
             Jsoup.connect(url)
@@ -54,7 +54,7 @@ class JdicRunnable extends TaskRunnable {
                     Document doc = post(kanji);
 
                     if (doc == null) {
-                        Log.d(TAG, "No " + DATA + " for 「" + kanji + "」 on web");
+                        Log.w(TAG, "No " + DATA + " for 「" + kanji + "」 on the web");
                     } else {
                         // TODO idx
 
@@ -79,7 +79,7 @@ class JdicRunnable extends TaskRunnable {
                             meaning = meaning.replace(",", "").replace(';', ',');
 
                         Log.d(TAG, String.format(
-                            "Retrieved " + DATA + " from web: ON = %s; KUN = %s; meaning = %s",
+                            "Retrieved " + DATA + " from the web: ON = %s; KUN = %s; meaning = %s",
                             on, kun, meaning
                         ));
 
@@ -93,7 +93,7 @@ class JdicRunnable extends TaskRunnable {
                     e.printStackTrace();
                 }
             } else {
-                Log.e(TAG, "Can't retrieve " + DATA + ": No Internet connection");
+                Log.w(TAG, "Can't retrieve " + DATA + ": No Internet connection");
                 on = NO_DATA;
                 kun = NO_DATA;
                 meaning = NO_DATA;
