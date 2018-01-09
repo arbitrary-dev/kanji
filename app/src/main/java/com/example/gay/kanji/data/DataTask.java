@@ -26,7 +26,7 @@ class DataTask {
         runnable2thread.put(new LoadingRunnable(this), null);
         runnable2thread.put(new KanjiRunnable(this), null);
         runnable2thread.put(new EtymologyRunnable(this), null);
-        runnable2thread.put(new WwwjdicRunnable(this), null);
+        runnable2thread.put(new JdicRunnable(this), null);
     }
 
     void init(WebView wv, Character kanji) {

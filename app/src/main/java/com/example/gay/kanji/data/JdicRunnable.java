@@ -13,12 +13,12 @@ import java.io.IOException;
 
 import static com.example.gay.kanji.data.DataRetriever.NO_DATA;
 
-class WwwjdicRunnable extends TaskRunnable {
+class JdicRunnable extends TaskRunnable {
 
     private static final String TAG = "JDIC";
     private static final String DATA = "info";
 
-    WwwjdicRunnable(DataTask task) {
+    JdicRunnable(DataTask task) {
         super(task);
     }
 
