@@ -40,7 +40,7 @@ class EtymologyRunnable extends TaskRunnable {
                 try {
                     checkIfInterrupted();
 
-                    // retrieve from web
+                    // retrieve from the web
 
                     String url = url(kanji);
                     Log.d(TAG, "Lookup 「" + kanji + "」 " + DATA + " on web");

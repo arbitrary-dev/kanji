@@ -7,6 +7,9 @@
     background: rgba(255, 255, 255, 0.75);
     overflow: hidden;
 }
+.night #info {
+    background: rgba(0, 0, 0, 0.75);
+}
 
 #info.collapse {
     height: 1.3em;
@@ -30,6 +33,9 @@ p > span {
 .hlit {
     color: #777;
 }
+.night .hlit {
+    color: #BBB;
+}
 
 #gif {
     visibility: hidden;
@@ -41,21 +47,12 @@ p > span {
     top: 50%;
     transform: translate(-50%, -50%);
 }
+.night #gif {
+    -webkit-filter: invert(100%);
+    filter: invert(100%);
+}
 
 .night {
     color: white;
     background: black;
-}
-
-.night #info {
-    background: rgba(0, 0, 0, 0.75);
-}
-
-.night .hlit {
-    color: #BBB;
-}
-
-.night #gif {
-    -webkit-filter: invert(100%);
-    filter: invert(100%);
 }

@@ -49,7 +49,7 @@ class JdicRunnable extends TaskRunnable {
                 try {
                     checkIfInterrupted();
 
-                    // retrieve from web
+                    // retrieve from the web
 
                     Document doc = post(kanji);
 

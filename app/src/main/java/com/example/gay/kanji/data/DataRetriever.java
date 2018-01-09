@@ -38,6 +38,7 @@ public class DataRetriever {
 
     private DataRetriever() { }
 
+    // FIXME don't retrieve same kanji twice
     static public void retrieve(WebView wv, Character kanji) {
         stop();
 
@@ -87,7 +88,7 @@ public class DataRetriever {
         ).sendToTarget();
     }
 
-    private static final String LOADING = "...";
+    private static final String LOADING = "…";
 
     private static void addLine(List<String> data, String line) {
         if (!NO_DATA.equals(line))
