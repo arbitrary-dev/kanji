@@ -4,20 +4,28 @@
     top: 0;
     margin: 0;
     width: 100%;
+    overflow: hidden;
     background: rgba(255, 255, 255, 0.75);
 }
 .night #info {
     background: rgba(0, 0, 0, 0.75);
 }
+#info.collapsed {
+    background: none;
+}
 
+#infoInner {
+    overflow: hidden;
+}
 .collapsed #infoInner {
     height: 1.3em;
-    overflow: hidden;
 }
 
 #more {
     color: #AAA;
     display: none;
+    line-height: 1.3em;
+    margin: 0.35em 0 0.4em;
 }
 .night #more {
     color: #888;
@@ -26,17 +34,16 @@
     display: block;
 }
 
-p {
+#info p {
     line-height: 1.3em;
     margin: 0 0 0.4em;
-}
-.collapsed p {
     overflow: hidden;
+}
+#info.collapsed p {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-
-p > span {
+#info p > span {
     margin-right: 8pt;
 }
 

@@ -1,5 +1,5 @@
 const COLLAPSED = 'collapsed'
-const OVERLAP_THRESHOLD = 6
+const OVERLAP_THRESHOLD = 10
 
 var gif = document.createElement('img')
 gif.id = 'gif'
