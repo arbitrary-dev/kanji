@@ -92,10 +92,13 @@ public class DataRetriever {
     private static final String LOADING = "…";
 
     private static void addLine(List<String> data, String line) {
-        if (!NO_DATA.equals(line))
-            if (line != null)
-                line = line.replace("\"", "\\\"");
-            data.add(line);
+        if (NO_DATA.equals(line))
+            return;
+
+        if (line != null)
+            line = line.replace("\"", "\\\"");
+
+        data.add(line);
     }
 
     // TODO unit test
