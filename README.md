@@ -14,6 +14,7 @@ An Android app to learn japanese writing.
 - [X] Kanji etymology from [Richard Sears](http://www.chineseetymology.org)
   [![v0.1](https://img.shields.io/badge/download-v0.1-brightgreen.svg)](https://github.com/arbitrary-dev/kanji/raw/master/app/kanji-0.1.apk)
 - [X] ON/KUN reading and meaning from [WWWJDIC](http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1B)
+  [![v0.2](https://img.shields.io/badge/download-v0.2-brightgreen.svg)](https://github.com/arbitrary-dev/kanji/raw/master/app/kanji-0.2.apk)
 - [ ] Download missing kanji from [WWWJDIC](http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1B)
 - [ ] Search widget &amp; screen swiping to walk the characters in search string
 - [ ] Hiragana &amp; Katakana
