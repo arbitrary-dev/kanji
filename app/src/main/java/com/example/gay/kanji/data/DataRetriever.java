@@ -93,6 +93,8 @@ public class DataRetriever {
 
     private static void addLine(List<String> data, String line) {
         if (!NO_DATA.equals(line))
+            if (line != null)
+                line = line.replace("\"", "\\\"");
             data.add(line);
     }
 
