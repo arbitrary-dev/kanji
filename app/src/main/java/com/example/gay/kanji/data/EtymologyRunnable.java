@@ -30,6 +30,7 @@ class EtymologyRunnable extends TaskRunnable {
     protected void runInner() throws InterruptedException {
         Character kanji = task.getKanji();
 
+        // TODO refactor cache quering to a separate TaskRunnable
         Cache cache = Cache.getFor(TAG, DATA, kanji);
         String etymology = cache.query(KanjiEntry.COL_ETYMOLOGY)[0];
 

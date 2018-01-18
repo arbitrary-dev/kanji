@@ -38,6 +38,7 @@ class JdicRunnable extends TaskRunnable {
     protected void runInner() throws InterruptedException {
         Character kanji = task.getKanji();
 
+        // TODO refactor cache quering to a separate TaskRunnable
         Cache cache = Cache.getFor(TAG, DATA, kanji);
         String[] cached = cache.query(KanjiEntry.COL_ON, KanjiEntry.COL_KUN, KanjiEntry.COL_MEANING);
         String on = cached[0], kun = cached[1], meaning = cached[2];

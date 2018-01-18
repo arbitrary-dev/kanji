@@ -54,6 +54,7 @@ public class KanjiRunnable extends TaskRunnable {
         File file = new File(path, filename);
 
         if (file.exists()) {
+            // TODO refactor cache quering to a separate TaskRunnable
             String absPath = file.getAbsolutePath();
             Log.d(TAG, "Found: " + absPath);
             return absPath;
