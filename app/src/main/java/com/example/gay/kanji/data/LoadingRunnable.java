@@ -1,10 +1,8 @@
 package com.example.gay.kanji.data;
 
-import android.util.Log;
-
 class LoadingRunnable extends TaskRunnable {
 
-    private static final String TAG = "LOAD";
+    String getLoggingTag() { return "LOAD"; }
 
     LoadingRunnable(DataTask task) {
         super(task);
@@ -12,7 +10,7 @@ class LoadingRunnable extends TaskRunnable {
 
     @Override
     protected void runInner() throws InterruptedException {
-        Log.d(TAG, "runInner: DataRetriever.update(task)");
+        logd("Loading initialized");
         DataRetriever.update(task);
     }
 }

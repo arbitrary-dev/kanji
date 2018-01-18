@@ -1,7 +1,5 @@
 package com.example.gay.kanji.data;
 
-import android.util.Log;
-
 import com.example.gay.kanji.App;
 import com.example.gay.kanji.KanjiContract.KanjiEntry;
 
@@ -15,8 +13,8 @@ import static com.example.gay.kanji.data.DataRetriever.NO_DATA;
 
 class EtymologyRunnable extends TaskRunnable {
 
-    private static final String TAG = "ETYM";
-    private static final String DATA = "etymology";
+    String getLoggingTag() { return "ETYM"; }
+    String getLoggingData() { return "etymology"; }
 
     private static String url(Character kanji) {
         return "http://www.chineseetymology.org/CharacterEtymology.aspx?characterInput=" + kanji;
@@ -31,7 +29,7 @@ class EtymologyRunnable extends TaskRunnable {
         Character kanji = task.getKanji();
 
         // TODO refactor cache quering to a separate TaskRunnable
-        Cache cache = Cache.getFor(TAG, DATA, kanji);
+        Cache cache = Cache.getFor(getLoggingTag(), getLoggingData(), kanji);
         String etymology = cache.query(KanjiEntry.COL_ETYMOLOGY)[0];
 
         if (etymology == null) {
@@ -44,7 +42,7 @@ class EtymologyRunnable extends TaskRunnable {
                     // retrieve from the web
 
                     String url = url(kanji);
-                    Log.d(TAG, "Lookup 「" + kanji + "」 " + DATA + " on the web");
+                    logd("Lookup", "on the web");
                     Document doc = Jsoup.connect(url).get();
                     // TODO integration test
                     Elements es = doc.select("#etymologyLabel p");
@@ -52,18 +50,19 @@ class EtymologyRunnable extends TaskRunnable {
                     etymology = es.text().trim();
 
                     if (etymology.matches(".*[a-zA-Z].*")) {
-                        Log.d(TAG, "Retrieved " + DATA + " from the web: " + etymology);
+                        logd("Retrieved", "from the web:", etymology);
                         cache.put(KanjiEntry.COL_ETYMOLOGY, etymology);
                     } else {
-                        Log.w(TAG, "No " + DATA + " for 「" + kanji + "」 on the web");
+                        logd("No", "on the web");
                         etymology = NO_DATA;
                     }
                 } catch (IOException e) {
+                    loge("Unable to retrieve", ":", e.getMessage());
                     e.printStackTrace();
                     etymology = NO_DATA;
                 }
             } else {
-                Log.w(TAG, "Can't retrieve " + DATA + ": No Internet connection");
+                logd("Can't retrieve", ": No Internet connection");
                 etymology = NO_DATA;
             }
         }

@@ -1,7 +1,5 @@
 package com.example.gay.kanji.data;
 
-import android.util.Log;
-
 import com.example.gay.kanji.App;
 
 import java.io.BufferedInputStream;
@@ -18,7 +16,8 @@ import static com.example.gay.kanji.data.DataRetriever.NO_DATA;
 
 public class KanjiRunnable extends TaskRunnable {
 
-    private static final String TAG = "KNJ";
+    String getLoggingTag() { return "KNJ"; }
+    String getLoggingData() { return "gif"; }
 
     KanjiRunnable(DataTask task) {
         super(task);
@@ -28,7 +27,6 @@ public class KanjiRunnable extends TaskRunnable {
     protected void runInner() throws InterruptedException {
         File extStorage = getExternalStoragePublicDirectory(DIRECTORY_PICTURES);
         String appName = App.getName();
-        Log.d(TAG, "Application name: " + appName);
         extStorage = new File(extStorage, appName);
 
         checkIfInterrupted();
@@ -36,11 +34,9 @@ public class KanjiRunnable extends TaskRunnable {
         // TODO check if Storage permission was granted
         // TODO fallback to local storage
         if (!extStorage.exists() && extStorage.mkdirs())
-            Log.d(TAG, "External storage was created: " + extStorage);
+            logd("External storage was created to store", ":", extStorage.getAbsolutePath());
 
         Character kanji = task.getKanji();
-        Log.d(TAG, "Kanji: " + kanji);
-
         String gif = prepareKanji(extStorage, kanji);
 
         checkIfInterrupted();
@@ -56,17 +52,16 @@ public class KanjiRunnable extends TaskRunnable {
         if (file.exists()) {
             // TODO refactor cache quering to a separate TaskRunnable
             String absPath = file.getAbsolutePath();
-            Log.d(TAG, "Found: " + absPath);
+            logd("Found cached");
             return absPath;
         } else {
-            Log.d(TAG, "Not found: " + file);
             return unzip(filename, path);
         }
     }
 
     private String unzip(String filename, File path) throws InterruptedException {
         if (!path.exists()) {
-            Log.e(TAG, "Folder doesn't exists: " + path.getAbsolutePath());
+            loge("No folder to store", "at", path.getAbsolutePath());
             return NO_DATA;
         }
 
@@ -85,7 +80,7 @@ public class KanjiRunnable extends TaskRunnable {
                     if (!ze.getName().equals(filename))
                         continue;
 
-                    Log.d(TAG, "Found ZipEntry(" + filename + ")");
+                    logd("Found", "in distro zip");
 
                     File file = new File(path, filename);
                     try (FileOutputStream fout = new FileOutputStream(file)) {
@@ -96,7 +91,7 @@ public class KanjiRunnable extends TaskRunnable {
                     }
 
                     String absPath = file.getAbsolutePath();
-                    Log.d(TAG, "ZipEntry(" + filename + ") was copied to " + absPath);
+                    logd("ZipEntry", "was cached to", absPath);
 
                     return absPath;
                 }
@@ -106,7 +101,7 @@ public class KanjiRunnable extends TaskRunnable {
         }
 
         // TODO fallback to downloading from WWWJDIC
-        Log.w(TAG, "No ZipEntry(" + filename + ") was found.");
+        logd("No", "was found in distro zip");
 
         return NO_DATA;
     }

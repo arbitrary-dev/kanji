@@ -1,7 +1,5 @@
 package com.example.gay.kanji.data;
 
-import android.util.Log;
-
 import com.example.gay.kanji.App;
 import com.example.gay.kanji.KanjiContract.KanjiEntry;
 
@@ -15,15 +13,14 @@ import static com.example.gay.kanji.data.DataRetriever.NO_DATA;
 
 class JdicRunnable extends TaskRunnable {
 
-    private static final String TAG = "JDIC";
-    private static final String DATA = "info";
+    String getLoggingTag() { return "JDIC"; }
+    String getLoggingData() { return "info"; }
 
     JdicRunnable(DataTask task) {
         super(task);
     }
 
     private static Document post(Character kanji) throws IOException {
-        Log.d(TAG, "Lookup 「" + kanji + "」 " + DATA + " on the web");
         String url = "http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1D";
         Document doc =
             Jsoup.connect(url)
@@ -39,7 +36,7 @@ class JdicRunnable extends TaskRunnable {
         Character kanji = task.getKanji();
 
         // TODO refactor cache quering to a separate TaskRunnable
-        Cache cache = Cache.getFor(TAG, DATA, kanji);
+        Cache cache = Cache.getFor(getLoggingTag(), getLoggingData(), kanji);
         String[] cached = cache.query(KanjiEntry.COL_ON, KanjiEntry.COL_KUN, KanjiEntry.COL_MEANING);
         String on = cached[0], kun = cached[1], meaning = cached[2];
 
@@ -52,10 +49,11 @@ class JdicRunnable extends TaskRunnable {
 
                     // retrieve from the web
 
+                    logd("Lookup", "on the web");
                     Document doc = post(kanji);
 
                     if (doc == null) {
-                        Log.w(TAG, "No " + DATA + " for 「" + kanji + "」 on the web");
+                        logd("No", "on the web");
                         on = NO_DATA;
                         kun = NO_DATA;
                         meaning = NO_DATA;
@@ -82,8 +80,8 @@ class JdicRunnable extends TaskRunnable {
                         if (meaning.contains(";"))
                             meaning = meaning.replace(",", "").replace(';', ',');
 
-                        Log.d(TAG, String.format(
-                            "Retrieved " + DATA + " from the web: ON = %s; KUN = %s; meaning = %s",
+                        logd("Retrieved", String.format(
+                            "from the web: ON = %s; KUN = %s; meaning = %s",
                             on, kun, meaning
                         ));
 
@@ -94,13 +92,14 @@ class JdicRunnable extends TaskRunnable {
                         );
                     }
                 } catch (IOException e) {
+                    loge("Unable to retrieve", ":", e.getMessage());
                     e.printStackTrace();
                     on = NO_DATA;
                     kun = NO_DATA;
                     meaning = NO_DATA;
                 }
             } else {
-                Log.w(TAG, "Can't retrieve " + DATA + ": No Internet connection");
+                logd("Can't retrieve", ": No Internet connection");
                 on = NO_DATA;
                 kun = NO_DATA;
                 meaning = NO_DATA;

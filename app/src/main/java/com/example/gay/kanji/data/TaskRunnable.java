@@ -1,6 +1,7 @@
 package com.example.gay.kanji.data;
 
 import android.os.Process;
+import android.util.Log;
 
 import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
 
@@ -34,5 +35,62 @@ abstract class TaskRunnable implements Runnable {
     void checkIfInterrupted() throws InterruptedException {
         if (Thread.interrupted())
             throw new InterruptedException();
+    }
+
+    abstract String getLoggingTag();
+    String getLoggingData() { return null; }
+
+    private static final int LOG_DEBUG = 0;
+    private static final int LOG_ERROR = 1;
+
+    /**
+     *  Outputs "{@code <prefix>} {@code <getLoggingData()>} for 「{@code <task.getKanji()>}」
+     *  {@code <suffixes[0]>} ... {@code <suffixes[N]>}" to DEBUG log
+     */
+    void logd(String prefix, String... suffixes) {
+        log(LOG_DEBUG, prefix, suffixes);
+    }
+
+    /**
+     *  Outputs "{@code <prefix>} {@code <getLoggingData()>} for 「{@code <task.getKanji()>}」
+     *  {@code <suffixes[0]>} ... {@code <suffixes[N]>}" to ERROR log
+     */
+    void loge(String prefix, String... suffixes) {
+        log(LOG_ERROR, prefix, suffixes);
+    }
+
+    private void log(int type, String prefix, String... suffixes) {
+        if (prefix == null || prefix.trim().isEmpty())
+            throw new IllegalArgumentException("Logging prefix is mandatory");
+
+        StringBuilder sb = new StringBuilder(prefix);
+
+        {
+            String data = getLoggingData();
+            if (data != null) {
+                sb.append(' ');
+                sb.append(data);
+            }
+        }
+
+        sb.append(" for 「");
+        sb.append(task.getKanji());
+        sb.append('」');
+
+        for (String suffix : suffixes) {
+            sb.append(' ');
+            sb.append(suffix);
+        }
+
+        String tag = getLoggingTag();
+        String message = sb.toString();
+        switch (type) {
+            case LOG_DEBUG:
+                Log.d(tag, message);
+                break;
+            case LOG_ERROR:
+                Log.e(tag, message);
+                break;
+        }
     }
 }

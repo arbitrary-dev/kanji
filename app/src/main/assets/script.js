@@ -42,9 +42,9 @@ function restartGif(e) {
 var prevPath
 
 function setGif(path) {
-    console.log("setGif: " + path)
     if (path == prevPath)
         return
+    console.log("setGif: " + path)
     prevPath = path
     gif.src = path
     gif.style.visibility = path == '' || path == 'null'  ? 'invisible' : 'visible'
