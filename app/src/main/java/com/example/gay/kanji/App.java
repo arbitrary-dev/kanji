@@ -37,6 +37,10 @@ public class App extends Application {
         return dbHelper.getWritableDatabase();
     }
 
+    public static void closeDatabase() {
+        dbHelper.close();
+    }
+
     public static boolean isConnected() {
         ConnectivityManager cm = (ConnectivityManager)
             instance.getSystemService(CONNECTIVITY_SERVICE);

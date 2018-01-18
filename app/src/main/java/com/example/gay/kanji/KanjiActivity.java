@@ -62,6 +62,7 @@ public class KanjiActivity extends AppCompatActivity {
     protected void onDestroy() {
         Log.d(TAG, "onDestroy()");
         DataRetriever.stop();
+        App.closeDatabase();
         super.onDestroy();
     }
 }
