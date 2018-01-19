@@ -84,7 +84,8 @@ public class DataRetriever {
                 wv.loadUrl("javascript:setInfo(\"" + info + "\")");
                 wv.loadUrl("javascript:setGif(\"" + gif + "\")");
 
-                // TODO replace empty gif with static kanji, iff other data is available
+                // TODO fallback to wikipedia's gif
+                // TODO replace unavailable gif with some static kanji
             }
         ).sendToTarget();
     }
