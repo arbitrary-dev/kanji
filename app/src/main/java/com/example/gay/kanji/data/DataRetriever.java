@@ -78,7 +78,7 @@ public class DataRetriever {
                 String info = formInfo(task);
                 String gif = task.getGif();
 
-                if (info.length() == "<p>X</p>".length() && gif.equals(NO_DATA))
+                if (info.length() == "<p>X</p>".length() && NO_DATA.equals(gif))
                     throw new RuntimeException("Fuck you!"); // TODO make more plausible
 
                 wv.loadUrl("javascript:setInfo(\"" + info + "\")");
