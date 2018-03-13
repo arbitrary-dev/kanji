@@ -77,4 +77,68 @@ public class App extends Application {
         settings.edit().putBoolean(PREF_NIGHT_MODE, result).apply();
         Log.d(TAG, "nightMode toggled to " + result);
     }
+
+    private static final Character DEFAULT_KANJI = '字';
+    private static String query;
+    private static int queryPosition;
+
+    /**
+     * @return kanji pointed by {@link #queryPosition} within {@link #query}
+     *         or {@link #DEFAULT_KANJI} if {@link #query} is {@code null}
+     */
+    public static Character getKanji() {
+        return query == null ? DEFAULT_KANJI : query.charAt(queryPosition);
+    }
+
+    // TODO javadoc
+    /** Cleans all non-japanese symbols from the {@code input} */
+    private static String clean(String input) {
+        if (input == null) return null;
+        String q = input.replaceAll("[^\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]", "");
+        return q.isEmpty() ? null : q;
+    }
+
+    /** @return {@link #query} */
+    public static String getQuery() {
+        return query;
+    }
+
+    /**
+     * Sets app {@code query} string and resets queryPosition to 0 within this string
+     * which points to a currently viewed kanji
+     *
+     * @param query string displayed in {@link android.support.v7.widget.SearchView SearchView}
+     */
+    public static void setQuery(String query) {
+        App.query = clean(query);
+        App.queryPosition = 0;
+        Log.d(TAG, "setQuery: \"" + App.query + "\"");
+    }
+
+    /** @return {@link #queryPosition} */
+    public static int getQueryPosition() {
+        return queryPosition;
+    }
+
+    /**
+     * @param position within app query string which points
+     *                 to a kanji returned by {@link #getKanji()}
+     */
+    public static void setQueryPosition(int position) {
+        String q = App.query;
+
+        if (q == null)
+            throw new IllegalArgumentException("Can't set queryPosition for null query");
+
+        @SuppressWarnings("UnnecessaryLocalVariable") int p = position;
+
+        if (p < 0 || p >= q.length())
+            throw new IllegalArgumentException("Query queryPosition " + p
+                + "is invalid for \"" + q + "\"");
+
+        App.queryPosition = p;
+        Log.d(TAG, "setQueryPosition: \""
+            + q.substring(0, p) + "[" + getKanji() + "]"
+            + q.substring(p + 1) + "\"");
+    }
 }
