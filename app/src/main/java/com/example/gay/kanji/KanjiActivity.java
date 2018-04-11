@@ -68,7 +68,8 @@ public class KanjiActivity extends AppCompatActivity {
             Field f = SearchView.class.getDeclaredField("mSearchHintIcon");
             f.setAccessible(true);
             Resources r = getResources();
-            Drawable d = r.getDrawable(R.drawable.ic_search_white_24dp, null);
+            // Mutation prevents d.setAlpha() from being applied to menu search icon also (Issue #6)
+            Drawable d = r.getDrawable(R.drawable.ic_search_white_24dp, null).mutate();
             d.setAlpha(153);
             f.set(searchView, d);
             searchView.setQueryHint(r.getString(R.string.app_name));
