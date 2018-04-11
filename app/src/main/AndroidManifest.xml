@@ -18,7 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeNight"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".KanjiActivity">
+        <activity android:name=".KanjiActivity"
+                  android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
