@@ -1,13 +1,18 @@
 package com.example.gay.kanji;
 
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -17,6 +22,7 @@ import com.example.gay.kanji.data.DataRetriever;
 import java.lang.reflect.Field;
 
 import static android.content.Intent.EXTRA_TEXT;
+import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
 // FIXME text selection block style should match nightmode
 // and do not offset main layout.
@@ -40,6 +46,7 @@ public class KanjiActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        updateToolbarTitle();
 
         mWebView = (KanjiWebView) findViewById(R.id.webView);
     }
@@ -57,6 +64,7 @@ public class KanjiActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 App.setQuery(query);
                 mWebView.update();
+                updateToolbarTitle();
                 searchItem.collapseActionView();
                 return true;
             }
@@ -113,6 +121,27 @@ public class KanjiActivity extends AppCompatActivity {
         }
     }
 
+    private void updateToolbarTitle() {
+        String q = App.getQuery();
+
+        if (q == null)
+            return;
+
+        TypedValue typedValue = new TypedValue();
+        TypedArray a = obtainStyledAttributes(
+            typedValue.data, new int[]{R.attr.colorAccent});
+        int color = a.getColor(0, 0);
+        a.recycle();
+
+        SpannableStringBuilder title = new SpannableStringBuilder(q);
+        int p = App.getQueryPosition();
+        title.setSpan(new ForegroundColorSpan(color), p, p + 1, SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setTitle(title);
+    }
+
     private static final String STATE_QUERY = "state_query";
     private static final String STATE_QUERY_POSITION = "state_query_position";
 
@@ -135,6 +164,7 @@ public class KanjiActivity extends AppCompatActivity {
         if (q != null) {
             App.setQuery(q);
             App.setQueryPosition(state.getInt(STATE_QUERY_POSITION));
+            updateToolbarTitle();
         }
     }
 

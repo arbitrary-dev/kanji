@@ -122,14 +122,6 @@ public class DataRetriever {
             }
         }
 
-        String kanji = task.getKanji().toString();
-
-        // headline
-        if (data.isEmpty())
-            data.add(kanji);
-        else
-            data.set(0, kanji + " &ndash; " + data.get(0));
-
         StringBuilder info = new StringBuilder();
 
         for (String line : data) {
