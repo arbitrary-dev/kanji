@@ -76,7 +76,7 @@ class JdicRunnable extends TaskRunnable {
 
                         Element elMeaning = doc.select("font:contains([英])").first();
                         meaning = values(elMeaning);
-                        // fix Jim Breen's badass HTML skills
+                        // fixes Jim Breen's badass HTML skills
                         if (meaning.contains(";"))
                             meaning = meaning.replace(",", "").replace(';', ',');
 

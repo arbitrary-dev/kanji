@@ -108,7 +108,7 @@ public class DataRetriever {
         addLine(data, task.getEtymology());
         addLine(data, formJdic(task));
 
-        // collapse adjacent nulls and replace with LOADING
+        // Collapse adjacent nulls and replace with LOADING
         ListIterator<String> it = data.listIterator();
         boolean prevWasNull = false;
         while (it.hasNext()) {

@@ -30,13 +30,17 @@ public class KanjiActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate()");
+
         setTheme(App.isNightMode() ? R.style.AppThemeNight : R.style.AppThemeDay);
-        App.setQuery(getIntent().getStringExtra(EXTRA_TEXT));
-        Log.d(TAG, "setContentView1");
+        Log.d(TAG, "setContentView() start");
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "setContentView2");
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
+        Log.d(TAG, "setContentView() end");
+
+        App.setQuery(getIntent().getStringExtra(EXTRA_TEXT));
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         mWebView = (KanjiWebView) findViewById(R.id.webView);
     }
 
