@@ -47,7 +47,7 @@ function setGif(path) {
     console.log("setGif: " + path)
     prevPath = path
     gif.src = path
-    gif.style.visibility = path == '' || path == 'null'  ? 'invisible' : 'visible'
+    gif.style.visibility = (path == '' || path == 'null') ? 'hidden' : 'visible'
 }
 
 function setInfo(text) {
