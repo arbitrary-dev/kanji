@@ -143,7 +143,7 @@ public class DataRetriever {
 
         StringBuilder jdic = new StringBuilder();
         appendSpan(jdic, on);
-        appendSpan(jdic, highlightSuffixes(kun));
+        appendSpan(jdic, dimSuffixes(kun));
         appendSpan(jdic, meaning);
 
         return jdic.toString();
@@ -157,7 +157,7 @@ public class DataRetriever {
         sb.append("</span>");
     }
 
-    private static String highlightSuffixes(String kun) {
-        return kun.replaceAll("\\.([^,]+)", "<span class='hlit'>$1</span>");
+    private static String dimSuffixes(String kun) {
+        return kun.replaceAll("\\.([^,]+)", "<span class='dim'>$1</span>");
     }
 }
