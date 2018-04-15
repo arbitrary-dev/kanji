@@ -80,14 +80,14 @@ public class App extends Application {
 
     private static final Character DEFAULT_KANJI = '字';
     private static String query;
-    private static int queryPosition;
 
     /**
-     * @return kanji pointed by {@link #queryPosition} within {@link #query}
+     * @param position within {@link #query}
+     * @return kanji pointed by {@code position} within {@link #query}
      *         or {@link #DEFAULT_KANJI} if {@link #query} is {@code null}
      */
-    public static Character getKanji() {
-        return query == null ? DEFAULT_KANJI : query.charAt(queryPosition);
+    public static Character getKanjiAt(int position) {
+        return query == null ? DEFAULT_KANJI : query.charAt(position);
     }
 
     // TODO javadoc
@@ -111,34 +111,6 @@ public class App extends Application {
      */
     public static void setQuery(String query) {
         App.query = clean(query);
-        App.queryPosition = 0;
         Log.d(TAG, "setQuery: \"" + App.query + "\"");
-    }
-
-    /** @return {@link #queryPosition} */
-    public static int getQueryPosition() {
-        return queryPosition;
-    }
-
-    /**
-     * @param position within app query string which points
-     *                 to a kanji returned by {@link #getKanji()}
-     */
-    public static void setQueryPosition(int position) {
-        String q = App.query;
-
-        if (q == null)
-            throw new IllegalArgumentException("Can't set queryPosition for null query");
-
-        @SuppressWarnings("UnnecessaryLocalVariable") int p = position;
-
-        if (p < 0 || p >= q.length())
-            throw new IllegalArgumentException("Query queryPosition " + p
-                + "is invalid for \"" + q + "\"");
-
-        App.queryPosition = p;
-        Log.d(TAG, "setQueryPosition: \""
-            + q.substring(0, p) + "[" + getKanji() + "]"
-            + q.substring(p + 1) + "\"");
     }
 }

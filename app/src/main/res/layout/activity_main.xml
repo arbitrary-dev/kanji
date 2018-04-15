@@ -16,8 +16,8 @@
         app:subtitleTextColor="@android:color/white"
         android:elevation="4dp" /> <!-- TODO split into different layout to support API 19 -->
 
-    <com.example.gay.kanji.KanjiWebView
-        android:id="@+id/webView"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
@@ -26,7 +26,6 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:visibility="invisible"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

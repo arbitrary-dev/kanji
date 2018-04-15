@@ -44,7 +44,7 @@ abstract class TaskRunnable implements Runnable {
     private static final int LOG_ERROR = 1;
 
     /**
-     *  Outputs "{@code <prefix>} {@code <getLoggingData()>} for 「{@code <task.getKanji()>}」
+     *  Outputs "{@code <prefix>} {@code <getLoggingData()>} for 「{@code <task.getKanjiAt()>}」
      *  {@code <suffixes[0]>} ... {@code <suffixes[N]>}" to DEBUG log
      */
     void logd(String prefix, String... suffixes) {
@@ -52,7 +52,7 @@ abstract class TaskRunnable implements Runnable {
     }
 
     /**
-     *  Outputs "{@code <prefix>} {@code <getLoggingData()>} for 「{@code <task.getKanji()>}」
+     *  Outputs "{@code <prefix>} {@code <getLoggingData()>} for 「{@code <task.getKanjiAt()>}」
      *  {@code <suffixes[0]>} ... {@code <suffixes[N]>}" to ERROR log
      */
     void loge(String prefix, String... suffixes) {

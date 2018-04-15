@@ -1,17 +1,19 @@
 package com.example.gay.kanji.data;
 
-import android.webkit.WebView;
+import android.util.Log;
+
+import com.example.gay.kanji.KanjiWebView;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-class DataTask {
+public class DataTask {
 
-    private final DataRetriever retriever = DataRetriever.getInstance();
+    private static final String TAG = "TASK";
 
-    private WeakReference<WebView> wvRef;
+    private WeakReference<KanjiWebView> wvRef;
 
     private Character kanji;
     // TODO idx
@@ -29,15 +31,27 @@ class DataTask {
         runnable2thread.put(new JdicRunnable(this), null);
     }
 
-    void init(WebView wv, Character kanji) {
+    void init(KanjiWebView wv, Character kanji) {
+        Log.d(TAG, "init: " + kanji);
+
         this.wvRef = new WeakReference<>(wv);
         this.kanji = kanji;
+
+        for (TaskRunnable runnable : getRunnables())
+            DataRetriever.getThreadPool().execute(runnable);
     }
 
     // TODO unit test
-    void recycle() {
-        for (TaskRunnable runnable : getRunnables())
+    public void stop() {
+        Log.d(TAG, "stop: " + kanji);
+
+        for (TaskRunnable runnable : getRunnables()) {
+            DataRetriever.getThreadPool().remove(runnable);
+            Thread et = getThread(runnable);
+            if (et != null)
+                et.interrupt();
             setThread(runnable, null);
+        }
 
         if (wvRef != null) {
             wvRef.clear();
@@ -51,9 +65,11 @@ class DataTask {
         on = null;
         kun = null;
         meaning = null;
+
+        DataRetriever.getTasks().add(this);
     }
 
-    WebView getWebView() {
+    KanjiWebView getWebView() {
         return wvRef == null ? null : wvRef.get();
     }
 
@@ -61,18 +77,18 @@ class DataTask {
         return kanji;
     }
 
-    Set<TaskRunnable> getRunnables() {
+    private Set<TaskRunnable> getRunnables() {
         return runnable2thread.keySet();
     }
 
-    Thread getThread(TaskRunnable runnable) {
-        synchronized (retriever) {
+    private Thread getThread(TaskRunnable runnable) {
+        synchronized (DataRetriever.lock) {
             return runnable2thread.get(runnable);
         }
     }
 
     void setThread(TaskRunnable runnable, Thread thread) {
-        synchronized (retriever) {
+        synchronized (DataRetriever.lock) {
             runnable2thread.put(runnable, thread);
         }
     }

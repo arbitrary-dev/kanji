@@ -4,6 +4,8 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -17,7 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
-import com.example.gay.kanji.data.DataRetriever;
+import com.example.gay.kanji.pager.KanjiPagerAdapter;
 
 import java.lang.reflect.Field;
 
@@ -30,7 +32,7 @@ public class KanjiActivity extends AppCompatActivity {
 
     private static final String TAG = "ACTV";
 
-    private KanjiWebView mWebView;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +50,31 @@ public class KanjiActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         updateToolbarTitle();
 
-        mWebView = (KanjiWebView) findViewById(R.id.webView);
+        // FIXME pager is black on switching nightMode off
+        //       But when just opening app it behaves nice.
+        //       Maybe this is the culprit?
+        //       E/ViewRootImpl: sendUserActionEvent() mView == null
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.addOnPageChangeListener(new OnPageChangeListener() {
+
+            @Override
+            public void onPageSelected(int position) {
+                updateToolbarTitle();
+            }
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
+
+            @Override
+            public void onPageScrollStateChanged(int state) { }
+        });
+        resetPager();
+    }
+
+    private void resetPager() {
+        KanjiPagerAdapter pagerAdapter = new KanjiPagerAdapter(getSupportFragmentManager());
+        if (mViewPager != null)
+            mViewPager.setAdapter(pagerAdapter);
     }
 
     @Override
@@ -65,7 +91,7 @@ public class KanjiActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 App.setQuery(query);
-                mWebView.update();
+                resetPager();
                 updateToolbarTitle();
                 searchItem.collapseActionView();
                 return true;
@@ -93,8 +119,6 @@ public class KanjiActivity extends AppCompatActivity {
 
         ImageView mCloseButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
         mCloseButton.getDrawable().setAlpha(153);
-
-        // TODO text editing button
 
         // Night mode
 
@@ -138,7 +162,7 @@ public class KanjiActivity extends AppCompatActivity {
         a.recycle();
 
         SpannableStringBuilder title = new SpannableStringBuilder(q);
-        int p = App.getQueryPosition();
+        int p = mViewPager.getCurrentItem();
         title.setSpan(new ForegroundColorSpan(color), p, p + 1, SPAN_EXCLUSIVE_EXCLUSIVE);
 
         ActionBar actionBar = getSupportActionBar();
@@ -156,7 +180,7 @@ public class KanjiActivity extends AppCompatActivity {
         String q = App.getQuery();
         if (q != null) {
             state.putString(STATE_QUERY, q);
-            state.putInt(STATE_QUERY_POSITION, App.getQueryPosition());
+            state.putInt(STATE_QUERY_POSITION, mViewPager.getCurrentItem());
         }
     }
 
@@ -167,7 +191,8 @@ public class KanjiActivity extends AppCompatActivity {
         String q = state.getString(STATE_QUERY);
         if (q != null) {
             App.setQuery(q);
-            App.setQueryPosition(state.getInt(STATE_QUERY_POSITION));
+            resetPager();
+            mViewPager.setCurrentItem(state.getInt(STATE_QUERY_POSITION), false);
             updateToolbarTitle();
         }
     }
@@ -175,7 +200,6 @@ public class KanjiActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy()");
-        DataRetriever.stop();
         App.closeDatabase();
         super.onDestroy();
     }

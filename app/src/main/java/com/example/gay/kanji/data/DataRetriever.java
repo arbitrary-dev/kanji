@@ -4,76 +4,64 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.webkit.WebView;
+
+import com.example.gay.kanji.KanjiWebView;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+// TODO refactor data retrieval mess
 public class DataRetriever {
 
     private static final String TAG = "RETRV";
 
     static final String NO_DATA = "";
 
-    private static final DataRetriever instance = new DataRetriever();
+    static final Object lock = new Object();
 
-    static DataRetriever getInstance() { return instance; }
+    private static final ConcurrentLinkedQueue<DataTask> tasks = new ConcurrentLinkedQueue<>();
 
-    private DataTask task;
-
-    private static DataTask getTask() {
-        if (instance.task == null)
-            instance.task = new DataTask();
-        return instance.task;
+    static ConcurrentLinkedQueue<DataTask> getTasks() {
+        return tasks;
     }
 
-    private final LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
-    private final ThreadPoolExecutor threadPool = new ThreadPoolExecutor(4, 4, 1, SECONDS, queue);
-    private final Handler handler = new Handler(Looper.getMainLooper());
+    private static DataTask getTask() {
+        DataTask task = tasks.poll();
+        return task == null ? new DataTask() : task;
+    }
+
+    private static final LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private static final ThreadPoolExecutor threadPool =
+        new ThreadPoolExecutor(4, 4, 1, SECONDS, queue);
+    private static final Handler handler = new Handler(Looper.getMainLooper());
 
     private DataRetriever() { }
 
     // FIXME don't retrieve same kanji twice
-    static public void retrieve(WebView wv, Character kanji) {
-        stop();
-
+    // TODO smart loading
+    // There'd be a loader icon first 1-2 seconds waiting for
+    // everything to be loaded, if etymology misses the time and still
+    // loading, then everything is revealed, but etymology will have a
+    // "Loading..." placeholder.
+    static public DataTask retrieve(KanjiWebView wv, Character kanji) {
         Log.d(TAG, "retrieve: " + kanji);
-
         DataTask task = getTask();
         task.init(wv, kanji);
-
-        for (TaskRunnable runnable : task.getRunnables())
-            instance.threadPool.execute(runnable);
-    }
-
-    static public void stop() {
-        Log.d(TAG, "stop()");
-        DataTask task = instance.task;
-
-        if (task == null)
-            return;
-
-        for (TaskRunnable runnable : task.getRunnables()) {
-            instance.threadPool.remove(runnable);
-            Thread et = task.getThread(runnable);
-            if (et != null)
-                et.interrupt();
-        }
-
-        task.recycle();
+        return task;
     }
 
     static void update(final DataTask task) {
         Log.d(TAG, "update: " + task);
         Message.obtain(
-            instance.handler,
+            handler,
             () -> {
-                WebView wv = task.getWebView();
+                KanjiWebView wv = task.getWebView();
 
                 String info = formInfo(task);
                 String gif = task.getGif();
@@ -81,8 +69,8 @@ public class DataRetriever {
                 if (info.length() == "<p>X</p>".length() && NO_DATA.equals(gif))
                     throw new RuntimeException("Fuck you!"); // TODO make more plausible
 
-                wv.loadUrl("javascript:setInfo(\"" + info + "\")");
-                wv.loadUrl("javascript:setGif(\"" + gif + "\")");
+                wv.setInfo(info);
+                wv.setGif(gif);
 
                 // TODO fallback to wikipedia's gif
                 // TODO replace unavailable gif with some static kanji
@@ -159,5 +147,9 @@ public class DataRetriever {
 
     private static String dimSuffixes(String kun) {
         return kun.replaceAll("\\.([^,]+)", "<span class='dim'>$1</span>");
+    }
+
+    static ThreadPoolExecutor getThreadPool() {
+        return threadPool;
     }
 }

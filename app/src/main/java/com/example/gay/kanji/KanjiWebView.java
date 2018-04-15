@@ -7,11 +7,12 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.example.gay.kanji.data.DataRetriever;
-
 public class KanjiWebView extends WebView {
 
     private static final String TAG = "WEBV";
+
+    private boolean loaded = false;
+    private String info, gif;
 
     public KanjiWebView(Context context) {
         super(context);
@@ -40,21 +41,28 @@ public class KanjiWebView extends WebView {
 
         public void onPageFinished(WebView view, String url) {
             Log.d(TAG, "WebViewClient.onPageFinished()");
+            loaded = true;
             update();
         }
     };
 
-    public void update() {
-        Character kanji = App.getKanji();
+    public void setInfo(String info) {
+        this.info = info;
+        if (loaded)
+            loadUrl("javascript:setInfo(\"" + info + "\")");
+    }
 
-        KanjiWebView.this.loadUrl("javascript:setInfo('')");
-        KanjiWebView.this.setVisibility(VISIBLE);
+    public void setGif(String gif) {
+        this.gif = gif;
+        if (loaded)
+            loadUrl("javascript:setGif(\"" + gif + "\")");
+    }
 
-        // TODO smart loading
-        // There'd be a loader icon first 1-2 seconds waiting for
-        // everything to be loaded, if etymology misses the time and still
-        // loading, then everything is revealed, but etymology will have a
-        // "Loading..." placeholder.
-        DataRetriever.retrieve(KanjiWebView.this, kanji);
+    private void update() {
+        if (!loaded)
+            return;
+        loadUrl("javascript:setInfo(\"" + info + "\")");
+        loadUrl("javascript:setGif(\"" + gif + "\")");
+        setVisibility(VISIBLE);
     }
 }
