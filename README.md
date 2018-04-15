@@ -13,7 +13,7 @@ An Android app to learn japanese writing.
 - [X] Kanji etymology from [Richard Sears](http://www.chineseetymology.org)
 - [X] 音・訓 reading and meaning from [WWWJDIC](http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1B)
 - [ ] 名乗り reading
-- [ ] 平仮名 &amp; 片仮名
+- [ ] 平仮名・片仮名
 
 ## TODO
-[link](https://github.com/arbitrary-dev/kanji/projects/1)
+[Google Play release](https://github.com/arbitrary-dev/kanji/projects/1)
