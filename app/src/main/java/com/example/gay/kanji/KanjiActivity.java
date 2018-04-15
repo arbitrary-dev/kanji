@@ -55,6 +55,8 @@ public class KanjiActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
 
+        // Search
+
         final MenuItem searchItem = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
@@ -93,6 +95,8 @@ public class KanjiActivity extends AppCompatActivity {
         mCloseButton.getDrawable().setAlpha(153);
 
         // TODO text editing button
+
+        // Night mode
 
         MenuItem nightDayItem = menu.findItem(R.id.night_day_mode);
         if (App.isNightMode()) {
