@@ -11,7 +11,7 @@ An Android app to learn japanese writing.
 - [X] Animated kanji writing order [&copy;CJKI](http://cjki.org)
 - [X] ~1k built-in kanji
 - [X] Kanji etymology from [Richard Sears](http://www.chineseetymology.org)
-- [X] 音/訓 reading and meaning from [WWWJDIC](http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1B)
+- [X] 音・訓 reading and meaning from [WWWJDIC](http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1B)
 - [ ] 名乗り reading
 - [ ] 平仮名 &amp; 片仮名
 
