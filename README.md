@@ -8,16 +8,12 @@ An Android app to learn japanese writing.
 ![screenshot](https://github.com/arbitrary-dev/kanji/raw/master/screenshot.jpg "screenshot")
 
 ## Features
-- [X] Animated kanji writing order &copy;[CJKI](http://cjki.org)
-- [X] Share action handling
-- [X] Night mode
+- [X] Animated kanji writing order [&copy;CJKI](http://cjki.org)
 - [X] ~1k built-in kanji
 - [X] Kanji etymology from [Richard Sears](http://www.chineseetymology.org)
-- [X] ON/KUN reading and meaning from [WWWJDIC](http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1B)
-- [ ] Download missing kanji from [WWWJDIC](http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1B)
-- [ ] Search widget &amp; screen swiping to walk the characters in search string
-- [ ] Hiragana &amp; Katakana
-- [ ] Kanji info text editing
+- [X] 音/訓 reading and meaning from [WWWJDIC](http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1B)
+- [ ] 名乗り reading
+- [ ] 平仮名 &amp; 片仮名
 
-## TODO for release
+## TODO
 [link](https://github.com/arbitrary-dev/kanji/projects/1)
