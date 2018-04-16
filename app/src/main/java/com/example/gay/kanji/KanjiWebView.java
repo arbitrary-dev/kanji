@@ -47,7 +47,7 @@ public class KanjiWebView extends WebView {
     public void update() {
         Character kanji = App.getKanji();
 
-        KanjiWebView.this.loadUrl("javascript:setInfo('" + kanji + "')");
+        KanjiWebView.this.loadUrl("javascript:setInfo('')");
         KanjiWebView.this.setVisibility(VISIBLE);
 
         // TODO smart loading
