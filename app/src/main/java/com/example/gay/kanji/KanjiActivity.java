@@ -36,10 +36,15 @@ public class KanjiActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Theme should be set before calling super.onCreate()
+        // Otherwise, you'll get:
+        // java.lang.IllegalStateException: You need to use a Theme.AppCompat theme (or descendant) with this activity.
+        // It happens when Fragments got recreated.
+        setTheme(App.isNightMode() ? R.style.AppThemeNight : R.style.AppThemeDay);
+
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate()");
 
-        setTheme(App.isNightMode() ? R.style.AppThemeNight : R.style.AppThemeDay);
         Log.d(TAG, "setContentView() start");
         setContentView(R.layout.activity_main);
         Log.d(TAG, "setContentView() end");
