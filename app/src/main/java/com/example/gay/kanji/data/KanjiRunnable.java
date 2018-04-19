@@ -1,5 +1,13 @@
 package com.example.gay.kanji.data;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
+
 import com.example.gay.kanji.App;
 
 import java.io.BufferedInputStream;
@@ -10,13 +18,19 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.os.Environment.DIRECTORY_PICTURES;
+import static android.os.Environment.MEDIA_MOUNTED;
+import static android.os.Environment.MEDIA_MOUNTED_READ_ONLY;
 import static android.os.Environment.getExternalStoragePublicDirectory;
 import static com.example.gay.kanji.data.DataRetriever.NO_DATA;
 
 public class KanjiRunnable extends TaskRunnable {
 
-    String getLoggingTag() { return "KNJ"; }
+    private static final String TAG = "KNJ";
+    String getLoggingTag() { return TAG; }
     String getLoggingData() { return "gif"; }
 
     KanjiRunnable(DataTask task) {
@@ -25,24 +39,49 @@ public class KanjiRunnable extends TaskRunnable {
 
     @Override
     protected void runInner() throws InterruptedException {
-        File extStorage = getExternalStoragePublicDirectory(DIRECTORY_PICTURES);
-        String appName = App.getName();
-        extStorage = new File(extStorage, appName);
+        String gif = NO_DATA;
 
-        checkIfInterrupted();
+        if (!isExtStorageAvailable())
+            Log.d(TAG, "External storage is not available");
+        else if (isExtStorageReadOnly())
+            Log.w(TAG, "External storage is read-only");
+        else if (!checkExtStoragePermissions())
+            Log.e(TAG, "External storage permissions are not granted");
+        else {
+            checkIfInterrupted();
 
-        // TODO check if Storage permission was granted
-        // TODO fallback to local storage
-        if (!extStorage.exists() && extStorage.mkdirs())
-            logd("External storage was created to store", ":", extStorage.getAbsolutePath());
+            File path = getExternalStoragePublicDirectory(DIRECTORY_PICTURES);
+            String appName = App.getName();
+            path = new File(path, appName);
 
-        Character kanji = task.getKanji();
-        String gif = prepareKanji(extStorage, kanji);
+            checkIfInterrupted();
+
+            // TODO fallback to local storage
+            if (!path.exists() && path.mkdirs())
+                Log.d(TAG, "External storage was created at " + path.getAbsolutePath());
+
+            Character kanji = task.getKanji();
+            gif = prepareKanji(path, kanji);
+        }
 
         checkIfInterrupted();
 
         task.setGif(gif);
         DataRetriever.update(task);
+    }
+
+    private static boolean isExtStorageAvailable() {
+        return MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
+    }
+
+    private static boolean isExtStorageReadOnly() {
+        return MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState());
+    }
+
+    private boolean checkExtStoragePermissions() {
+        Context ctx = task.getWebView().getContext();
+        return ContextCompat.checkSelfPermission(ctx, READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(ctx, WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED;
     }
 
     private String prepareKanji(File path, Character kanji) throws InterruptedException {

@@ -69,6 +69,8 @@ public class KanjiActivity extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) { }
         });
         resetPager();
+
+        // TODO request ext storage permissions
     }
 
     private void resetPager() {
