@@ -37,6 +37,7 @@ public class KanjiFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate() " + this);
         setHasOptionsMenu(true);
         mKanji = getArguments().getChar(KANJI_KEY);
     }
@@ -61,7 +62,13 @@ public class KanjiFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(TAG, "onDestroy()");
-        mTask.stop();
+        Log.d(TAG, "onStop() " + this);
+        mTask.stop(); // TODO resume?
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy() " + this);
     }
 }
