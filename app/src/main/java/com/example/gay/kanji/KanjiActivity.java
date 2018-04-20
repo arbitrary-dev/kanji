@@ -53,10 +53,6 @@ public class KanjiActivity extends AppCompatActivity {
 
         App.setQuery(getIntent().getStringExtra(EXTRA_TEXT));
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        updateToolbarTitle();
-
         // FIXME pager is black on switching nightMode off
         //       But when just opening app it behaves nice.
         //       Maybe this is the culprit?
@@ -75,9 +71,19 @@ public class KanjiActivity extends AppCompatActivity {
             @Override
             public void onPageScrollStateChanged(int state) { }
         });
-        resetPager();
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         // TODO request ext storage permissions
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d(TAG, "onStart()");
+        super.onStart();
+        resetPager();
+        updateToolbarTitle();
     }
 
     private void resetPager() {
