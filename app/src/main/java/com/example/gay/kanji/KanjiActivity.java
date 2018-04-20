@@ -53,10 +53,6 @@ public class KanjiActivity extends AppCompatActivity {
 
         App.setQuery(getIntent().getStringExtra(EXTRA_TEXT));
 
-        // FIXME pager is black on switching nightMode off
-        //       But when just opening app it behaves nice.
-        //       Maybe this is the culprit?
-        //       E/ViewRootImpl: sendUserActionEvent() mView == null
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.addOnPageChangeListener(new OnPageChangeListener() {
 
