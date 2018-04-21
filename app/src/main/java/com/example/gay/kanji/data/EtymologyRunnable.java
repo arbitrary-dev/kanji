@@ -3,21 +3,46 @@ package com.example.gay.kanji.data;
 import com.example.gay.kanji.App;
 import com.example.gay.kanji.KanjiContract.KanjiEntry;
 
+import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static com.example.gay.kanji.data.DataRetriever.NO_DATA;
+import static org.jsoup.Connection.Method.HEAD;
 
 class EtymologyRunnable extends TaskRunnable {
 
     String getLoggingTag() { return "ETYM"; }
     String getLoggingData() { return "etymology"; }
 
-    private static String url(Character kanji) {
-        return "http://www.chineseetymology.org/CharacterEtymology.aspx?characterInput=" + kanji;
+    private static final Object cookiesLock = new Object();
+    private static Map<String, String> cookies;
+
+    // TODO integration test
+    private static Document retrieveData(Character kanji) throws IOException {
+        String site = "http://hanziyuan.net";
+        String etymPath = "/etymology";
+
+        if (cookies == null)
+            synchronized (cookiesLock) {
+                if (cookies == null) {
+                    Response res = Jsoup.connect(site).method(HEAD).execute();
+                    cookies = res.cookies();
+                }
+            }
+
+        return Jsoup
+            .connect(site + etymPath)
+            .data("chinese", kanji.toString())
+            .data("Bronze", cookies.get("Bronze"))
+            .header("Accept-Encoding", "gzip, deflate")
+            .header("Referer", site)
+            .cookies(cookies)
+            .post();
     }
 
     EtymologyRunnable(DataTask task) {
@@ -41,11 +66,10 @@ class EtymologyRunnable extends TaskRunnable {
 
                     // retrieve from the web
 
-                    String url = url(kanji);
                     logd("Lookup", "on the web");
-                    Document doc = Jsoup.connect(url).get();
-                    // TODO integration test
-                    Elements es = doc.select("#etymologyLabel p");
+                    Document doc = retrieveData(kanji);
+                    Elements es = doc.select("p:matches((decomposition|meaning).+(?<!none)$)");
+                    es.select("b").remove();
 
                     etymology = es.text().trim();
 
