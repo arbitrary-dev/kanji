@@ -8,9 +8,9 @@ An Android app to learn japanese writing.
 ![screenshot](https://github.com/arbitrary-dev/kanji/raw/master/screenshot.jpg "screenshot")
 
 ## Features
-- [X] Animated kanji writing order [&copy;CJKI](http://cjki.org)
+- [X] Animated kanji writing order [&copy;Jack Halpern](http://cjki.org)
 - [X] Kanji etymology [&copy;Richard Sears](http://hanziyuan.net/#donation)
-- [X] 音・訓 reading and meaning [&copy;WWWJDIC](http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1B)
+- [X] 音・訓 reading and meaning [&copy;Jim Breen](http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1B)
 - [X] ~1k built-in kanji
 - [ ] 名乗り reading
 - [ ] 平仮名・片仮名
