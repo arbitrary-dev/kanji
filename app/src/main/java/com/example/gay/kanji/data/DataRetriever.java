@@ -61,14 +61,13 @@ public class DataRetriever {
         Message.obtain(
             handler,
             () -> {
-                KanjiWebView wv = task.getWebView();
-
                 String info = formInfo(task);
                 String gif = task.getGif();
 
-                if (info.length() == "<p>X</p>".length() && NO_DATA.equals(gif))
+                if (NO_DATA.equals(info) && NO_DATA.equals(gif))
                     throw new RuntimeException("Fuck you!"); // TODO make more plausible
 
+                KanjiWebView wv = task.getWebView();
                 wv.setInfo(info);
                 wv.setGif(gif);
 
