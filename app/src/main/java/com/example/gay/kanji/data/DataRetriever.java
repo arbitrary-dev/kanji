@@ -64,10 +64,13 @@ public class DataRetriever {
                 String info = formInfo(task);
                 String gif = task.getGif();
 
-                if (NO_DATA.equals(info) && NO_DATA.equals(gif))
-                    throw new RuntimeException("Fuck you!"); // TODO make more plausible
-
                 KanjiWebView wv = task.getWebView();
+
+                if (NO_DATA.equals(info) && NO_DATA.equals(gif)) {
+                    wv.setInfo("No data"); // TODO skip & dim
+                    return;
+                }
+
                 wv.setInfo(info);
                 wv.setGif(gif);
 
