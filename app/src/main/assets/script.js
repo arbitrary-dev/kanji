@@ -42,12 +42,14 @@ function restartGif(e) {
 var prevPath
 
 function setGif(path) {
+    if (path == 'null')
+        path = ''
     if (path == prevPath)
         return
-    console.log("setGif: " + path)
+    console.log("setGif: " + (path == '' ? 'null' : path))
     prevPath = path
     gif.src = path
-    gif.style.visibility = (path == '' || path == 'null') ? 'hidden' : 'visible'
+    gif.style.visibility = (path == '') ? 'hidden' : 'visible'
 }
 
 function setInfo(text) {
