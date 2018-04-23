@@ -18,7 +18,7 @@ public class DataTask {
     private boolean stopped;
 
     private Character kanji;
-    // TODO idx
+    // TODO Halpern NJECD Index
     // private Integer idx; // Halpern NJECD Index
     private String gif;
     private String etymology;
