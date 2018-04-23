@@ -1,5 +1,6 @@
 package com.example.gay.kanji.data;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.gay.kanji.KanjiWebView;
@@ -14,6 +15,7 @@ public class DataTask {
     private static final String TAG = "TASK";
 
     private WeakReference<KanjiWebView> wvRef;
+    private boolean stopped;
 
     private Character kanji;
     // TODO idx
@@ -34,6 +36,8 @@ public class DataTask {
     void init(KanjiWebView wv, Character kanji) {
         Log.d(TAG, "init: " + kanji);
 
+        stopped = false;
+
         this.wvRef = new WeakReference<>(wv);
         this.kanji = kanji;
 
@@ -44,6 +48,8 @@ public class DataTask {
     // TODO unit test
     public void stop() {
         Log.d(TAG, "stop: " + kanji);
+
+        stopped = true;
 
         for (TaskRunnable runnable : getRunnables()) {
             DataRetriever.getThreadPool().remove(runnable);
@@ -69,6 +75,11 @@ public class DataTask {
         DataRetriever.getTasks().add(this);
     }
 
+    boolean isStopped() {
+        return stopped;
+    }
+
+    @Nullable
     KanjiWebView getWebView() {
         return wvRef == null ? null : wvRef.get();
     }

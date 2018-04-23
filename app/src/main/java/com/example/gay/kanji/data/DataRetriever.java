@@ -61,10 +61,16 @@ public class DataRetriever {
         Message.obtain(
             handler,
             () -> {
+                if (task.isStopped())
+                    return;
+
                 String info = formInfo(task);
                 String gif = task.getGif();
 
                 KanjiWebView wv = task.getWebView();
+
+                if (wv == null)
+                    return;
 
                 if (NO_DATA.equals(info) && NO_DATA.equals(gif)) {
                     wv.setInfo("No data"); // TODO skip & dim
