@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
+import com.example.gay.kanji.App;
 import com.example.gay.kanji.KanjiWebView;
 
 import java.util.LinkedList;
@@ -14,6 +15,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import static com.example.gay.kanji.App.JAP_CHAR_RANGE;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 // TODO refactor data retrieval mess
@@ -101,7 +103,7 @@ public class DataRetriever {
     // TODO unit test
     private static String formInfo(DataTask task) {
         List<String> data = new LinkedList<>();
-        addLine(data, task.getEtymology());
+        addLine(data, glue(task.getEtymology()));
         addLine(data, formJdic(task));
 
         // Collapse adjacent nulls and replace with LOADING
@@ -138,9 +140,9 @@ public class DataRetriever {
             return null;
 
         StringBuilder jdic = new StringBuilder();
-        appendSpan(jdic, on);
-        appendSpan(jdic, dimSuffixes(kun));
-        appendSpan(jdic, meaning);
+        appendSpan(jdic, glue(on));
+        appendSpan(jdic, dimSuffixes(glue(kun)));
+        appendSpan(jdic, glue(meaning));
 
         return jdic.toString();
     }
@@ -148,13 +150,21 @@ public class DataRetriever {
     private static void appendSpan(StringBuilder sb, String text) {
         if (text.isEmpty())
             return;
-        sb.append("<span>");
+        sb.append("<span class='section'>");
         sb.append(text);
-        sb.append("</span>");
+        sb.append("</span> "); // space at the end is necessary to have even spacing
+    }
+
+    /** Glues together kanji's so they are not sparsely justified */
+    private static String glue(String s) {
+        return s.replaceAll(
+            "([-" + JAP_CHAR_RANGE + "][-.," + JAP_CHAR_RANGE + "]*)",
+            "<span class='glue'>$1</span>"
+        );
     }
 
     private static String dimSuffixes(String kun) {
-        return kun.replaceAll("\\.([^,]+)", "<span class='dim'>$1</span>");
+        return kun.replaceAll("\\.([" + JAP_CHAR_RANGE + "]+)", "<span class='dim'>$1</span>");
     }
 
     static ThreadPoolExecutor getThreadPool() {

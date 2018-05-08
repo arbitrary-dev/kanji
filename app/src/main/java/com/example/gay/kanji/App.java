@@ -17,6 +17,7 @@ import static android.net.ConnectivityManager.TYPE_WIFI;
 public class App extends Application {
 
     private static final String TAG = "APP";
+    public static final String JAP_CHAR_RANGE = "\\u3040-\\u309f\\u30a0-\\u30ff\\u4e00-\\u9faf";
 
     private static App instance;
     private static KanjiDbHelper dbHelper;
@@ -94,7 +95,7 @@ public class App extends Application {
     /** Cleans all non-japanese symbols from the {@code input} */
     private static String clean(String input) {
         if (input == null) return null;
-        String q = input.replaceAll("[^\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]", "");
+        String q = input.replaceAll("[^" + JAP_CHAR_RANGE + "]", "");
         return q.isEmpty() ? null : q;
     }
 

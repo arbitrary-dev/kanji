@@ -44,8 +44,11 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-#info p > span {
-    margin-right: 8pt;
+#info .section {
+    margin-right: 10pt;
+}
+#info .glue {
+    display: inline-block;
 }
 
 .dim {
