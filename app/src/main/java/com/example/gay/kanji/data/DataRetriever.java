@@ -5,7 +5,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import com.example.gay.kanji.App;
 import com.example.gay.kanji.KanjiWebView;
 
 import java.util.LinkedList;
