@@ -73,7 +73,7 @@ public class KanjiRunnable extends TaskRunnable {
             checkIfInterrupted();
 
             task.setGif(gif);
-            DataRetriever.update(task);
+            task.updateUi();
         }
         finally {
             context = null;

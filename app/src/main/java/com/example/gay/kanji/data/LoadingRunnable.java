@@ -11,6 +11,6 @@ class LoadingRunnable extends TaskRunnable {
     @Override
     protected void runInner() throws InterruptedException {
         logd("Loading initialized");
-        DataRetriever.update(task);
+        task.updateUi();
     }
 }

@@ -47,7 +47,7 @@ public class KanjiFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_kanji, container, false);
         KanjiWebView webView = (KanjiWebView) v.findViewById(R.id.webView);
-        mTask = DataRetriever.retrieve(webView, mKanji);
+        mTask = DataRetriever.getInstance().retrieve(webView, mKanji);
         return v;
     }
 

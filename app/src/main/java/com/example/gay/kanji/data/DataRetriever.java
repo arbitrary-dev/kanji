@@ -24,25 +24,34 @@ public class DataRetriever {
 
     static final String NO_DATA = "";
 
-    static final Object lock = new Object();
+    private final ConcurrentLinkedQueue<DataTask> tasks = new ConcurrentLinkedQueue<>();
 
-    private static final ConcurrentLinkedQueue<DataTask> tasks = new ConcurrentLinkedQueue<>();
-
-    static ConcurrentLinkedQueue<DataTask> getTasks() {
+    ConcurrentLinkedQueue<DataTask> getTasks() {
         return tasks;
     }
 
-    private static DataTask getTask() {
+    private DataTask getTask() {
         DataTask task = tasks.poll();
         return task == null ? new DataTask() : task;
     }
 
-    private static final LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
-    private static final ThreadPoolExecutor threadPool =
+    private final LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private final ThreadPoolExecutor threadPool =
         new ThreadPoolExecutor(4, 4, 1, SECONDS, queue);
-    private static final Handler handler = new Handler(Looper.getMainLooper());
+    private final Handler handler;
 
-    private DataRetriever() { }
+    // For testing only
+    DataRetriever(Looper looper) {
+        handler = new Handler(looper);
+    }
+
+    private static class Singleton {
+        static final DataRetriever INSTANCE = new DataRetriever(Looper.getMainLooper());
+    }
+
+    public static DataRetriever getInstance() {
+        return Singleton.INSTANCE;
+    }
 
     // FIXME don't retrieve same kanji twice
     // TODO smart loading
@@ -50,14 +59,14 @@ public class DataRetriever {
     // everything to be loaded, if etymology misses the time and still
     // loading, then everything is revealed, but etymology will have a
     // "Loading..." placeholder.
-    static public DataTask retrieve(KanjiWebView wv, Character kanji) {
+    public DataTask retrieve(KanjiWebView wv, Character kanji) {
         Log.d(TAG, "retrieve: " + kanji);
         DataTask task = getTask();
         task.init(wv, kanji);
         return task;
     }
 
-    static void update(final DataTask task) {
+    void update(final DataTask task) {
         Log.d(TAG, "update: " + task);
         Message.obtain(
             handler,
@@ -89,7 +98,7 @@ public class DataRetriever {
 
     private static final String LOADING = "…";
 
-    private static void addLine(List<String> data, String line) {
+    private void addLine(List<String> data, String line) {
         if (NO_DATA.equals(line))
             return;
 
@@ -99,8 +108,7 @@ public class DataRetriever {
         data.add(line);
     }
 
-    // TODO unit test
-    private static String formInfo(DataTask task) {
+    String formInfo(DataTask task) {
         List<String> data = new LinkedList<>();
         addLine(data, glue(task.getEtymology()));
         addLine(data, formJdic(task));
@@ -130,7 +138,7 @@ public class DataRetriever {
         return info.toString();
     }
 
-    private static String formJdic(DataTask task) {
+    private String formJdic(DataTask task) {
         String on = task.getOn();
         String kun = task.getKun();
         String meaning = task.getMeaning();
@@ -146,7 +154,7 @@ public class DataRetriever {
         return jdic.toString();
     }
 
-    private static void appendSpan(StringBuilder sb, String text) {
+    private void appendSpan(StringBuilder sb, String text) {
         if (text.isEmpty())
             return;
         sb.append("<span class='section'>");
@@ -155,18 +163,18 @@ public class DataRetriever {
     }
 
     /** Glues together kanji's so they are not sparsely justified */
-    private static String glue(String s) {
+    private String glue(String s) {
         return s.replaceAll(
             "([-" + JAP_CHAR_RANGE + "][-.," + JAP_CHAR_RANGE + "]*)",
             "<span class='glue'>$1</span>"
         );
     }
 
-    private static String dimSuffixes(String kun) {
+    private String dimSuffixes(String kun) {
         return kun.replaceAll("\\.([" + JAP_CHAR_RANGE + "]+)", "<span class='dim'>$1</span>");
     }
 
-    static ThreadPoolExecutor getThreadPool() {
+    ThreadPoolExecutor getThreadPool() {
         return threadPool;
     }
 }

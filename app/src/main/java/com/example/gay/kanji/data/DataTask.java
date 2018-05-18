@@ -24,9 +24,16 @@ public class DataTask {
     private String etymology;
     private String on, kun, meaning;
 
+    private final DataRetriever dataRetriever;
     private final Map<TaskRunnable, Thread> runnable2thread = new LinkedHashMap<>();
 
     DataTask() {
+        this(DataRetriever.getInstance());
+    }
+
+    DataTask(DataRetriever dataRetriever) {
+        this.dataRetriever = dataRetriever;
+
         runnable2thread.put(new LoadingRunnable(this), null);
         runnable2thread.put(new KanjiRunnable(this), null);
         runnable2thread.put(new EtymologyRunnable(this), null);
@@ -42,7 +49,7 @@ public class DataTask {
         this.kanji = kanji;
 
         for (TaskRunnable runnable : getRunnables())
-            DataRetriever.getThreadPool().execute(runnable);
+            dataRetriever.getThreadPool().execute(runnable);
     }
 
     // TODO unit test
@@ -52,7 +59,7 @@ public class DataTask {
         stopped = true;
 
         for (TaskRunnable runnable : getRunnables()) {
-            DataRetriever.getThreadPool().remove(runnable);
+            dataRetriever.getThreadPool().remove(runnable);
             Thread et = getThread(runnable);
             if (et != null)
                 et.interrupt();
@@ -72,7 +79,7 @@ public class DataTask {
         kun = null;
         meaning = null;
 
-        DataRetriever.getTasks().add(this);
+        dataRetriever.getTasks().add(this);
     }
 
     boolean isStopped() {
@@ -93,13 +100,13 @@ public class DataTask {
     }
 
     private Thread getThread(TaskRunnable runnable) {
-        synchronized (DataRetriever.lock) {
+        synchronized (dataRetriever) {
             return runnable2thread.get(runnable);
         }
     }
 
     void setThread(TaskRunnable runnable, Thread thread) {
-        synchronized (DataRetriever.lock) {
+        synchronized (dataRetriever) {
             runnable2thread.put(runnable, thread);
         }
     }
@@ -150,5 +157,9 @@ public class DataTask {
 
     void setMeaning(String meaning) {
         this.meaning = meaning;
+    }
+
+    void updateUi() {
+        dataRetriever.update(this);
     }
 }

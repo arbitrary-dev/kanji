@@ -112,7 +112,7 @@ class JdicRunnable extends TaskRunnable {
         task.setOn(on);
         task.setKun(kun);
         task.setMeaning(meaning);
-        DataRetriever.update(task);
+        task.updateUi();
     }
 
     private String values(Element el) {
