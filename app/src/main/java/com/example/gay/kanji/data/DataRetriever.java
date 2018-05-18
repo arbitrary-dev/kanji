@@ -3,6 +3,7 @@ package com.example.gay.kanji.data;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.gay.kanji.KanjiWebView;
@@ -163,8 +164,8 @@ public class DataRetriever {
     }
 
     /** Glues together kanji's so they are not sparsely justified */
-    private String glue(String s) {
-        return s.replaceAll(
+    @Nullable private String glue(String s) {
+        return s == null ? null : s.replaceAll(
             "([-" + JAP_CHAR_RANGE + "][-.," + JAP_CHAR_RANGE + "]*)",
             "<span class='glue'>$1</span>"
         );

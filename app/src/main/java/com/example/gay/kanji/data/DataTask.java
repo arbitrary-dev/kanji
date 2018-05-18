@@ -135,7 +135,7 @@ public class DataTask {
         this.idx = idx;
     }*/
 
-    String getOn() {
+    @Nullable String getOn() {
         return on;
     }
 
@@ -143,7 +143,7 @@ public class DataTask {
         this.on = on;
     }
 
-    String getKun() {
+    @Nullable String getKun() {
         return kun;
     }
 
