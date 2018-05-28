@@ -22,8 +22,7 @@ class EtymologyRunnable extends TaskRunnable {
     private static final Object cookiesLock = new Object();
     private static Map<String, String> cookies;
 
-    // TODO integration test
-    private static Document retrieveData(Character kanji) throws IOException {
+    static String retrieveEtymology(Character kanji) throws IOException {
         String site = "http://hanziyuan.net";
         String etymPath = "/etymology";
 
@@ -35,14 +34,21 @@ class EtymologyRunnable extends TaskRunnable {
                 }
             }
 
-        return Jsoup
+        Document doc = Jsoup
             .connect(site + etymPath)
             .data("chinese", kanji.toString())
             .data("Bronze", cookies.get("Bronze"))
             .header("Accept-Encoding", "gzip, deflate")
             .header("Referer", site)
+            .header("Chinese", "" + ((int) kanji))
             .cookies(cookies)
             .post();
+
+        Elements es = doc.select(
+            "p:matches((?i)(decomposition|meaning|english).+(?<!none|not applicable.)$)");
+        es.select("b").remove();
+
+        return es.text().trim();
     }
 
     EtymologyRunnable(DataTask task) {
@@ -64,14 +70,8 @@ class EtymologyRunnable extends TaskRunnable {
                 try {
                     checkIfInterrupted();
 
-                    // retrieve from the web
-
                     logd("Lookup", "on the web");
-                    Document doc = retrieveData(kanji);
-                    Elements es = doc.select("p:matches((decomposition|meaning).+(?<!none)$)");
-                    es.select("b").remove();
-
-                    etymology = es.text().trim();
+                    etymology = retrieveEtymology(kanji);
 
                     if (etymology.matches(".*[a-zA-Z].*")) {
                         logd("Retrieved", "from the web:", etymology);
