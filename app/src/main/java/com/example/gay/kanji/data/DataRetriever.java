@@ -111,7 +111,7 @@ public class DataRetriever {
 
     String formInfo(DataTask task) {
         List<String> data = new LinkedList<>();
-        addLine(data, glue(task.getEtymology()));
+        addLine(data, glue(clean(task.getEtymology())));
         addLine(data, formJdic(task));
 
         // Collapse adjacent nulls and replace with LOADING
@@ -162,11 +162,19 @@ public class DataRetriever {
         sb.append(text);
         sb.append("</span> "); // space at the end is necessary to have even spacing
     }
+    /** Cleans some nasty shit retreived from the Internets */
+    @Nullable private String clean(String s) {
+        return s == null ? null
+            : s.replaceAll("(?<=[\\[(])\\s+|\\s+(?=[]),.])", "")
+               .replaceAll("([^ ])(?=[(\\[])", "$1 ");
+    }
 
     /** Glues together kanji's so they are not sparsely justified */
     @Nullable private String glue(String s) {
         return s == null ? null : s.replaceAll(
-            "([-" + JAP_CHAR_RANGE + "][-.," + JAP_CHAR_RANGE + "]*)",
+            "([\\[(\\-" + JAP_CHAR_RANGE + "]+[" + JAP_CHAR_RANGE + "][])\\-.," + JAP_CHAR_RANGE
+                + "]*|[\\[(\\-" + JAP_CHAR_RANGE + "]*[" + JAP_CHAR_RANGE + "][])\\-.,"
+                + JAP_CHAR_RANGE + "]+)",
             "<span class='glue'>$1</span>"
         );
     }

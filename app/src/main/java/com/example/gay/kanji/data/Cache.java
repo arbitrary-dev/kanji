@@ -8,6 +8,8 @@ import android.util.Log;
 import com.example.gay.kanji.App;
 import com.example.gay.kanji.KanjiContract.KanjiEntry;
 
+import java.util.Arrays;
+
 class Cache {
 
     private final String tag;
@@ -48,7 +50,8 @@ class Cache {
                     found &= result[i] != null;
                 }
                 if (found)
-                    Log.d(tag, "Found cached " + data + " for 「" + kanji + "」");
+                    Log.d(tag, "Found cached " + data + " for 「" + kanji + "」: "
+                        + Arrays.toString(result));
                 else
                     Log.d(tag, "No cached " + data + " for 「" + kanji + "」");
             } else {
