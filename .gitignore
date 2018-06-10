@@ -8,5 +8,6 @@
 .externalNativeBuild
 
 *.swp
+*.swo
 *.orig
 /notes
