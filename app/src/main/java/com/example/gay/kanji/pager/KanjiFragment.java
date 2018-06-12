@@ -20,8 +20,6 @@ public class KanjiFragment extends Fragment {
 
     private static final String TAG = "FRAG";
 
-    private int mPosition = -1;
-    private Character mKanji;
     private DataTask mTask;
 
     private static final String KANJI_POS = "kanji_pos";
@@ -43,8 +41,6 @@ public class KanjiFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mPosition = getArguments().getInt(KANJI_POS);
-        mKanji = getArguments().getChar(KANJI_KEY);
         Log.d(TAG, "onCreate" + this);
     }
 
@@ -54,9 +50,10 @@ public class KanjiFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_kanji, container, false);
         KanjiWebView webView = (KanjiWebView) v.findViewById(R.id.webView);
 
-        Data data = Cache.get(mKanji);
+        Character kanji = getKanji();
+        Data data = Cache.get(kanji);
         if (data == null) {
-            mTask = DataRetriever.getInstance().retrieve(webView, mKanji);
+            mTask = DataRetriever.getInstance().retrieve(webView, kanji);
         } else {
             webView.setInfo(data.info);
             webView.setGif(data.gif);
@@ -83,15 +80,16 @@ public class KanjiFragment extends Fragment {
 
     @Override
     public String toString() {
-        return "(" + (mPosition != -1 && mKanji != null ? mPosition + ", " + mKanji : "") + ")"
-            + hashCode();
+        int p = getPosition();
+        Character k = getKanji();
+        return "(" + (p != -1 && k != null ? p + ", " + k : "") + ")" + hashCode();
     }
 
     int getPosition() {
-        return mPosition;
+        return getArguments().getInt(KANJI_POS, -1);
     }
 
     Character getKanji() {
-        return mKanji;
+        return getArguments().getChar(KANJI_KEY);
     }
 }
