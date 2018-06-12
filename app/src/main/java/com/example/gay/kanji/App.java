@@ -82,15 +82,6 @@ public class App extends Application {
     private static final Character DEFAULT_KANJI = '字';
     private static String query;
 
-    /**
-     * @param position within {@link #query}
-     * @return kanji pointed by {@code position} within {@link #query}
-     *         or {@link #DEFAULT_KANJI} if {@link #query} is {@code null}
-     */
-    public static Character getKanjiAt(int position) {
-        return query == null ? DEFAULT_KANJI : query.charAt(position);
-    }
-
     // TODO javadoc
     /** Cleans all non-japanese symbols from the {@code input} */
     private static String clean(String input) {
@@ -101,7 +92,7 @@ public class App extends Application {
 
     /** @return {@link #query} */
     public static String getQuery() {
-        return query;
+        return query == null ? DEFAULT_KANJI.toString() : query;
     }
 
     /**

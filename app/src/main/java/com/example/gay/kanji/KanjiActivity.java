@@ -21,6 +21,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import com.example.gay.kanji.data.Cache;
+import com.example.gay.kanji.data.Data;
 import com.example.gay.kanji.pager.KanjiPagerAdapter;
 
 import java.lang.reflect.Field;
@@ -35,6 +37,8 @@ public class KanjiActivity extends AppCompatActivity {
     private static final String TAG = "ACTV";
 
     private ViewPager mViewPager;
+
+    private Cache.UpdateListener pagerAdapterCacheListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,10 @@ public class KanjiActivity extends AppCompatActivity {
         Log.d(TAG, "setContentView() end");
 
         App.setQuery(getIntent().getStringExtra(EXTRA_TEXT));
+
+        Cache.addUpdateListener((kanji, data) -> {
+            if (data.isEmpty()) updateToolbarTitle();
+        });
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.addOnPageChangeListener(new OnPageChangeListener() {
@@ -85,9 +93,17 @@ public class KanjiActivity extends AppCompatActivity {
     }
 
     private void resetPager() {
+        if (mViewPager == null)
+            return;
+
         KanjiPagerAdapter pagerAdapter = new KanjiPagerAdapter(getSupportFragmentManager());
-        if (mViewPager != null)
-            mViewPager.setAdapter(pagerAdapter);
+        if (pagerAdapterCacheListener != null)
+            Cache.removeUpdateListener(pagerAdapterCacheListener);
+        pagerAdapterCacheListener = (kanji, data) -> {
+            if (data.isEmpty()) pagerAdapter.notifyDataSetChanged();
+        };
+        Cache.addUpdateListener(pagerAdapterCacheListener);
+        mViewPager.setAdapter(pagerAdapter);
     }
 
     @Override
@@ -182,17 +198,32 @@ public class KanjiActivity extends AppCompatActivity {
 
         TypedValue typedValue = new TypedValue();
         TypedArray a = obtainStyledAttributes(
-            typedValue.data, new int[]{R.attr.colorAccent});
-        int color = a.getColor(0, 0);
+            typedValue.data, new int[]{R.attr.colorAccent, android.R.attr.textColorHint});
+        int colorAccent = a.getColor(0, 0);
+        int colorDim = a.getColor(1, 0);
         a.recycle();
 
         SpannableStringBuilder title = new SpannableStringBuilder(q);
-        int p = mViewPager.getCurrentItem();
-        title.setSpan(new ForegroundColorSpan(color), p, p + 1, SPAN_EXCLUSIVE_EXCLUSIVE);
+        int pos = 0;
+        int curr = mViewPager.getCurrentItem();
+        for (int i = 0; i < q.length(); ++i) {
+            Character c = q.charAt(i);
+            Data data = Cache.get(c);
+            if (data != null && data.isEmpty()) {
+                colorAt(i, title, colorDim);
+            } else {
+                if (pos == curr) colorAt(i, title, colorAccent);
+                ++pos;
+            }
+        }
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
             actionBar.setTitle(title);
+    }
+
+    private void colorAt(int i, SpannableStringBuilder spannable, int color) {
+        spannable.setSpan(new ForegroundColorSpan(color), i, i + 1, SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
     private static final String STATE_QUERY = "state_query";

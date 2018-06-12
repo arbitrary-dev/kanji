@@ -7,7 +7,7 @@
 
         <item name="android:windowBackground">@android:color/white</item>
         <item name="android:editTextColor">@android:color/white</item>
-        <item name="android:textColorHint">#99FFFFFF</item>
+        <item name="android:textColorHint">#99FFFFFF</item> <!-- used for dimming -->
         <item name="colorControlNormal">@android:color/white</item>
     </style>
 

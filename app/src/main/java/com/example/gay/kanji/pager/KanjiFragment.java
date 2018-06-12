@@ -20,17 +20,20 @@ public class KanjiFragment extends Fragment {
 
     private static final String TAG = "FRAG";
 
+    private int mPosition = -1;
     private Character mKanji;
     private DataTask mTask;
 
+    private static final String KANJI_POS = "kanji_pos";
     private static final String KANJI_KEY = "kanji_key";
 
     public KanjiFragment() { } // required
 
-    public static KanjiFragment newInstance(Character kanji) {
-        Log.d(TAG, "newInstance: " + kanji);
+    public static KanjiFragment newInstance(int position, Character kanji) {
+        Log.d(TAG, "newInstance(" + position + ", " + kanji + ")");
         KanjiFragment fragment = new KanjiFragment();
         Bundle args = new Bundle();
+        args.putInt(KANJI_POS, position);
         args.putChar(KANJI_KEY, kanji);
         fragment.setArguments(args);
         return fragment;
@@ -39,9 +42,10 @@ public class KanjiFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate() " + this);
         setHasOptionsMenu(true);
+        mPosition = getArguments().getInt(KANJI_POS);
         mKanji = getArguments().getChar(KANJI_KEY);
+        Log.d(TAG, "onCreate" + this);
     }
 
     @Override
@@ -72,13 +76,28 @@ public class KanjiFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(TAG, "onStop() " + this);
-        mTask.stop(); // TODO resume?
+        Log.d(TAG, "onStop" + this);
+        if (mTask != null)
+            mTask.stop(); // TODO resume?
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy() " + this);
+        Log.d(TAG, "onDestroy" + this);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + (mPosition != -1 && mKanji != null ? mPosition + ", " + mKanji : "") + ")"
+            + hashCode();
+    }
+
+    int getPosition() {
+        return mPosition;
+    }
+
+    Character getKanji() {
+        return mKanji;
     }
 }
