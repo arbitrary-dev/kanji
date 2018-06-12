@@ -35,6 +35,8 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.18.3'
     testImplementation 'org.jsoup:jsoup:1.10.3'
 
+    androidTestImplementation 'org.mockito:mockito-core:2.18.3'
+    androidTestImplementation 'org.mockito:mockito-android:2.18.3'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })

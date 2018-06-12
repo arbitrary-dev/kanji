@@ -10,6 +10,9 @@ import com.example.gay.kanji.App;
 import com.example.gay.kanji.data.Cache;
 import com.example.gay.kanji.data.Data;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+
 public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
 
     private static final String TAG = "PGAD";
@@ -52,6 +55,22 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
                 ++pos;
             }
             if (pos > oldPos) break;
+        }
+
+        if (newPos != oldPos && newPos != POSITION_NONE) {
+            // Nasty hack to move Fragment for parent
+            try {
+                Field f = FragmentStatePagerAdapter.class.getDeclaredField("mFragments");
+                f.setAccessible(true);
+                @SuppressWarnings("unchecked")
+                ArrayList<Fragment> fs = (ArrayList<Fragment>) f.get(this);
+                fs.set(newPos, frag);
+                fs.set(oldPos, null);
+                f.setAccessible(false);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Something changed!");
+            }
         }
 
         return newPos;
