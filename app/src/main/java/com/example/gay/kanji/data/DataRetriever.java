@@ -156,7 +156,7 @@ public class DataRetriever {
     }
 
     private void appendSpan(StringBuilder sb, String text) {
-        if (text.isEmpty())
+        if (text == null || text.isEmpty())
             return;
         sb.append("<span class='section'>");
         sb.append(text);
@@ -180,7 +180,8 @@ public class DataRetriever {
     }
 
     private String dimSuffixes(String kun) {
-        return kun.replaceAll("\\.([" + JAP_CHAR_RANGE + "]+)", "<span class='dim'>$1</span>");
+        return kun == null ? null
+            : kun.replaceAll("\\.([" + JAP_CHAR_RANGE + "]+)", "<span class='dim'>$1</span>");
     }
 
     ThreadPoolExecutor getThreadPool() {
