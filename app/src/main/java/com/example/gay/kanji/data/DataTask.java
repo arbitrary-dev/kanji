@@ -48,8 +48,14 @@ public class DataTask {
         this.wvRef = new WeakReference<>(wv);
         this.kanji = kanji;
 
-        for (TaskRunnable runnable : getRunnables())
-            dataRetriever.getThreadPool().execute(runnable);
+        Data cached = Cache.get(kanji);
+        if (cached == null) {
+            for (TaskRunnable runnable : getRunnables())
+                dataRetriever.getThreadPool().execute(runnable);
+        } else {
+            dataRetriever.update(this);
+            stopped = true;
+        }
     }
 
     // TODO unit test

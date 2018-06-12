@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 
 import com.example.gay.kanji.KanjiWebView;
 import com.example.gay.kanji.R;
+import com.example.gay.kanji.data.Cache;
+import com.example.gay.kanji.data.Data;
 import com.example.gay.kanji.data.DataRetriever;
 import com.example.gay.kanji.data.DataTask;
 
@@ -47,7 +49,15 @@ public class KanjiFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_kanji, container, false);
         KanjiWebView webView = (KanjiWebView) v.findViewById(R.id.webView);
-        mTask = DataRetriever.getInstance().retrieve(webView, mKanji);
+
+        Data data = Cache.get(mKanji);
+        if (data == null) {
+            mTask = DataRetriever.getInstance().retrieve(webView, mKanji);
+        } else {
+            webView.setInfo(data.info);
+            webView.setGif(data.gif);
+        }
+
         return v;
     }
 

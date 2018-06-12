@@ -23,7 +23,7 @@ import static android.os.Environment.DIRECTORY_PICTURES;
 import static android.os.Environment.MEDIA_MOUNTED;
 import static android.os.Environment.MEDIA_MOUNTED_READ_ONLY;
 import static android.os.Environment.getExternalStoragePublicDirectory;
-import static com.example.gay.kanji.data.DataRetriever.NO_DATA;
+import static com.example.gay.kanji.data.Data.NO_DATA;
 
 public class KanjiRunnable extends TaskRunnable {
 

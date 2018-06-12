@@ -16,14 +16,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.example.gay.kanji.App.JAP_CHAR_RANGE;
+import static com.example.gay.kanji.data.Data.NO_DATA;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 // TODO refactor data retrieval mess
 public class DataRetriever {
 
     private static final String TAG = "RETRV";
-
-    static final String NO_DATA = "";
 
     private final ConcurrentLinkedQueue<DataTask> tasks = new ConcurrentLinkedQueue<>();
 
@@ -77,6 +76,11 @@ public class DataRetriever {
 
                 String info = formInfo(task);
                 String gif = task.getGif();
+
+                if (!(info.contains(LOADING) || gif == null)) {
+                    Data data = new Data(info, gif);
+                    Cache.put(task.getKanji(), data);
+                }
 
                 KanjiWebView wv = task.getWebView();
 

@@ -9,7 +9,7 @@ import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 
-import static com.example.gay.kanji.data.DataRetriever.NO_DATA;
+import static com.example.gay.kanji.data.Data.NO_DATA;
 
 class JdicRunnable extends TaskRunnable {
 
@@ -35,10 +35,10 @@ class JdicRunnable extends TaskRunnable {
     protected void runInner() throws InterruptedException {
         Character kanji = task.getKanji();
 
-        // TODO refactor cache quering to a separate TaskRunnable
-        Cache cache = Cache.getFor(getLoggingTag(), getLoggingData(), kanji);
-        String[] cached = cache.query(KanjiEntry.COL_ON, KanjiEntry.COL_KUN, KanjiEntry.COL_MEANING);
-        String on = cached[0], kun = cached[1], meaning = cached[2];
+        // TODO refactor db quering to a separate TaskRunnable
+        Db db = Db.getFor(getLoggingTag(), getLoggingData(), kanji);
+        String[] data = db.query(KanjiEntry.COL_ON, KanjiEntry.COL_KUN, KanjiEntry.COL_MEANING);
+        String on = data[0], kun = data[1], meaning = data[2];
 
         if (on == null || kun == null || meaning == null) {
             checkIfInterrupted();
@@ -85,7 +85,7 @@ class JdicRunnable extends TaskRunnable {
                             on, kun, meaning
                         ));
 
-                        cache.put(
+                        db.persist(
                             KanjiEntry.COL_ON, on,
                             KanjiEntry.COL_KUN, kun,
                             KanjiEntry.COL_MEANING, meaning

@@ -11,7 +11,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.example.gay.kanji.data.DataRetriever.NO_DATA;
+import static com.example.gay.kanji.data.Data.NO_DATA;
 import static org.jsoup.Connection.Method.HEAD;
 
 class EtymologyRunnable extends TaskRunnable {
@@ -60,8 +60,8 @@ class EtymologyRunnable extends TaskRunnable {
         Character kanji = task.getKanji();
 
         // TODO refactor cache quering to a separate TaskRunnable
-        Cache cache = Cache.getFor(getLoggingTag(), getLoggingData(), kanji);
-        String etymology = cache.query(KanjiEntry.COL_ETYMOLOGY)[0];
+        Db db = Db.getFor(getLoggingTag(), getLoggingData(), kanji);
+        String etymology = db.query(KanjiEntry.COL_ETYMOLOGY)[0];
 
         if (etymology == null) {
             checkIfInterrupted();
@@ -75,7 +75,7 @@ class EtymologyRunnable extends TaskRunnable {
 
                     if (etymology.matches(".*[a-zA-Z].*")) {
                         logd("Retrieved", "from the web:", etymology);
-                        cache.put(KanjiEntry.COL_ETYMOLOGY, etymology);
+                        db.persist(KanjiEntry.COL_ETYMOLOGY, etymology);
                     } else {
                         logd("No", "on the web");
                         etymology = NO_DATA;
