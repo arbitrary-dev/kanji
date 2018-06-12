@@ -82,12 +82,6 @@ public class KanjiFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy" + this);
-    }
-
-    @Override
     public String toString() {
         return "(" + (mPosition != -1 && mKanji != null ? mPosition + ", " + mKanji : "") + ")"
             + hashCode();

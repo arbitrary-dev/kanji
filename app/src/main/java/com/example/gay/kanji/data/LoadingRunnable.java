@@ -9,7 +9,7 @@ class LoadingRunnable extends TaskRunnable {
     }
 
     @Override
-    protected void runInner() throws InterruptedException {
+    protected void runInner() {
         logd("Loading initialized");
         task.updateUi();
     }

@@ -38,10 +38,8 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
 
         Data cached = Cache.get(kanji);
         boolean isEmpty = cached != null && cached.isEmpty();
-        if (isEmpty) {
-            Log.d(TAG, "getItemPosition" + frag + " = " + newPos);
+        if (isEmpty)
             return newPos;
-        }
 
         int pos = 0;
         int oldPos = frag.getPosition();
@@ -56,30 +54,7 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
             if (pos > oldPos) break;
         }
 
-        Log.d(TAG, "getItemPosition" + frag + " = " + newPos);
-
         return newPos;
-    }
-
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-        Log.d(TAG, "destroyItem(pos = " + position + ", obj = KanjiFragment" + object + ")");
-        super.destroyItem(container, position, object);
-    }
-
-    @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-        Object result = super.instantiateItem(container, position);
-        Log.d(TAG, "instantiateItem(pos = " + position + ") = KanjiFragment" + result);
-        return result;
-    }
-
-    @Override
-    public void setPrimaryItem(ViewGroup container, int position, Object object) {
-        KanjiFragment f = (KanjiFragment) object;
-//        if (f.getFragmentManager() == null) return; // FIXME
-        Log.d(TAG, "setPrimaryItem(pos = " + position + ", obj = KanjiFragment" + f + ")");
-        super.setPrimaryItem(container, position, object);
     }
 
     @Override
