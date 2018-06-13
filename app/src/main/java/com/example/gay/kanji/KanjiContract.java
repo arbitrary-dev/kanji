@@ -54,6 +54,17 @@ public final class KanjiContract {
                     "SELECT " + COL_SYMBOL + ", " + COL_ETYMOLOGY + " FROM " + TABLE + "_old",
                 "DROP TABLE " + TABLE + "_old"
             );
+
+            // 3
+            update(
+                "UPDATE " + TABLE + " SET " + COL_ETYMOLOGY + " = NULL WHERE " + COL_ETYMOLOGY + " = ''",
+                "UPDATE " + TABLE + " SET " + COL_ON + " = NULL WHERE " + COL_ON + " = ''",
+                "UPDATE " + TABLE + " SET " + COL_KUN + " = NULL WHERE " + COL_KUN + " = ''",
+                "UPDATE " + TABLE + " SET " + COL_MEANING + " = NULL WHERE " + COL_MEANING + " = ''",
+                "DELETE FROM " + TABLE +
+                    " WHERE coalesce(" + COL_ETYMOLOGY + ", " + COL_ON + ", " + COL_KUN +
+                    ", " + COL_MEANING + ") IS NULL"
+            );
         }
     }
 }

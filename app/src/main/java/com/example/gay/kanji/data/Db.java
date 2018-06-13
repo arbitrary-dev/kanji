@@ -62,20 +62,16 @@ class Db {
         return result;
     }
 
-    void persist(String... colsAndVals) throws InterruptedException {
-        if (colsAndVals.length % 2 != 0)
-            throw new IllegalArgumentException(
-                "colsAndVals should contain paired columns and values");
+    void persist(String column, String value) throws InterruptedException {
+        persist(data, column, value);
+    }
 
+    void persist(String data, String column, String value) throws InterruptedException {
         checkIfInterrupted();
 
         ContentValues values = new ContentValues();
         values.put(KanjiEntry.COL_SYMBOL, kanji.toString());
-        for (int i = 0; i < colsAndVals.length; i += 2) {
-            String col = colsAndVals[i];
-            String val = colsAndVals[i + 1];
-            values.put(col, val);
-        }
+        values.put(column, value);
 
         checkIfInterrupted();
 

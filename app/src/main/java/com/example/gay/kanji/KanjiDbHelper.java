@@ -10,7 +10,7 @@ import static com.example.gay.kanji.KanjiContract.KanjiEntry.SQL_UPDATES;
 
 class KanjiDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "kanji.db";
 
     KanjiDbHelper(Context context) {

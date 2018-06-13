@@ -1,14 +1,17 @@
 package com.example.gay.kanji.data;
 
 import com.example.gay.kanji.App;
-import com.example.gay.kanji.KanjiContract.KanjiEntry;
 
 import org.jsoup.Jsoup;
+import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 
+import static com.example.gay.kanji.KanjiContract.KanjiEntry.COL_KUN;
+import static com.example.gay.kanji.KanjiContract.KanjiEntry.COL_MEANING;
+import static com.example.gay.kanji.KanjiContract.KanjiEntry.COL_ON;
 import static com.example.gay.kanji.data.Data.NO_DATA;
 
 class JdicRunnable extends TaskRunnable {
@@ -27,7 +30,7 @@ class JdicRunnable extends TaskRunnable {
                  .data("kanjsel", "X")
                  .data("ksrchkey", kanji.toString())
                  .post();
-        boolean notFound = doc.toString().contains("No kanji matched this key.");
+        boolean notFound = doc.toString().matches("Match\\[es]:|No kanji matched this key\\.");
         return notFound ? null : doc;
     }
 
@@ -37,7 +40,7 @@ class JdicRunnable extends TaskRunnable {
 
         // TODO refactor db quering to a separate TaskRunnable
         Db db = Db.getFor(getLoggingTag(), getLoggingData(), kanji);
-        String[] data = db.query(KanjiEntry.COL_ON, KanjiEntry.COL_KUN, KanjiEntry.COL_MEANING);
+        String[] data = db.query(COL_ON, COL_KUN, COL_MEANING);
         String on = data[0], kun = data[1], meaning = data[2];
 
         if (on == null || kun == null || meaning == null) {
@@ -64,11 +67,13 @@ class JdicRunnable extends TaskRunnable {
 
                         Element elOn = doc.select("font:contains([音])").first();
                         on = values(elOn);
+                        persist(db, "ON", COL_ON, on);
 
                         checkIfInterrupted();
 
                         Element elKun = doc.select("font:contains([訓])").first();
                         kun = values(elKun);
+                        persist(db, "KUN", COL_KUN, kun);
 
                         // TODO name reading
 
@@ -79,17 +84,10 @@ class JdicRunnable extends TaskRunnable {
                         // fixes Jim Breen's badass HTML skills
                         if (meaning.contains(";"))
                             meaning = meaning.replace(",", "").replace(';', ',');
+                        persist(db, "meaning", COL_MEANING, meaning);
 
-                        logd("Retrieved", String.format(
-                            "from the web: ON = %s; KUN = %s; meaning = %s",
-                            on, kun, meaning
-                        ));
-
-                        db.persist(
-                            KanjiEntry.COL_ON, on,
-                            KanjiEntry.COL_KUN, kun,
-                            KanjiEntry.COL_MEANING, meaning
-                        );
+                        if (StringUtil.isBlank(on + kun + meaning))
+                            logd("No", "on the web");
                     }
                 } catch (IOException e) {
                     loge("Unable to retrieve", ":", e.getMessage());
@@ -113,6 +111,13 @@ class JdicRunnable extends TaskRunnable {
         task.setKun(kun);
         task.setMeaning(meaning);
         task.updateUi();
+    }
+
+    private void persist(Db db, String data, String column, String value) throws InterruptedException {
+        if (StringUtil.isBlank(value))
+            return;
+        checkIfInterrupted();
+        db.persist(data, column, value);
     }
 
     private String values(Element el) {
