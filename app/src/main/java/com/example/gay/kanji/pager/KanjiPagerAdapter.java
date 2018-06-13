@@ -66,6 +66,17 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
                 fs.set(newPos, frag);
                 fs.set(oldPos, null);
                 f.setAccessible(false);
+
+                f = FragmentStatePagerAdapter.class.getDeclaredField("mSavedState");
+                f.setAccessible(true);
+                @SuppressWarnings("unchecked")
+                ArrayList<Fragment.SavedState> ss = (ArrayList<Fragment.SavedState>) f.get(this);
+                if (ss.size() > oldPos) {
+                    Fragment.SavedState state = ss.get(oldPos);
+                    ss.set(newPos, state);
+                    ss.set(oldPos, null);
+                }
+                f.setAccessible(false);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
                 throw new RuntimeException("Something changed!");
