@@ -62,6 +62,7 @@ class Db {
         return result;
     }
 
+    @SuppressWarnings("SameParameterValue")
     void persist(String column, String value) throws InterruptedException {
         persist(data, column, value);
     }

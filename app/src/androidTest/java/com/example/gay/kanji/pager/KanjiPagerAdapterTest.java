@@ -23,8 +23,6 @@ import java.lang.reflect.Field;
 import static com.example.gay.kanji.data.Data.NO_DATA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
 public class KanjiPagerAdapterTest {
