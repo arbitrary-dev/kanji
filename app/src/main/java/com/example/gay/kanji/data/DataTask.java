@@ -69,7 +69,6 @@ public class DataTask {
             Thread et = getThread(runnable);
             if (et != null)
                 et.interrupt();
-            setThread(runnable, null);
         }
 
         if (wvRef != null) {

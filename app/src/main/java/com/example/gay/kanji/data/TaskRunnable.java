@@ -33,6 +33,7 @@ abstract class TaskRunnable implements Runnable {
             e.printStackTrace();
         } finally {
             Thread.interrupted();
+            task.setThread(this, null);
         }
     }
 
