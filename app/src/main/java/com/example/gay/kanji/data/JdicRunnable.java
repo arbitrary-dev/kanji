@@ -38,8 +38,8 @@ class JdicRunnable extends TaskRunnable {
                 .post();
         }
 
-        System.out.println(TAG + " retrieveInfo「" + kanji + "」: "
-            + doc.outputSettings(doc.outputSettings().prettyPrint(true)).html());
+        // System.out.println(TAG + " retrieveInfo「" + kanji + "」: "
+        //     + doc.outputSettings(doc.outputSettings().prettyPrint(true)).html());
         boolean notFound = doc.toString().matches("Match\\[es]:|No kanji matched this key\\.");
         return notFound ? null : doc;
     }

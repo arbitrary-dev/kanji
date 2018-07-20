@@ -48,9 +48,9 @@ class EtymologyRunnable extends TaskRunnable {
                 .post();
         }
 
-        System.out.println(TAG + " retrieveEtymology「" + kanji + "」:\n"
-            + "COOKIES" + Arrays.toString(cookies.entrySet().toArray()).replaceAll("[]\\[,] ?", "\n")
-            + "\nDOC\n" + doc.outputSettings(doc.outputSettings().prettyPrint(true)).html());
+        // System.out.println(TAG + " retrieveEtymology「" + kanji + "」:\n"
+        //     + "COOKIES" + Arrays.toString(cookies.entrySet().toArray()).replaceAll("[]\\[,] ?", "\n")
+        //     + "\nDOC\n" + doc.outputSettings(doc.outputSettings().prettyPrint(true)).html());
         Elements es = doc.select(
             "p:matches((?i)(decomposition|meaning|english).+(?<!none|not applicable.)$)");
         es.select("b").remove();
