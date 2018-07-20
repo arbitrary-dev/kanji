@@ -1,5 +1,7 @@
 package com.example.gay.kanji.data;
 
+import android.util.Log;
+
 import com.example.gay.kanji.App;
 import com.example.gay.kanji.KanjiContract.KanjiEntry;
 
@@ -17,19 +19,20 @@ import static org.jsoup.Connection.Method.HEAD;
 class EtymologyRunnable extends TaskRunnable {
 
     private static final String TAG = "ETYM";
+    private static final String DATA = "etymology";
     String getLoggingTag() { return TAG; }
-    String getLoggingData() { return "etymology"; }
+    String getLoggingData() { return DATA; }
 
     private static final Object lock = new Object();
     private static Map<String, String> cookies;
 
-    String retrieveEtymology(Character kanji) throws IOException {
+    static String retrieveEtymology(Character kanji) throws IOException {
         String site = "http://hanziyuan.net";
         String etymPath = "/etymology";
 
         Document doc;
         synchronized (lock) {
-            logd("Lookup", "on the web");
+            Log.d(TAG, "Lookup " + DATA + " for「" + kanji + "」on the web");
 
             if (cookies == null) {
                 Response res = Jsoup.connect(site).method(HEAD).execute();
