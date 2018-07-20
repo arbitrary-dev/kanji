@@ -21,30 +21,32 @@ class EtymologyRunnable extends TaskRunnable {
     String getLoggingTag() { return TAG; }
     String getLoggingData() { return "etymology"; }
 
-    private static final Object cookiesLock = new Object();
+    private static final Object lock = new Object();
     private static Map<String, String> cookies;
 
-    static String retrieveEtymology(Character kanji) throws IOException {
+    String retrieveEtymology(Character kanji) throws IOException {
         String site = "http://hanziyuan.net";
         String etymPath = "/etymology";
 
-        if (cookies == null)
-            synchronized (cookiesLock) {
-                if (cookies == null) {
-                    Response res = Jsoup.connect(site).method(HEAD).execute();
-                    cookies = res.cookies();
-                }
+        Document doc;
+        synchronized (lock) {
+            logd("Lookup", "on the web");
+
+            if (cookies == null) {
+                Response res = Jsoup.connect(site).method(HEAD).execute();
+                cookies = res.cookies();
             }
 
-        Document doc = Jsoup
-            .connect(site + etymPath)
-            .data("chinese", kanji.toString())
-            .data("Bronze", cookies.get("Bronze"))
-            .header("Accept-Encoding", "gzip, deflate")
-            .header("Referer", site)
-            .header("Chinese", "" + ((int) kanji))
-            .cookies(cookies)
-            .post();
+            doc = Jsoup
+                .connect(site + etymPath)
+                .data("chinese", kanji.toString())
+                .data("Bronze", cookies.get("Bronze"))
+                .header("Accept-Encoding", "gzip, deflate")
+                .header("Referer", site)
+                .header("Chinese", "" + ((int) kanji))
+                .cookies(cookies)
+                .post();
+        }
 
         System.out.println(TAG + " retrieveEtymology「" + kanji + "」:\n"
             + "COOKIES" + Arrays.toString(cookies.entrySet().toArray()).replaceAll("[]\\[,] ?", "\n")
@@ -75,7 +77,6 @@ class EtymologyRunnable extends TaskRunnable {
                 try {
                     checkIfInterrupted();
 
-                    logd("Lookup", "on the web");
                     etymology = retrieveEtymology(kanji);
 
                     if (etymology.matches(".*[a-zA-Z].*")) {

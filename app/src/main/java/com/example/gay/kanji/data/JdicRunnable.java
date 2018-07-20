@@ -24,13 +24,19 @@ class JdicRunnable extends TaskRunnable {
         super(task);
     }
 
-    private static Document post(Character kanji) throws IOException {
+    private static final Object lock = new Object();
+
+    private Document retrieveInfo(Character kanji) throws IOException {
         String url = "http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1D";
-        Document doc =
-            Jsoup.connect(url)
-                 .data("kanjsel", "X")
-                 .data("ksrchkey", kanji.toString())
-                 .post();
+        Document doc;
+
+        synchronized (lock) {
+            logd("Lookup", "on the web");
+            doc = Jsoup.connect(url)
+                .data("kanjsel", "X")
+                .data("ksrchkey", kanji.toString())
+                .post();
+        }
 
         System.out.println(TAG + " retrieveInfo「" + kanji + "」: "
             + doc.outputSettings(doc.outputSettings().prettyPrint(true)).html());
@@ -56,8 +62,7 @@ class JdicRunnable extends TaskRunnable {
 
                     // retrieve from the web
 
-                    logd("Lookup", "on the web");
-                    Document doc = post(kanji);
+                    Document doc = retrieveInfo(kanji);
 
                     if (doc == null) {
                         logd("No", "on the web");
