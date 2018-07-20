@@ -85,7 +85,7 @@ public class DataTask {
         kun = null;
         meaning = null;
 
-        dataRetriever.getTasks().add(this);
+        dataRetriever.tasks.add(this);
     }
 
     boolean isStopped() {

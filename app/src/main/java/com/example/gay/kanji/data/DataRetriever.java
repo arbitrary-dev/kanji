@@ -24,11 +24,7 @@ public class DataRetriever {
 
     private static final String TAG = "RETRV";
 
-    private final ConcurrentLinkedQueue<DataTask> tasks = new ConcurrentLinkedQueue<>();
-
-    ConcurrentLinkedQueue<DataTask> getTasks() {
-        return tasks;
-    }
+    final ConcurrentLinkedQueue<DataTask> tasks = new ConcurrentLinkedQueue<>();
 
     private DataTask getTask() {
         DataTask task = tasks.poll();
@@ -37,7 +33,7 @@ public class DataRetriever {
 
     private final LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
     private final ThreadPoolExecutor threadPool =
-        new ThreadPoolExecutor(4, 4, 1, SECONDS, queue);
+        new ThreadPoolExecutor(4, 4 * 64, 10, SECONDS, queue);
     private final Handler handler;
 
     // For testing only
