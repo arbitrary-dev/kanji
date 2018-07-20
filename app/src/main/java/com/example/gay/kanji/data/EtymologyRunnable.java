@@ -9,7 +9,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 
 import static com.example.gay.kanji.data.Data.NO_DATA;
