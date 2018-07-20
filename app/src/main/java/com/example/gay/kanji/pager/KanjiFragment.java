@@ -75,8 +75,10 @@ public class KanjiFragment extends Fragment {
     public void onStop() {
         super.onStop();
         Log.d(TAG, "onStop" + this);
-        if (mTask != null)
+        if (mTask != null) {
             mTask.stop(); // TODO resume?
+            mTask = null;
+        }
     }
 
     @Override
