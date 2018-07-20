@@ -16,7 +16,8 @@ import static com.example.gay.kanji.data.Data.NO_DATA;
 
 class JdicRunnable extends TaskRunnable {
 
-    String getLoggingTag() { return "JDIC"; }
+    private static final String TAG = "JDIC";
+    String getLoggingTag() { return TAG; }
     String getLoggingData() { return "info"; }
 
     JdicRunnable(DataTask task) {
@@ -30,6 +31,9 @@ class JdicRunnable extends TaskRunnable {
                  .data("kanjsel", "X")
                  .data("ksrchkey", kanji.toString())
                  .post();
+
+        System.out.println(TAG + " retrieveInfo「" + kanji + "」: "
+            + doc.outputSettings(doc.outputSettings().prettyPrint(true)).html());
         boolean notFound = doc.toString().matches("Match\\[es]:|No kanji matched this key\\.");
         return notFound ? null : doc;
     }

@@ -15,8 +15,11 @@ abstract class TaskRunnable implements Runnable {
 
     abstract protected void runInner() throws InterruptedException;
 
+    private static final String TAG = "TRUN";
+
     @Override
     public void run() {
+        Log.d(TAG, "run() " + this);
         try {
             checkIfInterrupted();
 
@@ -26,10 +29,16 @@ abstract class TaskRunnable implements Runnable {
 
             runInner();
         } catch (InterruptedException e) {
+            Log.d(TAG, "interrupted " + this);
             e.printStackTrace();
         } finally {
             Thread.interrupted();
         }
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode()) + " " + task;
     }
 
     void checkIfInterrupted() throws InterruptedException {

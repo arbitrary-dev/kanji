@@ -60,7 +60,7 @@ public class DataTask {
 
     // TODO unit test
     public void stop() {
-        Log.d(TAG, "stop: " + kanji);
+        Log.d(TAG, "stop() " + this);
 
         stopped = true;
 
@@ -167,5 +167,10 @@ public class DataTask {
 
     void updateUi() {
         dataRetriever.update(this);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "「" + kanji + "」" + Integer.toHexString(hashCode());
     }
 }

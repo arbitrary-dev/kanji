@@ -1,7 +1,5 @@
 package com.example.gay.kanji.data;
 
-import android.util.Log;
-
 import com.example.gay.kanji.App;
 import com.example.gay.kanji.KanjiContract.KanjiEntry;
 
@@ -48,7 +46,7 @@ class EtymologyRunnable extends TaskRunnable {
             .cookies(cookies)
             .post();
 
-        Log.v(TAG, "retrieveEtymology「" + kanji + "」:\n"
+        System.out.println(TAG + " retrieveEtymology「" + kanji + "」:\n"
             + "COOKIES" + Arrays.toString(cookies.entrySet().toArray()).replaceAll("[]\\[,] ?", "\n")
             + "\nDOC\n" + doc.outputSettings(doc.outputSettings().prettyPrint(true)).html());
         Elements es = doc.select(

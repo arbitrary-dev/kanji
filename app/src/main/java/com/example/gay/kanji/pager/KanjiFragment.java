@@ -47,6 +47,7 @@ public class KanjiFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView" + this);
         View v = inflater.inflate(R.layout.fragment_kanji, container, false);
         KanjiWebView webView = (KanjiWebView) v.findViewById(R.id.webView);
 
