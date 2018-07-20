@@ -1,5 +1,7 @@
 package com.example.gay.kanji.data;
 
+import android.util.Log;
+
 import com.example.gay.kanji.App;
 import com.example.gay.kanji.KanjiContract.KanjiEntry;
 
@@ -9,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 import static com.example.gay.kanji.data.Data.NO_DATA;
@@ -16,7 +19,8 @@ import static org.jsoup.Connection.Method.HEAD;
 
 class EtymologyRunnable extends TaskRunnable {
 
-    String getLoggingTag() { return "ETYM"; }
+    private static final String TAG = "ETYM";
+    String getLoggingTag() { return TAG; }
     String getLoggingData() { return "etymology"; }
 
     private static final Object cookiesLock = new Object();
@@ -44,6 +48,9 @@ class EtymologyRunnable extends TaskRunnable {
             .cookies(cookies)
             .post();
 
+        Log.v(TAG, "retrieveEtymology「" + kanji + "」:\n"
+            + "COOKIES" + Arrays.toString(cookies.entrySet().toArray()).replaceAll("[]\\[,] ?", "\n")
+            + "\nDOC\n" + doc.outputSettings(doc.outputSettings().prettyPrint(true)).html());
         Elements es = doc.select(
             "p:matches((?i)(decomposition|meaning|english).+(?<!none|not applicable.)$)");
         es.select("b").remove();
