@@ -13,6 +13,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         app:titleTextColor="@android:color/white"
+        app:titleTextAppearance="@style/ToolbarTitle"
         app:subtitleTextColor="@android:color/white"
         android:elevation="4dp" /> <!-- TODO split into different layout to support API 19 -->
 
