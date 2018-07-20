@@ -77,19 +77,13 @@ public class KanjiActivity extends AppCompatActivity {
             @Override
             public void onPageScrollStateChanged(int state) { }
         });
+        resetPager();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        updateToolbarTitle();
 
         // TODO request ext storage permissions
-    }
-
-    @Override
-    protected void onStart() {
-        Log.d(TAG, "onStart()");
-        super.onStart();
-        resetPager();
-        updateToolbarTitle();
     }
 
     private void resetPager() {
