@@ -28,7 +28,8 @@ public class Cache {
     }
 
     public static void removeUpdateListener(UpdateListener listener) {
-        listeners.remove(listener);
+        if (listener != null)
+            listeners.remove(listener);
     }
 
     private static void onUpdate(Character kanji, Data data) {

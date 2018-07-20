@@ -90,9 +90,8 @@ public class KanjiActivity extends AppCompatActivity {
         if (mViewPager == null)
             return;
 
-        KanjiPagerAdapter pagerAdapter = new KanjiPagerAdapter(getSupportFragmentManager());
-        if (pagerAdapterCacheListener != null)
-            Cache.removeUpdateListener(pagerAdapterCacheListener);
+        final KanjiPagerAdapter pagerAdapter = new KanjiPagerAdapter(getSupportFragmentManager());
+        Cache.removeUpdateListener(pagerAdapterCacheListener);
         pagerAdapterCacheListener = (kanji, data) -> {
             if (data.isEmpty()) pagerAdapter.notifyDataSetChanged();
         };
@@ -250,6 +249,7 @@ public class KanjiActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy()");
+        Cache.removeUpdateListener(pagerAdapterCacheListener);
         App.closeDatabase();
         super.onDestroy();
     }
