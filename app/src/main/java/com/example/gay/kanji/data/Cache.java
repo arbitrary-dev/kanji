@@ -18,6 +18,7 @@ public class Cache {
 
     static void put(Character kanji, Data data) {
         instance.put(kanji, data);
+        log("put", kanji, data);
         onUpdate(kanji, data);
     }
 
@@ -33,13 +34,18 @@ public class Cache {
     }
 
     private static void onUpdate(Character kanji, Data data) {
-        Log.d(TAG, "onUpdate(" + kanji + ", " + (data.isEmpty() ? "EMPTY" : data) + ")");
         for (UpdateListener l : listeners)
             l.onCacheUpdated(kanji, data);
     }
 
     public static Data get(Character kanji) {
-        return instance.get(kanji);
+        Data data = instance.get(kanji);
+        log("get", kanji, data);
+        return data;
+    }
+
+    private static void log(String method, Character kanji, Data data) {
+        Log.v(TAG, method + "(" + kanji + ") " + data);
     }
 
     public interface UpdateListener {

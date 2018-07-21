@@ -15,4 +15,9 @@ public class Data {
     public boolean isEmpty() {
         return NO_DATA.equals(info) && NO_DATA.equals(gif);
     }
+
+    @Override
+    public String toString() {
+        return isEmpty() ? "EMPTY" : getClass().getSimpleName() + "@" + Integer.toHexString(hashCode());
+    }
 }
