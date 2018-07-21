@@ -49,7 +49,6 @@ public class DataRetriever {
         return Singleton.INSTANCE;
     }
 
-    // FIXME don't retrieve same kanji twice
     // TODO smart loading
     // There'd be a loader icon first 1-2 seconds waiting for
     // everything to be loaded, if etymology misses the time and still
