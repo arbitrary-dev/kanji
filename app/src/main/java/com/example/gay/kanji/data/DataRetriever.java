@@ -84,7 +84,7 @@ public class DataRetriever {
                     return;
 
                 if (NO_DATA.equals(info) && NO_DATA.equals(gif)) {
-                    wv.setInfo("No data"); // TODO skip & dim
+                    wv.setInfo("No data");
                     return;
                 }
 
