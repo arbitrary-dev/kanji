@@ -1,5 +1,6 @@
 package android.util;
 
+@SuppressWarnings("ALL")
 public class Log {
 
     public static int d(String tag, String msg) {
