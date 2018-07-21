@@ -34,7 +34,6 @@ public class DataTask {
     DataTask(DataRetriever dataRetriever) {
         this.dataRetriever = dataRetriever;
 
-        runnable2thread.put(new LoadingRunnable(this), null);
         runnable2thread.put(new KanjiRunnable(this), null);
         runnable2thread.put(new EtymologyRunnable(this), null);
         runnable2thread.put(new JdicRunnable(this), null);
@@ -47,13 +46,13 @@ public class DataTask {
 
         this.wvRef = new WeakReference<>(wv);
         this.kanji = kanji;
+        updateUi();
 
         Data cached = Cache.get(kanji);
         if (cached == null) {
             for (TaskRunnable runnable : getRunnables())
                 dataRetriever.getThreadPool().execute(runnable);
         } else {
-            dataRetriever.update(this);
             stopped = true;
         }
     }

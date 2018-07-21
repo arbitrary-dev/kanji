@@ -61,8 +61,10 @@ public class KanjiWebView extends WebView {
     private void update() {
         if (!loaded)
             return;
-        loadUrl("javascript:setInfo(\"" + info + "\")");
-        loadUrl("javascript:setGif(\"" + gif + "\")");
+        if (info != null)
+            loadUrl("javascript:setInfo(\"" + info + "\")");
+        if (gif != null)
+            loadUrl("javascript:setGif(\"" + gif + "\")");
         setVisibility(VISIBLE);
     }
 }
