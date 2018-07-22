@@ -66,7 +66,7 @@ class EtymologyRunnable extends TaskRunnable {
 
     @Override
     protected void runInner() throws InterruptedException {
-        Character kanji = task.getKanji();
+        Character kanji = task.data.kanji;
 
         // TODO refactor cache quering to a separate TaskRunnable
         Db db = Db.getFor(getLoggingTag(), getLoggingData(), kanji);
@@ -99,9 +99,9 @@ class EtymologyRunnable extends TaskRunnable {
             }
         }
 
+        // Thread.sleep(4000);
         checkIfInterrupted();
 
-        task.setEtymology(etymology);
-        task.updateUi();
+        task.data.setEtymology(etymology);
     }
 }

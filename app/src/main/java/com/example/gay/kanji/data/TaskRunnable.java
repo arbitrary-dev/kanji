@@ -28,12 +28,13 @@ abstract class TaskRunnable implements Runnable {
             Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND);
 
             runInner();
+            task.updateUi();
         } catch (InterruptedException e) {
             Log.d(TAG, "interrupted " + this);
             e.printStackTrace();
         } finally {
             Thread.interrupted();
-            task.setThread(this, null);
+            task.removeThread(this);
         }
     }
 
@@ -84,7 +85,7 @@ abstract class TaskRunnable implements Runnable {
         }
 
         sb.append(" for 「");
-        sb.append(task.getKanji());
+        sb.append(task.data.kanji);
         sb.append('」');
 
         for (String suffix : suffixes) {

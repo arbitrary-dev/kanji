@@ -1,102 +1,60 @@
 package com.example.gay.kanji.data;
 
-import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.example.gay.kanji.KanjiWebView;
-
-import java.lang.ref.WeakReference;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class DataTask {
 
     private static final String TAG = "TASK";
 
-    private WeakReference<KanjiWebView> wvRef;
-    private boolean stopped;
+    private final Map<TaskRunnable, Thread> runnable2thread = new ConcurrentHashMap<>(3);
 
-    private Character kanji;
-    // TODO Halpern NJECD Index
-    // private Integer idx; // Halpern NJECD Index
-    private String gif;
-    private String etymology;
-    private String on, kun, meaning;
+    private static final LinkedBlockingQueue<Runnable> QUEUE = new LinkedBlockingQueue<>();
+    private static final ThreadPoolExecutor THREAD_POOL =
+        new ThreadPoolExecutor(4, 4 * 64, 10, SECONDS, QUEUE);
 
-    private final DataRetriever dataRetriever;
-    private final Map<TaskRunnable, Thread> runnable2thread = new LinkedHashMap<>();
+    final Data data;
 
-    DataTask() {
-        this(DataRetriever.getInstance());
+    public DataTask(Data data) {
+        this.data = data;
     }
 
-    DataTask(DataRetriever dataRetriever) {
-        this.dataRetriever = dataRetriever;
+    public void resume(Runnable uiCallback) {
+        if (uiCallback == null)
+            throw new IllegalArgumentException("uiCallback can't be null!");
 
-        runnable2thread.put(new KanjiRunnable(this), null);
-        runnable2thread.put(new EtymologyRunnable(this), null);
-        runnable2thread.put(new JdicRunnable(this), null);
-    }
+        this.uiCallback = uiCallback;
 
-    void init(KanjiWebView wv, Character kanji) {
-        Log.d(TAG, "init: " + kanji);
+        Log.d(TAG, "resume() " + this);
 
-        stopped = false;
-
-        this.wvRef = new WeakReference<>(wv);
-        this.kanji = kanji;
         updateUi();
 
-        Data cached = Cache.get(kanji);
-        if (cached == null) {
-            for (TaskRunnable runnable : getRunnables())
-                dataRetriever.getThreadPool().execute(runnable);
-        } else {
-            stopped = true;
-        }
+        if (data.getGif() == null)
+            THREAD_POOL.execute(new KanjiRunnable(this));
+        if (data.getEtymology() == null)
+            THREAD_POOL.execute(new EtymologyRunnable(this));
+        if (data.getOn() == null || data.getKun() == null || data.getMeaning() == null)
+            THREAD_POOL.execute(new JdicRunnable(this));
     }
 
-    // TODO unit test
     public void stop() {
         Log.d(TAG, "stop() " + this);
 
-        stopped = true;
+        uiCallback = null;
 
         for (TaskRunnable runnable : getRunnables()) {
-            dataRetriever.getThreadPool().remove(runnable);
+            THREAD_POOL.remove(runnable);
             Thread et = getThread(runnable);
             if (et != null)
                 et.interrupt();
         }
-
-        if (wvRef != null) {
-            wvRef.clear();
-            wvRef = null;
-        }
-
-        kanji = null;
-        // idx = null;
-        gif = null;
-        etymology = null;
-        on = null;
-        kun = null;
-        meaning = null;
-
-        dataRetriever.tasks.add(this);
-    }
-
-    boolean isStopped() {
-        return stopped;
-    }
-
-    @Nullable
-    KanjiWebView getWebView() {
-        return wvRef == null ? null : wvRef.get();
-    }
-
-    public Character getKanji() {
-        return kanji;
     }
 
     private Set<TaskRunnable> getRunnables() {
@@ -104,71 +62,30 @@ public class DataTask {
     }
 
     private Thread getThread(TaskRunnable runnable) {
-        synchronized (dataRetriever) {
-            return runnable2thread.get(runnable);
-        }
+        return runnable2thread.get(runnable);
     }
 
     void setThread(TaskRunnable runnable, Thread thread) {
-        synchronized (dataRetriever) {
-            runnable2thread.put(runnable, thread);
-        }
+        runnable2thread.put(runnable, thread);
     }
 
-    String getEtymology() {
-        return etymology;
+    void removeThread(TaskRunnable runnable) {
+        runnable2thread.remove(runnable);
     }
 
-    void setEtymology(String etymology) {
-        this.etymology = etymology;
+    public Data getData() {
+        return data;
     }
 
-    String getGif() {
-        return gif;
-    }
-
-    void setGif(String gif) {
-        this.gif = gif;
-    }
-/*
-    Integer getIdx() {
-        return idx;
-    }
-
-    void setIdx(Integer idx) {
-        this.idx = idx;
-    }*/
-
-    @Nullable String getOn() {
-        return on;
-    }
-
-    void setOn(String on) {
-        this.on = on;
-    }
-
-    @Nullable String getKun() {
-        return kun;
-    }
-
-    void setKun(String kun) {
-        this.kun = kun;
-    }
-
-    String getMeaning() {
-        return meaning;
-    }
-
-    void setMeaning(String meaning) {
-        this.meaning = meaning;
-    }
+    private Runnable uiCallback;
 
     void updateUi() {
-        dataRetriever.update(this);
+        if (uiCallback != null)
+            uiCallback.run();
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "「" + kanji + "」" + Integer.toHexString(hashCode());
+        return getClass().getSimpleName() + "「" + data.kanji + "」" + Integer.toHexString(hashCode());
     }
 }

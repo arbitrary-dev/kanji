@@ -46,7 +46,7 @@ class JdicRunnable extends TaskRunnable {
 
     @Override
     protected void runInner() throws InterruptedException {
-        Character kanji = task.getKanji();
+        Character kanji = task.data.kanji;
 
         // TODO refactor db quering to a separate TaskRunnable
         Db db = Db.getFor(getLoggingTag(), getLoggingData(), kanji);
@@ -113,13 +113,13 @@ class JdicRunnable extends TaskRunnable {
             }
         }
 
+        // Thread.sleep(2000);
         checkIfInterrupted();
 
         // TODO idx
-        task.setOn(on);
-        task.setKun(kun);
-        task.setMeaning(meaning);
-        task.updateUi();
+        task.data.setOn(on);
+        task.data.setKun(kun);
+        task.data.setMeaning(meaning);
     }
 
     private void persist(Db db, String data, String column, String value) throws InterruptedException {

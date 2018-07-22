@@ -7,6 +7,8 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.example.gay.kanji.data.Data;
+
 public class KanjiWebView extends WebView {
 
     private static final String TAG = "WEBV";
@@ -46,25 +48,24 @@ public class KanjiWebView extends WebView {
         }
     };
 
-    public void setInfo(String info) {
-        this.info = info;
-        if (loaded)
-            loadUrl("javascript:setInfo(\"" + info + "\")");
-    }
-
-    public void setGif(String gif) {
-        this.gif = gif;
-        if (loaded)
-            loadUrl("javascript:setGif(\"" + gif + "\")");
-    }
-
     private void update() {
+        update(null);
+    }
+
+    public void update(Data data) {
+        if (data != null) {
+            info = data.getInfo();
+            gif = data.getGif();
+        }
+
         if (!loaded)
             return;
+
         if (info != null)
             loadUrl("javascript:setInfo(\"" + info + "\")");
         if (gif != null)
             loadUrl("javascript:setGif(\"" + gif + "\")");
+
         setVisibility(VISIBLE);
     }
 }

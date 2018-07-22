@@ -1,6 +1,7 @@
 package com.example.gay.kanji;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.database.sqlite.SQLiteDatabase;
@@ -28,6 +29,10 @@ public class App extends Application {
         Log.d(TAG, "onCreate()");
         instance = this;
         dbHelper = new KanjiDbHelper(getApplicationContext());
+    }
+
+    public static Context getContext() {
+        return instance.getApplicationContext();
     }
 
     public static SQLiteDatabase getReadableDatabase() {

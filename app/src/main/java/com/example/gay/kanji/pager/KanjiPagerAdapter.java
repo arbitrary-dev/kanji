@@ -22,13 +22,17 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        String q = App.getQuery();
+        StringBuilder q = new StringBuilder(App.getQuery());
         int L = q.length();
-        for (Character c : q.toCharArray()) {
+        for (int i = 0; i < q.length(); ++i) {
+            Character c = q.charAt(i);
             Data data = Cache.get(c);
-            if (data != null && data.isEmpty())
+            if (data.isEmpty()) {
+                q.setCharAt(i, '_');
                 --L;
+            }
         }
+        Log.d(TAG, "getCount: " + L + " " + q);
         return L == 0 ? 1 : L;
     }
 
@@ -49,7 +53,7 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
         for (int i = 0; i < q.length(); ++i) {
             Character c = q.charAt(i);
             Data data = Cache.get(c);
-            if (data == null || !data.isEmpty()) {
+            if (!data.isEmpty()) {
                 if (kanji.equals(c)) newPos = pos;
                 ++pos;
             }
@@ -94,7 +98,7 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
         int i = 0;
         for (Character c : q.toCharArray()) {
             Data data = Cache.get(c);
-            if (data != null && data.isEmpty()) {
+            if (data.isEmpty()) {
                 Log.d(TAG, "...skipping 「" + c + "」");
             } else {
                 if (i == position) {

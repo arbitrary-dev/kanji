@@ -61,10 +61,23 @@ public class KanjiPagerAdapterTest {
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
             LruCache<Character, Data> c = (LruCache<Character, Data>) f.get(null);
-            c.put(ch, new Data(NO_DATA, NO_DATA));
+            Data data = new Data(ch);
+            setNoDataFor(data, "gif");
+            setNoDataFor(data, "etymology");
+            setNoDataFor(data, "on");
+            setNoDataFor(data, "kun");
+            setNoDataFor(data, "meaning");
+            c.put(ch, data);
             f.setAccessible(false);
         } catch (IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
+    }
+
+    private void setNoDataFor(Data d, String field) throws NoSuchFieldException, IllegalAccessException {
+        Field f = Data.class.getDeclaredField(field);
+        f.setAccessible(true);
+        f.set(d, NO_DATA);
+        f.setAccessible(false);
     }
 }

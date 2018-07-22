@@ -38,7 +38,7 @@ public class KanjiActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
 
-    private Cache.UpdateListener pagerAdapterCacheListener;
+    private Cache.UpdateListener toolbarCacheListener, pagerAdapterCacheListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,10 +57,13 @@ public class KanjiActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG, "setContentView() end");
 
-        App.setQuery(getIntent().getStringExtra(EXTRA_TEXT));
+        App.setQuery(getIntent().getStringExtra(EXTRA_TEXT)); // "日に本ほん語ご"
 
-        Cache.addUpdateListener((kanji, data) -> {
-            if (data.isEmpty()) updateToolbarTitle();
+        Cache.addUpdateListener(toolbarCacheListener = (kanji, data) -> {
+            if (data.isEmpty()) {
+                Log.d(TAG, "updateToolbarTitle() " + data);
+                updateToolbarTitle();
+            }
         });
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -93,7 +96,10 @@ public class KanjiActivity extends AppCompatActivity {
         final KanjiPagerAdapter pagerAdapter = new KanjiPagerAdapter(getSupportFragmentManager());
         Cache.removeUpdateListener(pagerAdapterCacheListener);
         pagerAdapterCacheListener = (kanji, data) -> {
-            if (data.isEmpty()) pagerAdapter.notifyDataSetChanged();
+            if (data.isEmpty()) {
+                Log.d(TAG, "pagerAdapter.notifyDataSetChanged() " + data);
+                pagerAdapter.notifyDataSetChanged();
+            }
         };
         Cache.addUpdateListener(pagerAdapterCacheListener);
         mViewPager.setAdapter(pagerAdapter);
@@ -249,6 +255,7 @@ public class KanjiActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy()");
+        Cache.removeUpdateListener(toolbarCacheListener);
         Cache.removeUpdateListener(pagerAdapterCacheListener);
         App.closeDatabase();
         super.onDestroy();

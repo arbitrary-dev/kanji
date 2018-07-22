@@ -13,14 +13,13 @@ import com.example.gay.kanji.KanjiWebView;
 import com.example.gay.kanji.R;
 import com.example.gay.kanji.data.Cache;
 import com.example.gay.kanji.data.Data;
-import com.example.gay.kanji.data.DataRetriever;
 import com.example.gay.kanji.data.DataTask;
 
 public class KanjiFragment extends Fragment {
 
     private static final String TAG = "FRAG";
 
-    private DataTask mTask;
+    private DataTask task;
 
     private static final String KANJI_POS = "kanji_pos";
     private static final String KANJI_KEY = "kanji_key";
@@ -53,11 +52,16 @@ public class KanjiFragment extends Fragment {
 
         Character kanji = getKanji();
         Data data = Cache.get(kanji);
-        if (data == null) {
-            mTask = DataRetriever.getInstance().retrieve(webView, kanji);
+        if (!data.isFull()) {
+            // TODO smart loading
+            // There should be a loader icon first 1-2 seconds waiting for
+            // everything to be loaded, if etymology misses the time and still
+            // loading, then everything is revealed, but etymology will have a
+            // "…" placeholder.
+            task = new DataTask(data);
+            task.resume(new UiCallback(task, webView));
         } else {
-            webView.setInfo(data.info);
-            webView.setGif(data.gif);
+            webView.update(data);
         }
 
         return v;
@@ -72,20 +76,19 @@ public class KanjiFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop" + this);
-        if (mTask != null) {
-            mTask.stop(); // TODO resume?
-            mTask = null;
-        }
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy" + this);
+        if (task != null)
+            task.stop();
+        super.onDestroy();
     }
 
     @Override
     public String toString() {
         int p = getPosition();
         Character k = getKanji();
-        return "(" + (p != -1 && k != null ? p + ", " + k : "") + ")" + hashCode();
+        return "(" + (p != -1 && k != null ? p + ", " + k : "") + ") "
+            + Integer.toHexString(hashCode());
     }
 
     int getPosition() {
