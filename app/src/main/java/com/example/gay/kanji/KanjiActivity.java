@@ -95,13 +95,12 @@ public class KanjiActivity extends AppCompatActivity {
 
         final KanjiPagerAdapter pagerAdapter = new KanjiPagerAdapter(getSupportFragmentManager());
         Cache.removeUpdateListener(pagerAdapterCacheListener);
-        pagerAdapterCacheListener = (kanji, data) -> {
+        Cache.addUpdateListener(pagerAdapterCacheListener = (kanji, data) -> {
             if (data.isEmpty()) {
                 Log.d(TAG, "pagerAdapter.notifyDataSetChanged() " + data);
                 pagerAdapter.notifyDataSetChanged();
             }
-        };
-        Cache.addUpdateListener(pagerAdapterCacheListener);
+        });
         mViewPager.setAdapter(pagerAdapter);
     }
 
