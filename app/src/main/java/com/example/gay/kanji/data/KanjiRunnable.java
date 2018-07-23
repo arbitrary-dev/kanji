@@ -58,12 +58,12 @@ public class KanjiRunnable extends TaskRunnable {
             if (!path.exists() && path.mkdirs())
                 Log.d(TAG, "External storage was created at " + path.getAbsolutePath());
 
-            gif = prepareKanji(path, task.data.kanji);
+            gif = prepareKanji(path, task.kanji);
         }
 
         checkIfInterrupted();
 
-        task.data.setGif(gif);
+        task.gif = gif;
     }
 
     private static boolean isExtStorageAvailable() {

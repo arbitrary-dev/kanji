@@ -34,7 +34,7 @@ class UiCallback implements Runnable {
                     return;
 
                 Data data = task.getData();
-                Cache.put(data.getKanji(), data);
+                Cache.put(data.kanji, data);
 
                 if (!webView.isAttachedToWindow())
                     return;

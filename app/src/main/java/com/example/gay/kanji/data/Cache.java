@@ -29,13 +29,12 @@ public class Cache {
         if (Looper.getMainLooper().getThread() != Thread.currentThread())
             throw new IllegalStateException("Should be called in UI thread!");
         Log.d(TAG, "put: " + data);
-        Data d = data.copy();
-        instance.put(kanji, d);
-        onUpdate(kanji, d);
+        instance.put(kanji, data);
+        onUpdate(kanji, data);
     }
 
     public static Data get(Character kanji) {
-        return instance.get(kanji).copy();
+        return instance.get(kanji);
     }
 
     private static void onUpdate(Character kanji, Data data) {

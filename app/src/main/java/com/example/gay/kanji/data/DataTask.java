@@ -20,10 +20,18 @@ public class DataTask {
     private static final ThreadPoolExecutor THREAD_POOL =
         new ThreadPoolExecutor(4, 4 * 64, 10, SECONDS, QUEUE);
 
-    final Data data;
+    final Character kanji;
+    volatile String gif;
+    volatile String etymology;
+    volatile String on, kun, meaning;
 
     public DataTask(Data data) {
-        this.data = data;
+        kanji = data.kanji;
+        gif = data.getGif();
+        etymology = data.getEtymology();
+        on = data.getOn();
+        kun = data.getKun();
+        meaning = data.getMeaning();
     }
 
     public void resume(Runnable uiCallback) {
@@ -36,11 +44,11 @@ public class DataTask {
 
         updateUi();
 
-        if (data.getGif() == null)
+        if (gif == null)
             THREAD_POOL.execute(new KanjiRunnable(this));
-        if (data.getEtymology() == null)
+        if (etymology == null)
             THREAD_POOL.execute(new EtymologyRunnable(this));
-        if (data.getOn() == null || data.getKun() == null || data.getMeaning() == null)
+        if (on == null || kun == null || meaning == null)
             THREAD_POOL.execute(new JdicRunnable(this));
     }
 
@@ -74,7 +82,13 @@ public class DataTask {
     }
 
     public Data getData() {
-        return data;
+        return Data.builder(kanji)
+            .setGif(gif)
+            .setEtymology(etymology)
+            .setOn(on)
+            .setKun(kun)
+            .setMeaning(meaning)
+            .build();
     }
 
     private Runnable uiCallback;
@@ -86,6 +100,6 @@ public class DataTask {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "「" + data.kanji + "」" + Integer.toHexString(hashCode());
+        return getClass().getSimpleName() + "「" + kanji + "」" + Integer.toHexString(hashCode());
     }
 }

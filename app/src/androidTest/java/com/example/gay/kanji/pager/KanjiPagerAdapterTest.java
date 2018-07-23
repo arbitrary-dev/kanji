@@ -21,6 +21,7 @@ import org.mockito.junit.MockitoRule;
 import java.lang.reflect.Field;
 
 import static com.example.gay.kanji.data.Data.NO_DATA;
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -61,23 +62,18 @@ public class KanjiPagerAdapterTest {
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
             LruCache<Character, Data> c = (LruCache<Character, Data>) f.get(null);
-            Data data = new Data(ch);
-            setNoDataFor(data, "gif");
-            setNoDataFor(data, "etymology");
-            setNoDataFor(data, "on");
-            setNoDataFor(data, "kun");
-            setNoDataFor(data, "meaning");
+            Data data = Data.builder(ch)
+                .setGif(NO_DATA)
+                .setEtymology(NO_DATA)
+                .setOn(NO_DATA)
+                .setKun(NO_DATA)
+                .setMeaning(NO_DATA)
+                .build();
+            assertTrue(data.isEmpty());
             c.put(ch, data);
             f.setAccessible(false);
         } catch (IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
-    }
-
-    private void setNoDataFor(Data d, String field) throws NoSuchFieldException, IllegalAccessException {
-        Field f = Data.class.getDeclaredField(field);
-        f.setAccessible(true);
-        f.set(d, NO_DATA);
-        f.setAccessible(false);
     }
 }

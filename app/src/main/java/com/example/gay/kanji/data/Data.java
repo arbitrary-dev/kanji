@@ -11,34 +11,73 @@ import static com.example.gay.kanji.App.JAP_CHAR_RANGE;
 public class Data {
 
     public static final String NO_DATA = "";
-    private static final String LOADING = "…";
+    static final String LOADING = "…";
 
-    final Character kanji;
-    private volatile String info;
+    public final Character kanji;
 
     // TODO Halpern NJECD Index
-    private volatile String gif;
-    private volatile String etymology;
-    private volatile String on, kun, meaning;
+    private String gif;
+    private String info;
+    private String etymology;
+    private String on, kun, meaning;
+
+    private boolean full, empty;
+
+    public static class Builder {
+
+        private final Data data;
+
+        private Builder(Character kanji) {
+            data = new Data(kanji);
+        }
+
+        public Builder setGif(String gif) {
+            data.gif = gif;
+            return this;
+        }
+
+        public Builder setEtymology(String etymology) {
+            data.etymology = etymology;
+            return this;
+        }
+
+        public Builder setOn(String on) {
+            data.on = on;
+            return this;
+        }
+
+        public Builder setKun(String kun) {
+            data.kun = kun;
+            return this;
+        }
+
+        public Builder setMeaning(String meaning) {
+            data.meaning = meaning;
+            return this;
+        }
+
+        public Data build() {
+            data.formInfo();
+            data.empty = NO_DATA.equals(data.info) && NO_DATA.equals(data.gif);
+            data.full = !(data.info.contains(LOADING) || data.gif == null);
+            return data;
+        }
+    }
+
+    public static Builder builder(Character kanji) {
+        return new Builder(kanji);
+    }
 
     public Data(Character kanji) {
         this.kanji = kanji;
     }
 
     public boolean isFull() {
-        return !(getInfo().contains(LOADING) || gif == null);
+        return full;
     }
 
     public boolean isEmpty() {
-        return NO_DATA.equals(getInfo()) && NO_DATA.equals(gif);
-    }
-
-    public Character getKanji() {
-        return kanji;
-    }
-
-    public void setGif(String gif) {
-        this.gif = gif;
+        return empty;
     }
 
     public String getGif() {
@@ -49,53 +88,26 @@ public class Data {
         return etymology;
     }
 
-    public synchronized void setEtymology(String etymology) {
-        this.etymology = etymology;
-        info = null;
-    }
-
     public String getOn() {
         return on;
-    }
-
-    public synchronized void setOn(String on) {
-        this.on = on;
-        info = null;
     }
 
     public String getKun() {
         return kun;
     }
 
-    public synchronized void setKun(String kun) {
-        this.kun = kun;
-        info = null;
-    }
-
     public String getMeaning() {
         return meaning;
     }
 
-    public synchronized void setMeaning(String meaning) {
-        this.meaning = meaning;
-        info = null;
+    public String getInfo() {
+        return info;
     }
 
-
-    public String getInfo() {
-        String etymology;
-        String on;
-        String kun;
-        String meaning;
-
-        synchronized (this) {
-            if (info != null)
-                return info;
-
-            etymology = this.etymology;
-            on = this.on;
-            kun = this.kun;
-            meaning = this.meaning;
+    void formInfo() {
+        if (etymology == null && on == null && kun == null && meaning == null) {
+            info = LOADING;
+            return;
         }
 
         List<String> data = new LinkedList<>();
@@ -124,10 +136,7 @@ public class Data {
             sb.append("</p>");
         }
 
-        synchronized (this) {
-            info = sb.toString();
-            return info;
-        }
+        info = sb.toString();
     }
 
     private void addLine(List<String> data, String line) {
@@ -185,16 +194,6 @@ public class Data {
 
     @Override
     public String toString() {
-        return (isEmpty() ? "Empty" : "") + getClass().getSimpleName() + "@" + Integer.toHexString(hashCode());
-    }
-
-    public synchronized Data copy() {
-        Data copy = new Data(kanji);
-        copy.gif = gif;
-        copy.etymology = etymology;
-        copy.on = on;
-        copy.kun = kun;
-        copy.meaning = meaning;
-        return copy;
+        return (empty ? "Empty" : "") + getClass().getSimpleName() + "@" + Integer.toHexString(hashCode());
     }
 }
