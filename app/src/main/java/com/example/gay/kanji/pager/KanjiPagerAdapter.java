@@ -22,22 +22,22 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        StringBuilder q = new StringBuilder(App.getQuery());
+        long start = System.nanoTime();
+        String q = App.getQuery();
         int L = q.length();
         for (int i = 0; i < q.length(); ++i) {
             Character c = q.charAt(i);
             Data data = Cache.get(c);
-            if (data.isEmpty()) {
-                q.setCharAt(i, '_');
+            if (data.isEmpty())
                 --L;
-            }
         }
-        Log.d(TAG, "getCount: " + L + " " + q);
+        Log.d(TAG, String.format("getCount: %d us", (System.nanoTime() - start) / 1_000));
         return L == 0 ? 1 : L;
     }
 
     @Override
     public int getItemPosition(Object object) {
+        long start = System.nanoTime();
         KanjiFragment frag = (KanjiFragment) object;
         Character kanji = frag.getKanji();
         int newPos = POSITION_NONE;
@@ -87,20 +87,19 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
             }
         }
 
+        Log.d(TAG, String.format("getItemPosition: %d us", (System.nanoTime() - start) / 1_000));
         return newPos;
     }
 
     @Override
     public Fragment getItem(int position) {
-        Log.d(TAG, "getItem: " + position);
+        long start = System.nanoTime();
         String q = App.getQuery();
         Character kanji = q.charAt(0);
         int i = 0;
         for (Character c : q.toCharArray()) {
             Data data = Cache.get(c);
-            if (data.isEmpty()) {
-                Log.d(TAG, "...skipping 「" + c + "」");
-            } else {
+            if (!data.isEmpty()) {
                 if (i == position) {
                     kanji = c;
                     break;
@@ -109,6 +108,7 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
                 }
             }
         }
+        Log.d(TAG, String.format("getItem: %d us", (System.nanoTime() - start) / 1_000));
         return KanjiFragment.newInstance(position, kanji);
     }
 
