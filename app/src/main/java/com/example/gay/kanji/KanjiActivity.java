@@ -246,27 +246,33 @@ public class KanjiActivity extends AppCompatActivity {
         spannable.setSpan(new ForegroundColorSpan(color), i, i + 1, SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(false);
+    }
+
     private static final String STATE_QUERY = "state_query";
     private static final String STATE_QUERY_POSITION = "state_query_position";
 
     @Override
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
-        Log.d(TAG, "onSaveInstanceState()");
         String q = getQuery();
         if (q != null) {
+            int i = mViewPager.getCurrentItem();
             state.putString(STATE_QUERY, q);
-            state.putInt(STATE_QUERY_POSITION, mViewPager.getCurrentItem());
+            state.putInt(STATE_QUERY_POSITION, i);
         }
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle state) {
         super.onRestoreInstanceState(state);
-        Log.d(TAG, "onRestoreInstanceState()");
         String q = state.getString(STATE_QUERY);
-        if (q != null)
-            submitQuery(q, state.getInt(STATE_QUERY_POSITION));
+        if (q != null) {
+            int i = state.getInt(STATE_QUERY_POSITION);
+            submitQuery(q, i);
+        }
     }
 
     @Override
