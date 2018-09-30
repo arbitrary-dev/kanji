@@ -2,6 +2,7 @@ package com.example.gay.kanji.data;
 
 import android.util.Log;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,6 +15,7 @@ public class DataTask {
 
     private static final String TAG = "TASK";
 
+    private Set<TaskRunnable> executedRunnables = new HashSet<>();
     private final Map<TaskRunnable, Thread> runnable2thread = new ConcurrentHashMap<>(3);
 
     private static final LinkedBlockingQueue<Runnable> QUEUE = new LinkedBlockingQueue<>();
@@ -45,11 +47,11 @@ public class DataTask {
         updateUi();
 
         if (gif == null)
-            THREAD_POOL.execute(new KanjiRunnable(this));
+            executeRunnable(new KanjiRunnable(this));
         if (etymology == null)
-            THREAD_POOL.execute(new EtymologyRunnable(this));
+            executeRunnable(new EtymologyRunnable(this));
         if (on == null || kun == null || meaning == null)
-            THREAD_POOL.execute(new JdicRunnable(this));
+            executeRunnable(new JdicRunnable(this));
     }
 
     public void stop() {
@@ -57,16 +59,18 @@ public class DataTask {
 
         uiCallback = null;
 
-        for (TaskRunnable runnable : getRunnables()) {
+        for (TaskRunnable runnable : executedRunnables) {
             THREAD_POOL.remove(runnable);
             Thread et = getThread(runnable);
             if (et != null)
                 et.interrupt();
         }
+        executedRunnables.clear();
     }
 
-    private Set<TaskRunnable> getRunnables() {
-        return runnable2thread.keySet();
+    private void executeRunnable(TaskRunnable runnable) {
+        THREAD_POOL.execute(runnable);
+        executedRunnables.add(runnable);
     }
 
     private Thread getThread(TaskRunnable runnable) {
