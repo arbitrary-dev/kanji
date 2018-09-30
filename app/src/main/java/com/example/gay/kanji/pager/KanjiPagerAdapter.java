@@ -16,7 +16,7 @@ import static com.example.gay.kanji.App.JAP_CHAR_RANGE;
 public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
 
     private static final String TAG = "PGAD";
-    private static final Character DEFAULT_KANJI = '字';
+    private static final String DEFAULT_KANJI = "字";
 
     public KanjiPagerAdapter(FragmentManager fm, String query) {
         super(fm);
@@ -32,11 +32,13 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
 
     /**
      * Cleans all non-japanese symbols from the {@code input}
+     *
+     * @return {@link #DEFAULT_KANJI} if {@code input} is null or empty after cleaning
      */
     private static String clean(String input) {
-        if (input == null) return DEFAULT_KANJI.toString();
+        if (input == null) return DEFAULT_KANJI;
         String q = input.replaceAll("[^" + JAP_CHAR_RANGE + "]", "");
-        return q.isEmpty() ? DEFAULT_KANJI.toString() : q;
+        return q.isEmpty() ? DEFAULT_KANJI : q;
     }
 
     @Override

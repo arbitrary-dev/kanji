@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
 import android.support.v4.view.ViewPager;
@@ -79,21 +80,30 @@ public class KanjiActivity extends AppCompatActivity {
             @Override
             public void onPageScrollStateChanged(int state) { }
         });
-        resetPager(getIntent().getStringExtra(EXTRA_TEXT)); // "日に本ほん語ご"
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        updateToolbarTitle();
+
+        submitQuery(getIntent().getStringExtra(EXTRA_TEXT)); // "日に本ほん語ご"
 
         // TODO request ext storage permissions
     }
 
-    private void resetPager(String query) {
+    private void submitQuery(String query) {
+        submitQuery(query, 0);
+    }
+
+    private void submitQuery(@Nullable String query, int currentItem) {
         if (mViewPager == null)
+            return;
+
+        String previous = getQuery();
+        if (previous != null && previous.equals(query))
             return;
 
         final KanjiPagerAdapter pagerAdapter =
             new KanjiPagerAdapter(getSupportFragmentManager(), query);
+
         Cache.removeUpdateListener(pagerAdapterCacheListener);
         Cache.addUpdateListener(pagerAdapterCacheListener = (kanji, data) -> {
             if (data.isEmpty()) {
@@ -101,11 +111,17 @@ public class KanjiActivity extends AppCompatActivity {
                 pagerAdapter.notifyDataSetChanged();
             }
         });
+
         mViewPager.setAdapter(pagerAdapter);
+        mViewPager.setCurrentItem(currentItem, false);
+
+        updateToolbarTitle();
     }
 
+    @Nullable
     private String getQuery() {
-        return ((KanjiPagerAdapter) mViewPager.getAdapter()).getQuery();
+        KanjiPagerAdapter adapter = (KanjiPagerAdapter) mViewPager.getAdapter();
+        return adapter == null ? null : adapter.getQuery();
     }
 
     @Override
@@ -138,8 +154,7 @@ public class KanjiActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                resetPager(query);
-                updateToolbarTitle();
+                submitQuery(query);
                 searchItem.collapseActionView();
                 return true;
             }
@@ -198,6 +213,9 @@ public class KanjiActivity extends AppCompatActivity {
     private void updateToolbarTitle() {
         String q = getQuery();
 
+        if (q == null)
+            return;
+
         TypedValue typedValue = new TypedValue();
         TypedArray a = obtainStyledAttributes(
             typedValue.data, new int[]{R.attr.colorAccent, android.R.attr.textColorHint});
@@ -247,11 +265,8 @@ public class KanjiActivity extends AppCompatActivity {
         super.onRestoreInstanceState(state);
         Log.d(TAG, "onRestoreInstanceState()");
         String q = state.getString(STATE_QUERY);
-        if (q != null) {
-            resetPager(q);
-            mViewPager.setCurrentItem(state.getInt(STATE_QUERY_POSITION), false);
-            updateToolbarTitle();
-        }
+        if (q != null)
+            submitQuery(q, state.getInt(STATE_QUERY_POSITION));
     }
 
     @Override
