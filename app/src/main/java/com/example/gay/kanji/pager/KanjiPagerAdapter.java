@@ -51,7 +51,6 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
             if (data.isEmpty())
                 --L;
         }
-        Log.d(TAG, String.format("getCount: %d us", (System.nanoTime() - start) / 1_000));
         return L == 0 ? 1 : L;
     }
 
@@ -106,7 +105,6 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
             }
         }
 
-        Log.d(TAG, String.format("getItemPosition: %d us", (System.nanoTime() - start) / 1_000));
         return newPos;
     }
 
@@ -126,7 +124,6 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
                 }
             }
         }
-        Log.d(TAG, String.format("getItem: %d us", (System.nanoTime() - start) / 1_000));
         return KanjiFragment.newInstance(position, kanji);
     }
 
