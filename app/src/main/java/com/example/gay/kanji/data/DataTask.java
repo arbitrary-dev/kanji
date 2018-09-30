@@ -15,7 +15,7 @@ public class DataTask {
 
     private static final String TAG = "TASK";
 
-    private Set<TaskRunnable> executedRunnables = new HashSet<>();
+    private final Set<TaskRunnable> executedRunnables = new HashSet<>();
     private final Map<TaskRunnable, Thread> runnable2thread = new ConcurrentHashMap<>(3);
 
     private static final LinkedBlockingQueue<Runnable> QUEUE = new LinkedBlockingQueue<>();

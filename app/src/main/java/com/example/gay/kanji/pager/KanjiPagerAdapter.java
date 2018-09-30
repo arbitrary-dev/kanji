@@ -24,7 +24,7 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
         Log.d(TAG, this.query);
     }
 
-    private String query;
+    private final String query;
 
     public String getQuery() {
         return query;
@@ -43,7 +43,6 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        long start = System.nanoTime();
         int L = query.length();
         for (int i = 0; i < query.length(); ++i) {
             Character c = query.charAt(i);
@@ -56,7 +55,6 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getItemPosition(Object object) {
-        long start = System.nanoTime();
         KanjiFragment frag = (KanjiFragment) object;
         Character kanji = frag.getKanji();
         int newPos = POSITION_NONE;
@@ -110,7 +108,6 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        long start = System.nanoTime();
         Character kanji = query.charAt(0);
         int i = 0;
         for (Character c : query.toCharArray()) {
