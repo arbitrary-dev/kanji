@@ -19,6 +19,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.example.gay.kanji.data.Cache;
@@ -113,10 +114,15 @@ public class KanjiActivity extends AppCompatActivity {
         final MenuItem searchItem = menu.findItem(R.id.search);
         final SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
+        final EditText queryTextView = (EditText) searchView.findViewById(
+            android.support.v7.appcompat.R.id.search_src_text);
         MenuItemCompat.setOnActionExpandListener(searchItem, new OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                searchView.post(() -> searchView.setQuery(App.getQuery(), false));
+                searchView.post(() -> {
+                    searchView.setQuery(App.getQuery(), false);
+                    queryTextView.selectAll();
+                });
                 return true;
             }
 
