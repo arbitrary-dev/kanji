@@ -58,8 +58,6 @@ public class KanjiActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG, "setContentView() end");
 
-        App.setQuery(getIntent().getStringExtra(EXTRA_TEXT)); // "日に本ほん語ご"
-
         Cache.addUpdateListener(toolbarCacheListener = (kanji, data) -> {
             if (data.isEmpty()) {
                 Log.d(TAG, "updateToolbarTitle() " + data);
@@ -81,7 +79,7 @@ public class KanjiActivity extends AppCompatActivity {
             @Override
             public void onPageScrollStateChanged(int state) { }
         });
-        resetPager();
+        resetPager(getIntent().getStringExtra(EXTRA_TEXT)); // "日に本ほん語ご"
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -90,11 +88,12 @@ public class KanjiActivity extends AppCompatActivity {
         // TODO request ext storage permissions
     }
 
-    private void resetPager() {
+    private void resetPager(String query) {
         if (mViewPager == null)
             return;
 
-        final KanjiPagerAdapter pagerAdapter = new KanjiPagerAdapter(getSupportFragmentManager());
+        final KanjiPagerAdapter pagerAdapter =
+            new KanjiPagerAdapter(getSupportFragmentManager(), query);
         Cache.removeUpdateListener(pagerAdapterCacheListener);
         Cache.addUpdateListener(pagerAdapterCacheListener = (kanji, data) -> {
             if (data.isEmpty()) {
@@ -103,6 +102,10 @@ public class KanjiActivity extends AppCompatActivity {
             }
         });
         mViewPager.setAdapter(pagerAdapter);
+    }
+
+    private String getQuery() {
+        return ((KanjiPagerAdapter) mViewPager.getAdapter()).getQuery();
     }
 
     @Override
@@ -120,7 +123,7 @@ public class KanjiActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 searchView.post(() -> {
-                    searchView.setQuery(App.getQuery(), false);
+                    searchView.setQuery(getQuery(), false);
                     queryTextView.selectAll();
                 });
                 return true;
@@ -135,8 +138,7 @@ public class KanjiActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                App.setQuery(query);
-                resetPager();
+                resetPager(query);
                 updateToolbarTitle();
                 searchItem.collapseActionView();
                 return true;
@@ -183,8 +185,7 @@ public class KanjiActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.night_day_mode:
-                // TODO preserve view state on night mode and layout switch
-                // View state is info expansion and gif animation.
+                // TODO preserve info expansion and gif animation on night mode and layout switch
                 App.toggleNightMode();
                 recreate();
                 return true;
@@ -195,10 +196,7 @@ public class KanjiActivity extends AppCompatActivity {
     }
 
     private void updateToolbarTitle() {
-        String q = App.getQuery();
-
-        if (q == null)
-            return;
+        String q = getQuery();
 
         TypedValue typedValue = new TypedValue();
         TypedArray a = obtainStyledAttributes(
@@ -237,7 +235,7 @@ public class KanjiActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
         Log.d(TAG, "onSaveInstanceState()");
-        String q = App.getQuery();
+        String q = getQuery();
         if (q != null) {
             state.putString(STATE_QUERY, q);
             state.putInt(STATE_QUERY_POSITION, mViewPager.getCurrentItem());
@@ -250,8 +248,7 @@ public class KanjiActivity extends AppCompatActivity {
         Log.d(TAG, "onRestoreInstanceState()");
         String q = state.getString(STATE_QUERY);
         if (q != null) {
-            App.setQuery(q);
-            resetPager();
+            resetPager(q);
             mViewPager.setCurrentItem(state.getInt(STATE_QUERY_POSITION), false);
             updateToolbarTitle();
         }

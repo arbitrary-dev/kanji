@@ -5,28 +5,46 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 
-import com.example.gay.kanji.App;
 import com.example.gay.kanji.data.Cache;
 import com.example.gay.kanji.data.Data;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import static com.example.gay.kanji.App.JAP_CHAR_RANGE;
+
 public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
 
     private static final String TAG = "PGAD";
+    private static final Character DEFAULT_KANJI = '字';
 
-    public KanjiPagerAdapter(FragmentManager fm) {
+    public KanjiPagerAdapter(FragmentManager fm, String query) {
         super(fm);
+        this.query = clean(query);
+        Log.d(TAG, this.query);
+    }
+
+    private String query;
+
+    public String getQuery() {
+        return query;
+    }
+
+    /**
+     * Cleans all non-japanese symbols from the {@code input}
+     */
+    private static String clean(String input) {
+        if (input == null) return DEFAULT_KANJI.toString();
+        String q = input.replaceAll("[^" + JAP_CHAR_RANGE + "]", "");
+        return q.isEmpty() ? DEFAULT_KANJI.toString() : q;
     }
 
     @Override
     public int getCount() {
         long start = System.nanoTime();
-        String q = App.getQuery();
-        int L = q.length();
-        for (int i = 0; i < q.length(); ++i) {
-            Character c = q.charAt(i);
+        int L = query.length();
+        for (int i = 0; i < query.length(); ++i) {
+            Character c = query.charAt(i);
             Data data = Cache.get(c);
             if (data.isEmpty())
                 --L;
@@ -49,9 +67,8 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
 
         int pos = 0;
         int oldPos = frag.getPosition();
-        String q = App.getQuery();
-        for (int i = 0; i < q.length(); ++i) {
-            Character c = q.charAt(i);
+        for (int i = 0; i < query.length(); ++i) {
+            Character c = query.charAt(i);
             Data data = Cache.get(c);
             if (!data.isEmpty()) {
                 if (kanji.equals(c)) newPos = pos;
@@ -94,10 +111,9 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         long start = System.nanoTime();
-        String q = App.getQuery();
-        Character kanji = q.charAt(0);
+        Character kanji = query.charAt(0);
         int i = 0;
-        for (Character c : q.toCharArray()) {
+        for (Character c : query.toCharArray()) {
             Data data = Cache.get(c);
             if (!data.isEmpty()) {
                 if (i == position) {

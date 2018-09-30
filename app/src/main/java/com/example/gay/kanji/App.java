@@ -83,31 +83,4 @@ public class App extends Application {
         settings.edit().putBoolean(PREF_NIGHT_MODE, result).apply();
         Log.d(TAG, "nightMode toggled to " + result);
     }
-
-    private static final Character DEFAULT_KANJI = '字';
-    private static String query;
-
-    // TODO javadoc
-    /** Cleans all non-japanese symbols from the {@code input} */
-    private static String clean(String input) {
-        if (input == null) return null;
-        String q = input.replaceAll("[^" + JAP_CHAR_RANGE + "]", "");
-        return q.isEmpty() ? null : q;
-    }
-
-    /** @return {@link #query} */
-    public static String getQuery() {
-        return query == null ? DEFAULT_KANJI.toString() : query;
-    }
-
-    /**
-     * Sets app {@code query} string and resets queryPosition to 0 within this string
-     * which points to a currently viewed kanji
-     *
-     * @param query string displayed in {@link android.support.v7.widget.SearchView SearchView}
-     */
-    public static void setQuery(String query) {
-        App.query = clean(query);
-        Log.d(TAG, "setQuery: \"" + App.query + "\"");
-    }
 }
