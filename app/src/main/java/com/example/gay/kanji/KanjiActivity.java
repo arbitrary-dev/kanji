@@ -1,5 +1,6 @@
 package com.example.gay.kanji;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -84,9 +85,18 @@ public class KanjiActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        submitQuery(getIntent().getStringExtra(EXTRA_TEXT)); // "日に本ほん語ご"
+        String query = getIntent().getStringExtra(EXTRA_TEXT);
+        submitQuery(query); // "日に本ほん語ご"
 
         // TODO request ext storage permissions
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String query = intent.getStringExtra(EXTRA_TEXT);
+        Log.d(TAG, "onNewIntent: " + query);
+        submitQuery(query);
     }
 
     private void submitQuery(String query) {

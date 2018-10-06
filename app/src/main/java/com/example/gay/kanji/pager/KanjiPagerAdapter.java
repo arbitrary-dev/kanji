@@ -21,7 +21,7 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
     public KanjiPagerAdapter(FragmentManager fm, String query) {
         super(fm);
         this.query = clean(query);
-        Log.d(TAG, this.query);
+        Log.d(TAG, "new: " + this.query);
     }
 
     private final String query;

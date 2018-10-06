@@ -19,6 +19,7 @@
         android:supportsRtl="true"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".KanjiActivity"
+                  android:launchMode="singleTask"
                   android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
