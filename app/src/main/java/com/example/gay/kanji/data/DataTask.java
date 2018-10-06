@@ -36,13 +36,13 @@ public class DataTask {
         meaning = data.getMeaning();
     }
 
-    public void resume(Runnable uiCallback) {
+    public void start(Runnable uiCallback) {
         if (uiCallback == null)
             throw new IllegalArgumentException("uiCallback can't be null!");
 
         this.uiCallback = uiCallback;
 
-        Log.d(TAG, "resume() " + this);
+        Log.d(TAG, "start: " + this);
 
         updateUi();
 
@@ -55,7 +55,7 @@ public class DataTask {
     }
 
     public void stop() {
-        Log.d(TAG, "stop() " + this);
+        Log.d(TAG, "stop: " + this);
 
         uiCallback = null;
 

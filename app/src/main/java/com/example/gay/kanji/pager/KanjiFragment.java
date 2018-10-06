@@ -59,7 +59,7 @@ public class KanjiFragment extends Fragment {
             // loading, then everything is revealed, but etymology will have a
             // "…" placeholder.
             task = new DataTask(data);
-            task.resume(new UiCallback(task, webView));
+            task.start(new UiCallback(task, webView));
         } else {
             webView.update(data);
         }
