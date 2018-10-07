@@ -3,15 +3,12 @@ package com.example.gay.kanji;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.gay.kanji.data.Data;
 
 public class KanjiWebView extends WebView {
-
-    private static final String TAG = "WEBV";
 
     private boolean loaded, current;
     private String info, gif;
@@ -33,7 +30,6 @@ public class KanjiWebView extends WebView {
 
     @SuppressLint("SetJavaScriptEnabled")
     private void init() {
-        Log.d(TAG, "init()");
         getSettings().setJavaScriptEnabled(true);
         loadUrl("file:///android_asset/index-" + (App.isNightMode() ? "night" : "day") + ".html");
         setWebViewClient(webClient);
@@ -42,7 +38,6 @@ public class KanjiWebView extends WebView {
     private final WebViewClient webClient = new WebViewClient() {
 
         public void onPageFinished(WebView view, String url) {
-            Log.d(TAG, "WebViewClient.onPageFinished()");
             loaded = true;
             update();
         }
@@ -72,7 +67,6 @@ public class KanjiWebView extends WebView {
     }
 
     public void setCurrent(boolean value) {
-        Log.d(TAG, "setCurrent: " + value);
         current = value;
         if (loaded)
             loadUrl("javascript:setCurrent(" + current + ")");

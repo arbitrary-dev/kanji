@@ -73,7 +73,6 @@ public class KanjiFragment extends Fragment {
     /** Sets this fragment as currently visible to user */
     public void setCurrent(boolean value) {
         current = value;
-        Log.d(TAG, "setCurrent: " + this);
         if (webView != null)
             webView.setCurrent(value);
     }

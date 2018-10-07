@@ -112,31 +112,24 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
         int previousItem = currentItem;
         currentItem = value;
 
-        KanjiFragment prev = getCachedFragment(previousItem);
-        if (prev != null)
-            prev.setCurrent(false);
-
-        KanjiFragment curr = getCachedFragment(currentItem);
-        if (curr != null)
-            curr.setCurrent(true);
+        setCurrent(previousItem, false);
+        setCurrent(currentItem, true);
     }
 
-    private KanjiFragment getCachedFragment(int position) {
-        KanjiFragment result;
-
+    private void setCurrent(int item, boolean value) {
         try {
             Field f = FragmentStatePagerAdapter.class.getDeclaredField("mFragments");
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
             ArrayList<Fragment> fs = (ArrayList<Fragment>) f.get(this);
-            result = fs.size() <= position ? null : (KanjiFragment) fs.get(position);
+            KanjiFragment frag = fs.size() <= item ? null : (KanjiFragment) fs.get(item);
+            if (frag != null)
+                frag.setCurrent(value);
             f.setAccessible(false);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
             throw new RuntimeException("Something have changed!");
         }
-
-        return result;
     }
 
     @Override
