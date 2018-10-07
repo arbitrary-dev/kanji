@@ -19,7 +19,9 @@ public class KanjiFragment extends Fragment {
 
     private static final String TAG = "FRAG";
 
+    private KanjiWebView webView;
     private DataTask task;
+    private boolean current;
 
     private static final String KANJI_POS = "kanji_pos";
     private static final String KANJI_KEY = "kanji_key";
@@ -27,12 +29,12 @@ public class KanjiFragment extends Fragment {
     public KanjiFragment() { } // required
 
     public static KanjiFragment newInstance(int position, Character kanji) {
-        Log.d(TAG, "newInstance(" + position + ", " + kanji + ")");
         KanjiFragment fragment = new KanjiFragment();
         Bundle args = new Bundle();
         args.putInt(KANJI_POS, position);
         args.putChar(KANJI_KEY, kanji);
         fragment.setArguments(args);
+        Log.d(TAG, "newInstance: " + fragment);
         return fragment;
     }
 
@@ -40,15 +42,16 @@ public class KanjiFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        Log.d(TAG, "onCreate" + this);
+        Log.d(TAG, "onCreate: " + this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView" + this);
+        Log.d(TAG, "onCreateView: " + this);
         View v = inflater.inflate(R.layout.fragment_kanji, container, false);
-        KanjiWebView webView = (KanjiWebView) v.findViewById(R.id.webView);
+        webView = (KanjiWebView) v.findViewById(R.id.webView);
+        webView.setCurrent(current);
 
         Character kanji = getKanji();
         Data data = Cache.get(kanji);
@@ -67,6 +70,14 @@ public class KanjiFragment extends Fragment {
         return v;
     }
 
+    /** Sets this fragment as currently visible to user */
+    public void setCurrent(boolean value) {
+        current = value;
+        Log.d(TAG, "setCurrent: " + this);
+        if (webView != null)
+            webView.setCurrent(value);
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -77,7 +88,7 @@ public class KanjiFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy" + this);
+        Log.d(TAG, "onDestroy: " + this);
         if (task != null)
             task.stop();
         super.onDestroy();
@@ -87,8 +98,8 @@ public class KanjiFragment extends Fragment {
     public String toString() {
         int p = getPosition();
         Character k = getKanji();
-        return "(" + (p != -1 && k != null ? p + ", " + k : "") + ") "
-            + Integer.toHexString(hashCode());
+        return (p != -1 && k != null ? p + " " + k : "") + " " + Integer.toHexString(hashCode()) +
+            " " + (current ? "CURRENT" : "");
     }
 
     int getPosition() {

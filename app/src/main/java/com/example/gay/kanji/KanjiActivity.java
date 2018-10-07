@@ -75,6 +75,9 @@ public class KanjiActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
+                Log.d(TAG, "onPageSelected: " + position);
+                KanjiPagerAdapter adapter = (KanjiPagerAdapter) mViewPager.getAdapter();
+                adapter.setCurrentItem(position);
                 updateToolbarTitle();
             }
 
@@ -124,6 +127,8 @@ public class KanjiActivity extends AppCompatActivity {
         if (previous != null && previous.equals(query))
             return;
 
+        Log.d(TAG, "submitQuery: " + query + " " + currentItem);
+
         final KanjiPagerAdapter pagerAdapter =
             new KanjiPagerAdapter(getSupportFragmentManager(), query);
 
@@ -135,6 +140,7 @@ public class KanjiActivity extends AppCompatActivity {
             }
         });
 
+        pagerAdapter.setCurrentItem(currentItem);
         mViewPager.setAdapter(pagerAdapter);
         mViewPager.setCurrentItem(currentItem, false);
 

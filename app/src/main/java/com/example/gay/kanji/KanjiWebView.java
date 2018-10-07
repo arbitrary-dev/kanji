@@ -13,7 +13,7 @@ public class KanjiWebView extends WebView {
 
     private static final String TAG = "WEBV";
 
-    private boolean loaded = false;
+    private boolean loaded, current;
     private String info, gif;
 
     public KanjiWebView(Context context) {
@@ -39,7 +39,7 @@ public class KanjiWebView extends WebView {
         setWebViewClient(webClient);
     }
 
-    private final WebViewClient webClient = new WebViewClient(){
+    private final WebViewClient webClient = new WebViewClient() {
 
         public void onPageFinished(WebView view, String url) {
             Log.d(TAG, "WebViewClient.onPageFinished()");
@@ -61,11 +61,20 @@ public class KanjiWebView extends WebView {
         if (!loaded)
             return;
 
+        loadUrl("javascript:setCurrent(" + current + ")");
+
         if (info != null)
             loadUrl("javascript:setInfo(\"" + info + "\")");
         if (gif != null)
             loadUrl("javascript:setGif(\"" + gif + "\")");
 
         setVisibility(VISIBLE);
+    }
+
+    public void setCurrent(boolean value) {
+        Log.d(TAG, "setCurrent: " + value);
+        current = value;
+        if (loaded)
+            loadUrl("javascript:setCurrent(" + current + ")");
     }
 }

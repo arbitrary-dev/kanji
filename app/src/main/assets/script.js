@@ -1,16 +1,22 @@
+const NULL = 'null'
 const COLLAPSED = 'collapsed'
 const OVERLAP_THRESHOLD = 10
 
 var gif = document.createElement('img')
 gif.id = 'gif'
+gif.src = NULL
+
 var info = document.createElement('div')
 info.id = 'info'
+
 var infoInner = document.createElement('div')
 infoInner.id = 'infoInner'
 info.appendChild(infoInner)
+
 var more = document.createElement('div')
 more.id = 'more'
 more.textContent = 'Show more'
+
 info.appendChild(more)
 
 gif.onclick = restartGif
@@ -33,23 +39,50 @@ if (typeof String.prototype.endsWith !== 'function') {
     }
 }
 
+// Is this page currently visible to user
+var current = false
+
+function setCurrent(v) {
+    console.log("setCurrent1: " + v)
+    if (current == v)
+        return
+    current = v
+    console.log("setCurrent2: " + current)
+    if (current)
+        restartGif()
+    else
+        gif.style.visibility = 'hidden'
+}
+
+function gifSrc() {
+    // Because `gif.src` returns current web page address instead
+    return gif.getAttribute("src")
+}
+
 function restartGif(e) {
-    if (!gif.src.endsWith('_'))
+    var src = gifSrc()
+    if (src == NULL)
+        return
+    console.log("restartGif: '" + src + "'")
+    if (!src.endsWith('_'))
         gif.src += '?'
     gif.src += '_'
+    gif.style.visibility = 'visible'
 }
 
 var prevPath
 
 function setGif(path) {
-    if (path == 'null')
-        path = ''
+    if (path == '')
+        path = NULL
     if (path == prevPath)
         return
-    console.log("setGif: " + (path == '' ? 'null' : path))
+    console.log("setGif: " + path)
     prevPath = path
     gif.src = path
-    gif.style.visibility = (path == '') ? 'hidden' : 'visible'
+
+    if (current)
+        gif.style.visibility = 'visible'
 }
 
 function setInfo(text) {

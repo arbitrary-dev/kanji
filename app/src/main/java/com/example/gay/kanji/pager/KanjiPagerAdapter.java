@@ -99,11 +99,44 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
                 f.setAccessible(false);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
-                throw new RuntimeException("Something changed!");
+                throw new RuntimeException("Something have changed!");
             }
         }
 
         return newPos;
+    }
+
+    private int currentItem;
+
+    public void setCurrentItem(int value) {
+        int previousItem = currentItem;
+        currentItem = value;
+
+        KanjiFragment prev = getCachedFragment(previousItem);
+        if (prev != null)
+            prev.setCurrent(false);
+
+        KanjiFragment curr = getCachedFragment(currentItem);
+        if (curr != null)
+            curr.setCurrent(true);
+    }
+
+    private KanjiFragment getCachedFragment(int position) {
+        KanjiFragment result;
+
+        try {
+            Field f = FragmentStatePagerAdapter.class.getDeclaredField("mFragments");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            ArrayList<Fragment> fs = (ArrayList<Fragment>) f.get(this);
+            result = fs.size() <= position ? null : (KanjiFragment) fs.get(position);
+            f.setAccessible(false);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Something have changed!");
+        }
+
+        return result;
     }
 
     @Override
@@ -121,7 +154,11 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
                 }
             }
         }
-        return KanjiFragment.newInstance(position, kanji);
+
+        KanjiFragment result = KanjiFragment.newInstance(position, kanji);
+        result.setCurrent(position == currentItem);
+
+        return result;
     }
 
     // TODO getPageTitle?
