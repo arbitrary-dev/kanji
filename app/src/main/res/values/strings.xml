@@ -5,4 +5,6 @@
     <string name="day_mode">Day mode</string>
 
     <string name="search_title">Search</string>
+
+    <string name="no_connection">No internet connection</string>
 </resources>

@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
@@ -23,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.gay.kanji.data.Cache;
 import com.example.gay.kanji.data.Data;
@@ -89,6 +92,16 @@ public class KanjiActivity extends AppCompatActivity {
         submitQuery(query); // "日に本ほん語ご"
 
         // TODO request ext storage permissions
+
+        checkConnectivity();
+    }
+
+    private void checkConnectivity() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm == null ? null : cm.getActiveNetworkInfo();
+
+        if (netInfo == null || !netInfo.isConnected())
+            Toast.makeText(this, R.string.no_connection, Toast.LENGTH_SHORT).show();
     }
 
     @Override
