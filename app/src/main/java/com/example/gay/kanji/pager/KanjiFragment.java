@@ -25,6 +25,7 @@ public class KanjiFragment extends Fragment {
 
     private static final String KANJI_POS = "kanji_pos";
     private static final String KANJI_KEY = "kanji_key";
+    private static final String CURRENT = "current";
 
     public KanjiFragment() { } // required
 
@@ -42,6 +43,8 @@ public class KanjiFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        if (savedInstanceState != null)
+            current = savedInstanceState.getBoolean(CURRENT);
         Log.d(TAG, "onCreate: " + this);
     }
 
@@ -93,19 +96,25 @@ public class KanjiFragment extends Fragment {
         super.onDestroy();
     }
 
-    @Override
-    public String toString() {
-        int p = getPosition();
-        Character k = getKanji();
-        return (p != -1 && k != null ? p + " " + k : "") + " " + Integer.toHexString(hashCode()) +
-            " " + (current ? "CURRENT" : "");
-    }
-
     int getPosition() {
         return getArguments().getInt(KANJI_POS, -1);
     }
 
     Character getKanji() {
         return getArguments().getChar(KANJI_KEY);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(CURRENT, current);
+    }
+
+    @Override
+    public String toString() {
+        int p = getPosition();
+        Character k = getKanji();
+        return (p != -1 && k != null ? p + " " + k : "") + " " + Integer.toHexString(hashCode()) +
+            " " + (current ? "CURRENT" : "");
     }
 }

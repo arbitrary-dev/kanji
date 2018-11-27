@@ -61,9 +61,9 @@ function gifSrc() {
 
 function restartGif(e) {
     var src = gifSrc()
+    console.log("restartGif: '" + src + "'")
     if (src == NULL)
         return
-    console.log("restartGif: '" + src + "'")
     if (!src.endsWith('_'))
         gif.src += '?'
     gif.src += '_'

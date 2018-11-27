@@ -112,7 +112,8 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
         int previousItem = currentItem;
         currentItem = value;
 
-        setCurrent(previousItem, false);
+        if (currentItem != previousItem)
+            setCurrent(previousItem, false);
         setCurrent(currentItem, true);
     }
 
