@@ -3,18 +3,19 @@ package com.example.gay.kanji.data;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.regex.Pattern;
 
-import static java.util.regex.Pattern.CASE_INSENSITIVE;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.core.StringContains.containsString;
+import static org.junit.Assert.assertThat;
 
 public class EtymologyRunnableIntegrationTest {
 
     @Test
     public void testRetrieveEtymology() throws IOException {
-        Pattern p = Pattern.compile(
-            "^[^ ].*language.+words.+mouth.+speaking.*[^ ]$", CASE_INSENSITIVE);
         String etym = EtymologyRunnable.retrieveEtymology('語');
-        assertTrue(p.matcher(etym).find());
+
+        assertThat(etym, containsString("language"));
+        assertThat(etym, containsString("words"));
+        assertThat(etym, containsString("saying"));
+        assertThat(etym, containsString("to-speak"));
     }
 }
