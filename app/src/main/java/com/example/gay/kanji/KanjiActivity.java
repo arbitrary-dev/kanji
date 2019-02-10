@@ -91,7 +91,7 @@ public class KanjiActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         String query = getIntent().getStringExtra(EXTRA_TEXT);
-        submitQuery(query); // "日に本ほん語ご"
+        init(query, 0); // "日に本ほん語ご"
 
         // TODO request ext storage permissions
 
@@ -111,22 +111,12 @@ public class KanjiActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         String query = intent.getStringExtra(EXTRA_TEXT);
         Log.d(TAG, "onNewIntent: " + query);
-        submitQuery(query);
+        init(query, 0);
     }
 
-    private void submitQuery(String query) {
-        submitQuery(query, 0);
-    }
-
-    private void submitQuery(@Nullable String query, int currentItem) {
+    private void init(@Nullable String query, int currentItem) {
         if (mViewPager == null)
             return;
-
-        String previous = getQuery();
-        if (previous != null && previous.equals(query))
-            return;
-
-        Log.d(TAG, "submitQuery: " + query + " " + currentItem);
 
         final KanjiPagerAdapter pagerAdapter =
             new KanjiPagerAdapter(getSupportFragmentManager(), query);
@@ -150,7 +140,8 @@ public class KanjiActivity extends AppCompatActivity {
         KanjiPagerAdapter adapter = getPagerAdapter();
         if (adapter != null)
             adapter.setCurrentItem(currentItem);
-        mViewPager.setCurrentItem(currentItem, false);    }
+        mViewPager.setCurrentItem(currentItem, false);
+    }
 
     @Nullable
     private KanjiPagerAdapter getPagerAdapter() {
@@ -193,7 +184,10 @@ public class KanjiActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                submitQuery(query);
+                String previous = getQuery();
+                if (previous != null && previous.equals(query))
+                    return true;
+                init(query, 0);
                 searchItem.collapseActionView();
                 return true;
             }
@@ -309,7 +303,7 @@ public class KanjiActivity extends AppCompatActivity {
         String q = state.getString(STATE_QUERY);
         if (q != null) {
             int i = state.getInt(STATE_QUERY_POSITION);
-            submitQuery(q, i);
+            init(q, i);
         }
     }
 
