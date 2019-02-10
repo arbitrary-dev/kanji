@@ -52,13 +52,23 @@ public class KanjiFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: " + this);
+
         View v = inflater.inflate(R.layout.fragment_kanji, container, false);
+
         webView = (KanjiWebView) v.findViewById(R.id.webView);
         webView.setCurrent(current);
 
+        loadData();
+
+        return v;
+    }
+
+    private void loadData() {
         Character kanji = getKanji();
         Data data = Cache.get(kanji);
-        if (!data.isFull()) {
+        if (data.isFull()) {
+            webView.update(data);
+        } else {
             // TODO smart loading
             // There should be a loader icon first 1-2 seconds waiting for
             // everything to be loaded, if etymology misses the time and still
@@ -66,11 +76,7 @@ public class KanjiFragment extends Fragment {
             // "…" placeholder.
             task = new DataTask(data);
             task.start(new UiCallback(task, webView));
-        } else {
-            webView.update(data);
         }
-
-        return v;
     }
 
     /** Sets this fragment as currently visible to user */
