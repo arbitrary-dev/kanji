@@ -81,8 +81,7 @@ function setGif(path) {
     prevPath = path
     gif.src = path
 
-    if (current && path != NULL)
-        gif.style.visibility = 'visible'
+    gif.style.visibility = (current && path != NULL) ? 'visible' : 'hidden'
 }
 
 function setInfo(text) {
