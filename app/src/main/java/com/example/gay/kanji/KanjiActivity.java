@@ -28,7 +28,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.gay.kanji.data.Cache;
-import com.example.gay.kanji.data.Data;
 import com.example.gay.kanji.pager.KanjiPagerAdapter;
 
 import java.lang.reflect.Field;
@@ -258,8 +257,7 @@ public class KanjiActivity extends AppCompatActivity {
         int curr = mViewPager.getCurrentItem();
         for (int i = 0; i < q.length(); ++i) {
             Character c = q.charAt(i);
-            Data data = Cache.get(c);
-            if (data != null && data.isEmpty()) {
+            if (Cache.get(c).isEmpty()) {
                 colorAt(i, title, colorDim);
             } else {
                 if (pos == curr) colorAt(i, title, colorAccent);

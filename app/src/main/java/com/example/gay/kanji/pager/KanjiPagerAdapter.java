@@ -59,9 +59,7 @@ public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
         Character kanji = frag.getKanji();
         int newPos = POSITION_NONE;
 
-        Data cached = Cache.get(kanji);
-        boolean isEmpty = cached != null && cached.isEmpty();
-        if (isEmpty)
+        if (Cache.get(kanji).isEmpty())
             return newPos;
 
         int pos = 0;
