@@ -19,7 +19,7 @@ public class Cache {
 
             @Override
             protected Data create(Character kanji) {
-                return new Data(kanji);
+                return Data.builder(kanji).build();
             }
         };
 

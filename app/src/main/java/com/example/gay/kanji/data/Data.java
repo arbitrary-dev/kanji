@@ -68,7 +68,7 @@ public class Data {
         return new Builder(kanji);
     }
 
-    public Data(Character kanji) {
+    private Data(Character kanji) {
         this.kanji = kanji;
     }
 

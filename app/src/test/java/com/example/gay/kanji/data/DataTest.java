@@ -29,7 +29,7 @@ public class DataTest {
 
     @Test
     public void formInfo_rawData() {
-        Data data = new Data(' ');
+        Data data = Data.builder(' ').build();
         data.formInfo();
         assertEquals(LOADING, data.getInfo());
     }
