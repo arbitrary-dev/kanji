@@ -57,6 +57,11 @@ public class KanjiFragment extends Fragment {
 
         webView = (KanjiWebView) v.findViewById(R.id.webView);
         webView.setCurrent(current);
+        webView.setOnLongClickListener(view -> {
+            Cache.remove(getKanji());
+            loadData();
+            return true;
+        });
 
         loadData();
 

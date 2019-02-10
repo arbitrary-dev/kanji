@@ -44,6 +44,18 @@ public class Cache {
         return instance.get(kanji);
     }
 
+    public static void remove(Character kanji) {
+        checkThread();
+        Log.d(TAG, "remove: " + kanji);
+        instance.remove(kanji);
+    }
+
+    public static void clear() {
+        checkThread();
+        Log.d(TAG, "clear");
+        instance.evictAll();
+    }
+
     private static void onUpdate(Character kanji, Data data) {
         for (UpdateListener l : listeners)
             l.onCacheUpdated(kanji, data);

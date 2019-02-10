@@ -89,6 +89,12 @@ public class KanjiActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        if (toolbar != null)
+            toolbar.setOnLongClickListener(view -> {
+                Cache.clear();
+                init(getQuery(), 0);
+                return true;
+            });
 
         String query = getIntent().getStringExtra(EXTRA_TEXT);
         init(query, 0); // "日に本ほん語ご"
