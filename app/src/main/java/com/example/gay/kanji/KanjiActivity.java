@@ -140,16 +140,26 @@ public class KanjiActivity extends AppCompatActivity {
             }
         });
 
-        pagerAdapter.setCurrentItem(currentItem);
         mViewPager.setAdapter(pagerAdapter);
-        mViewPager.setCurrentItem(currentItem, false);
+        setCurrentItem(currentItem);
 
         updateToolbarTitle();
     }
 
+    private void setCurrentItem(int currentItem) {
+        KanjiPagerAdapter adapter = getPagerAdapter();
+        if (adapter != null)
+            adapter.setCurrentItem(currentItem);
+        mViewPager.setCurrentItem(currentItem, false);    }
+
+    @Nullable
+    private KanjiPagerAdapter getPagerAdapter() {
+        return (KanjiPagerAdapter) mViewPager.getAdapter();
+    }
+
     @Nullable
     private String getQuery() {
-        KanjiPagerAdapter adapter = (KanjiPagerAdapter) mViewPager.getAdapter();
+        KanjiPagerAdapter adapter = getPagerAdapter();
         return adapter == null ? null : adapter.getQuery();
     }
 
