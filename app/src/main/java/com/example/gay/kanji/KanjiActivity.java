@@ -184,11 +184,10 @@ public class KanjiActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                String previous = getQuery();
-                if (previous != null && previous.equals(query))
-                    return true;
-                init(query, 0);
                 searchItem.collapseActionView();
+                String previous = getQuery();
+                if (previous == null || !previous.equals(query))
+                    init(query, 0);
                 return true;
             }
 
