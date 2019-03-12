@@ -44,6 +44,7 @@ class JdicRunnable extends TaskRunnable {
         return notFound ? null : doc;
     }
 
+    // TODO unit test
     @Override
     protected void runInner() throws InterruptedException {
         Character kanji = task.kanji;
@@ -66,9 +67,9 @@ class JdicRunnable extends TaskRunnable {
 
                     if (doc == null) {
                         logd("No", "on the web");
-                        on = NO_DATA;
-                        kun = NO_DATA;
-                        meaning = NO_DATA;
+                        on = noData(on);
+                        kun = noData(kun);
+                        meaning = noData(meaning);
                     } else {
                         // TODO idx
 
@@ -101,15 +102,15 @@ class JdicRunnable extends TaskRunnable {
                 } catch (IOException e) {
                     loge("Unable to retrieve", ":", e.getMessage());
                     e.printStackTrace();
-                    on = NO_DATA;
-                    kun = NO_DATA;
-                    meaning = NO_DATA;
+                    on = noData(on);
+                    kun = noData(kun);
+                    meaning = noData(meaning);
                 }
             } else {
                 logd("Can't retrieve", ": No Internet connection");
-                on = NO_DATA;
-                kun = NO_DATA;
-                meaning = NO_DATA;
+                on = noData(on);
+                kun = noData(kun);
+                meaning = noData(meaning);
             }
         }
 
@@ -127,6 +128,10 @@ class JdicRunnable extends TaskRunnable {
             return;
         checkIfInterrupted();
         db.persist(data, column, value);
+    }
+
+    private String noData(String value) {
+        return value == null ? NO_DATA : value;
     }
 
     private String values(Element el) {
