@@ -15,6 +15,8 @@
         app:titleTextColor="@android:color/white"
         app:titleTextAppearance="@style/ToolbarTitle"
         app:subtitleTextColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:elevation="4dp" /> <!-- TODO split into different layout to support API 19 -->
 
     <android.support.v4.view.ViewPager

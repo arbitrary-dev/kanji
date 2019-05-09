@@ -33,7 +33,6 @@ abstract class TaskRunnable implements Runnable {
             Log.d(TAG, "interrupted " + this);
             e.printStackTrace();
         } finally {
-            Thread.interrupted();
             task.removeThread(this);
         }
     }

@@ -236,16 +236,13 @@ public class KanjiActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.night_day_mode:
-                // TODO preserve info expansion and gif animation on night mode and layout switch
-                App.toggleNightMode();
-                recreate();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.night_day_mode) {
+            // TODO preserve info expansion and gif animation on night mode and layout switch
+            App.toggleNightMode();
+            recreate();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void updateToolbarTitle() {
