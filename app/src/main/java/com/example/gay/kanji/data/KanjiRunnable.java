@@ -7,11 +7,19 @@ import android.util.Log;
 
 import com.example.gay.kanji.App;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -34,6 +42,8 @@ public class KanjiRunnable extends TaskRunnable {
     KanjiRunnable(DataTask task) {
         super(task);
     }
+
+    private static final Object lock = new Object();
 
     @Override
     protected void runInner() throws InterruptedException {
@@ -86,7 +96,8 @@ public class KanjiRunnable extends TaskRunnable {
         if (result.equals(NO_DATA))
             result = lookupDistroZip(targetFile);
 
-        // TODO fallback to downloading from WWWJDIC
+        if (result.equals(NO_DATA))
+            result = lookupOnline(kanji, targetFile);
 
         return result;
     }
@@ -148,6 +159,74 @@ public class KanjiRunnable extends TaskRunnable {
         }
 
         logd("No", "was found in distro zip");
+
+        return NO_DATA;
+    }
+
+    private Document retrieveInfo(Character kanji) throws IOException {
+        String url = "http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1D";
+        Document doc;
+
+        synchronized (lock) {
+            logd("Lookup", "on the web");
+            doc = Jsoup.connect(url)
+                .data("kanjsel", "X")
+                .data("ksrchkey", kanji.toString())
+                .post();
+        }
+
+        boolean notFound = doc.toString().matches("Match\\[es]:|No kanji matched this key\\.");
+        return notFound ? null : doc;
+    }
+
+    // TODO refactor
+    // Better to have separate runnable for kanji downloading.
+    // We could retrieve `idx` as part of `JdicRunnable` and wait until `KanjiRunnable` completes
+    // without result and only then enque our `KanjiDownloadRunnable`.
+    private String lookupOnline(Character kanji, File targetFile) throws InterruptedException {
+        checkParentDirectory(targetFile);
+        if (App.isConnected()) {
+            try {
+                checkIfInterrupted();
+                Document doc = retrieveInfo(kanji);
+                if (doc == null) {
+                    logd("No", "on the web");
+                } else {
+                    Element el = doc.select("td:contains(Halpern NJECD Index)").next().first();
+                    if (el == null) {
+                        return NO_DATA;
+                    } else {
+                        String idx = el.text().trim();
+                        URL downloadUrl = new URL("https://www.edrdg.org/cgi-bin/wwwjdic/dispgif?" + idx);
+                        long transferred = 0L;
+                        checkIfInterrupted();
+                        try (
+                            ReadableByteChannel rbc = Channels.newChannel(downloadUrl.openStream());
+                            FileChannel fc = new FileOutputStream(targetFile).getChannel()
+                        ) {
+                            long prev;
+                            do {
+                                checkIfInterrupted();
+                                prev = transferred;
+                                transferred += fc.transferFrom(rbc, transferred, 64 * 1024); // 64 kb
+                            } while (transferred != prev); // Not sure if this is going to work in ALL cases
+                        }
+                        if (transferred > 0L) {
+                            String absPath = targetFile.getAbsolutePath();
+                            logd("Downloaded", "was cached to", absPath);
+                            return absPath;
+                        } else {
+                            return NO_DATA;
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                loge("Unable to retrieve", ":", e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            logd("Can't retrieve", ": No Internet connection");
+        }
 
         return NO_DATA;
     }
