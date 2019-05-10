@@ -27,9 +27,13 @@ document.addEventListener('DOMContentLoaded', function(event) {
     document.body.appendChild(info)
 })
 
+var infoToggled = false
 function toggleInfo(e) {
-    if (info.classList.contains(COLLAPSED) || calcOverlap() >= OVERLAP_THRESHOLD)
+    if (info.classList.contains(COLLAPSED) || isOverlapping()) {
         info.classList.toggle(COLLAPSED)
+        // Toggling counts only when user did it, that's why we check event here.
+        if (e) infoToggled = true;
+    }
 }
 
 // available since ECMA6
@@ -87,11 +91,14 @@ function setGif(path) {
 function setInfo(text) {
     console.log("setInfo: " + text)
     infoInner.innerHTML = text
-    info.classList.remove(COLLAPSED)
-    toggleInfo()
+    // Check to prevent overriding user toggle.
+    if (!infoToggled) {
+        info.classList.remove(COLLAPSED)
+        toggleInfo()
+    }
 }
 
-function calcOverlap() {
+function isOverlapping() {
     var yInfo = info.offsetTop, hInfo = info.offsetHeight
     var rectGif = gif.getBoundingClientRect()
     var yGif = rectGif.top, wGif = rectGif.width, hGif = rectGif.height
@@ -99,5 +106,5 @@ function calcOverlap() {
     yGif = yGif + (hGif / 2) - (minDimGif / 2)
     var overlap = Math.round(Math.min(100, Math.max(0, yInfo + hInfo - yGif) / minDimGif * 100))
     console.log("overlap: " + overlap + "%")
-    return overlap
+    return overlap >= OVERLAP_THRESHOLD
 }
