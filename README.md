@@ -10,13 +10,13 @@ An Android app to learn japanese writing.
 
 ## Features
 
-- [X] Animated kanji writing order [&copy;Jack Halpern](http://cjki.org)
-- [X] Kanji etymology [&copy;Richard Sears](http://hanziyuan.net/#donation)
-- [X] 音・訓 reading and meaning [&copy;Jim Breen](http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1B)
-- [X] ~1k built-in kanji
-- [ ] 名乗り reading
-- [ ] 平仮名・片仮名
+- Animated kanji writing order [&copy;Jack Halpern](http://cjki.org)
+- Kanji etymology [&copy;Richard Sears](http://hanziyuan.net/#donation)
+- 音・訓 reading and meaning [&copy;Jim Breen](http://www.edrdg.org/cgi-bin/wwwjdic/wwwjdic?1B)
+- ≈1k built-in kanji
 
 ## TODO
 
-[Google Play release](https://github.com/arbitrary-dev/kanji/projects/1)
+1. 平仮名・片仮名
+2. 名乗り reading
+3. [Google Play release](https://github.com/arbitrary-dev/kanji/projects/1)
