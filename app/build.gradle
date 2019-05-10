@@ -10,7 +10,7 @@ android {
         targetSdkVersion 23
         versionCode 3
         versionName "0.3"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -32,12 +32,13 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.10.3'
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.18.3'
+    testImplementation 'org.mockito:mockito-core:2.27.0'
     testImplementation 'org.jsoup:jsoup:1.10.3'
 
-    androidTestImplementation 'org.mockito:mockito-core:2.18.3'
-    androidTestImplementation 'org.mockito:mockito-android:2.18.3'
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    androidTestImplementation 'org.mockito:mockito-core:2.27.0'
+    androidTestImplementation 'org.mockito:mockito-android:2.27.0'
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test:rules:1.1.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 }

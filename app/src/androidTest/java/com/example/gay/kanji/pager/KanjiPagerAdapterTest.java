@@ -1,12 +1,9 @@
 package com.example.gay.kanji.pager;
 
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.LruCache;
 import android.view.ViewGroup;
 
-import com.example.gay.kanji.App;
 import com.example.gay.kanji.KanjiActivity;
 import com.example.gay.kanji.data.Cache;
 import com.example.gay.kanji.data.Data;
@@ -19,6 +16,9 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import java.lang.reflect.Field;
+
+import androidx.test.rule.ActivityTestRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static com.example.gay.kanji.data.Data.NO_DATA;
 import static junit.framework.Assert.assertTrue;
@@ -40,16 +40,14 @@ public class KanjiPagerAdapterTest {
 
     @Test
     public void getItemPosition_hack() {
-        App.setQuery("日本語");
-
         FragmentActivity activity = mActivityRule.getActivity();
-        KanjiPagerAdapter p = new KanjiPagerAdapter(activity.getSupportFragmentManager());
+        KanjiPagerAdapter p = new KanjiPagerAdapter(activity.getSupportFragmentManager(), "日本語");
 
         p.instantiateItem(viewGroup, 0);
         p.instantiateItem(viewGroup, 1);
         Object item = p.instantiateItem(viewGroup, 2);
 
-        cacheEmptyDataFor(App.getQuery().charAt(1));
+        cacheEmptyDataFor(p.getQuery().charAt(1));
 
         assertEquals("Item should move left one position", 1, p.getItemPosition(item));
         assertEquals("Instantiated item should be the same", item, p.instantiateItem(viewGroup, 1));
