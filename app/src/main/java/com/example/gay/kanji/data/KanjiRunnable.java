@@ -196,8 +196,9 @@ public class KanjiRunnable extends TaskRunnable {
                     if (el == null) {
                         return NO_DATA;
                     } else {
-                        String idx = el.text().trim();
+                        String idx = String.format("%04d", Integer.valueOf(el.text().trim()));
                         URL downloadUrl = new URL("https://www.edrdg.org/cgi-bin/wwwjdic/dispgif?" + idx);
+                        logd("Will try to download", "from: " + downloadUrl);
                         long transferred = 0L;
                         checkIfInterrupted();
                         try (
@@ -209,9 +210,10 @@ public class KanjiRunnable extends TaskRunnable {
                                 checkIfInterrupted();
                                 prev = transferred;
                                 transferred += fc.transferFrom(rbc, transferred, 64 * 1024); // 64 kb
+                                Log.d(TAG, (transferred - prev) + "b");
                             } while (transferred != prev); // Not sure if this is going to work in ALL cases
                         }
-                        if (transferred > 0L) {
+                        if (transferred > 75L) { // 75b is the empty square GIF that WWWJDIC returns on 404
                             String absPath = targetFile.getAbsolutePath();
                             logd("Downloaded", "was cached to", absPath);
                             return absPath;
