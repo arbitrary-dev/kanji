@@ -213,6 +213,7 @@ public class KanjiRunnable extends TaskRunnable {
                                 Log.d(TAG, (transferred - prev) + "b");
                             } while (transferred != prev); // Not sure if this is going to work in ALL cases
                         }
+                        // TODO add int test regarding 75b
                         if (transferred > 75L) { // 75b is the empty square GIF that WWWJDIC returns on 404
                             String absPath = targetFile.getAbsolutePath();
                             logd("Downloaded", "was cached to", absPath);
