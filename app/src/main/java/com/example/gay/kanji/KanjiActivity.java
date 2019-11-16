@@ -24,7 +24,6 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.gay.kanji.data.Cache;
@@ -70,6 +69,7 @@ public class KanjiActivity extends AppCompatActivity {
         });
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
+        assert mViewPager != null;
         mViewPager.addOnPageChangeListener(new OnPageChangeListener() {
 
             @Override
@@ -212,13 +212,11 @@ public class KanjiActivity extends AppCompatActivity {
             Drawable d = r.getDrawable(R.drawable.ic_search_white_24dp, null).mutate();
             d.setAlpha(153);
             f.set(searchView, d);
+            // Should be set after Drawable update for SearchView to be updated also
             searchView.setQueryHint(r.getString(R.string.app_name));
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        ImageView mCloseButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
-        mCloseButton.getDrawable().setAlpha(153);
 
         // Night mode
 
