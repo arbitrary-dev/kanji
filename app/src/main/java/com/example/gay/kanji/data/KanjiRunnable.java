@@ -1,5 +1,6 @@
 package com.example.gay.kanji.data;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
@@ -196,6 +197,7 @@ public class KanjiRunnable extends TaskRunnable {
                     if (el == null) {
                         return NO_DATA;
                     } else {
+                        @SuppressLint("DefaultLocale")
                         String idx = String.format("%04d", Integer.valueOf(el.text().trim()));
                         URL downloadUrl = new URL("https://www.edrdg.org/cgi-bin/wwwjdic/dispgif?" + idx);
                         logd("Will try to download", "from: " + downloadUrl);
@@ -213,8 +215,9 @@ public class KanjiRunnable extends TaskRunnable {
                                 Log.d(TAG, (transferred - prev) + "b");
                             } while (transferred != prev); // Not sure if this is going to work in ALL cases
                         }
-                        // TODO add int test regarding 75b
-                        if (transferred > 75L) { // 75b is the empty square GIF that WWWJDIC returns on 404
+                        // Any GIF that is lower than 128b in size is deemed to be
+                        // empty square GIF that WWWJDIC returns as 404.
+                        if (transferred > 128L) {
                             String absPath = targetFile.getAbsolutePath();
                             logd("Downloaded", "was cached to", absPath);
                             return absPath;
