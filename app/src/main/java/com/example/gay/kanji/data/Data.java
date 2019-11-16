@@ -154,14 +154,14 @@ public class Data {
             return null;
 
         StringBuilder jdic = new StringBuilder();
-        appendSpan(jdic, glue(on));
-        appendSpan(jdic, dimSuffixes(glue(kun)));
-        appendSpan(jdic, glue(meaning));
+        appendSection(jdic, glue(on));
+        appendSection(jdic, dimSuffixes(glue(kun)));
+        appendSection(jdic, glue(meaning));
 
         return jdic.toString();
     }
 
-    private static void appendSpan(StringBuilder sb, String text) {
+    private static void appendSection(StringBuilder sb, String text) {
         if (text == null || text.isEmpty())
             return;
         sb.append("<span class='section'>");

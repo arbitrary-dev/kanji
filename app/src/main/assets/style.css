@@ -35,19 +35,19 @@
     display: block;
 }
 
-#info p {
+p {
     line-height: 1.3em;
     margin: 0 0 0.4em;
     overflow: hidden;
 }
-#info.collapsed p {
+.collapsed p {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-#info .section {
+.section {
     margin-right: 10pt;
 }
-#info .glue {
+.glue {
     display: inline-block;
 }
 
