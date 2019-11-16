@@ -31,6 +31,9 @@ var infoToggled = false
 function toggleInfo(e) {
     if (info.classList.contains(COLLAPSED) || isOverlapping()) {
         info.classList.toggle(COLLAPSED)
+        // Fixes the issue where .glue elements of the first P become invisible
+        // once .collapsed was toggled on for parent (even if it was then toggled off).
+        infoInner.innerHTML = infoInner.innerHTML
         // Toggling counts only when user did it, that's why we check event here.
         if (e) infoToggled = true;
     }
