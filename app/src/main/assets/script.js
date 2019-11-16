@@ -102,6 +102,8 @@ function setInfo(text) {
 }
 
 function isOverlapping() {
+    if (gifSrc() == NULL || gif.style.visibility == 'hidden')
+        return false
     var yInfo = info.offsetTop, hInfo = info.offsetHeight
     var rectGif = gif.getBoundingClientRect()
     var yGif = rectGif.top, wGif = rectGif.width, hGif = rectGif.height
