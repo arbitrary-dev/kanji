@@ -97,7 +97,7 @@ public class KanjiActivity extends AppCompatActivity {
             });
 
         String query = getIntent().getStringExtra(EXTRA_TEXT);
-        init(query, 0); // "日に本ほん語ご"
+        init(query, 0);
 
         // TODO request ext storage permissions
 

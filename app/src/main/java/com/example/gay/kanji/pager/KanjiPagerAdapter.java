@@ -16,7 +16,7 @@ import static com.example.gay.kanji.App.JAP_CHAR_RANGE;
 public class KanjiPagerAdapter extends FragmentStatePagerAdapter {
 
     private static final String TAG = "PGAD";
-    private static final String DEFAULT_KANJI = "字";
+    private static final String DEFAULT_KANJI = "字"; // "日に本ほん語ご"
 
     public KanjiPagerAdapter(FragmentManager fm, String query) {
         super(fm);
