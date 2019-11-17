@@ -8,8 +8,8 @@ android {
         minSdkVersion 21
         //noinspection ExpiredTargetSdkVersion,OldTargetApi
         targetSdkVersion 23
-        versionCode 3
-        versionName '0.3.13'
+        versionCode 4
+        versionName '0.3.14'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

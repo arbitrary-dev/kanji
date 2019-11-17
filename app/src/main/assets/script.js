@@ -47,18 +47,18 @@ if (typeof String.prototype.endsWith !== 'function') {
 }
 
 // Is this page currently visible to user
-var current = false
+var current = NULL
 
 function setCurrent(v) {
-    console.log("setCurrent1: " + v)
     if (current == v)
         return
+    if (v) {
+        if (current == NULL)
+            // Restart GIF only once
+            restartGif()
+        gif.style.visibility = 'visible'
+    }
     current = v
-    console.log("setCurrent2: " + current)
-    if (current)
-        restartGif()
-    else
-        gif.style.visibility = 'hidden'
 }
 
 function gifSrc() {
@@ -74,7 +74,6 @@ function restartGif(e) {
     if (!src.endsWith('_'))
         gif.src += '?'
     gif.src += '_'
-    gif.style.visibility = 'visible'
 }
 
 var prevPath

@@ -70,6 +70,7 @@ public class KanjiActivity extends AppCompatActivity {
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         assert mViewPager != null;
+        mViewPager.setOffscreenPageLimit(5);
         mViewPager.addOnPageChangeListener(new OnPageChangeListener() {
 
             @Override
