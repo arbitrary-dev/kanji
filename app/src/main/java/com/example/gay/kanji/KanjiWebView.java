@@ -10,7 +10,8 @@ import com.example.gay.kanji.data.Data;
 
 public class KanjiWebView extends WebView {
 
-    private boolean loaded, current;
+    private boolean webClientIsReady, current;
+    private Character kanji;
     private String info, gif;
 
     public KanjiWebView(Context context) {
@@ -38,7 +39,7 @@ public class KanjiWebView extends WebView {
     private final WebViewClient webClient = new WebViewClient() {
 
         public void onPageFinished(WebView view, String url) {
-            loaded = true;
+            webClientIsReady = true;
             update();
         }
     };
@@ -49,13 +50,15 @@ public class KanjiWebView extends WebView {
 
     public void update(Data data) {
         if (data != null) {
+            kanji = data.kanji;
             info = data.getInfo();
             gif = data.getGif();
         }
 
-        if (!loaded)
+        if (!webClientIsReady)
             return;
 
+        loadUrl("javascript:setKanji(\"" + kanji + "\")");
         loadUrl("javascript:setCurrent(" + current + ")");
         loadUrl("javascript:setGif(\"" + gif + "\")");
 
@@ -67,7 +70,7 @@ public class KanjiWebView extends WebView {
 
     public void setCurrent(boolean value) {
         current = value;
-        if (loaded)
+        if (webClientIsReady)
             loadUrl("javascript:setCurrent(" + current + ")");
     }
 }
