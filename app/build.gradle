@@ -44,6 +44,7 @@ dependencies {
 }
 
 class Version {
+
     private int major
     private int minor
     private int patch
@@ -87,7 +88,7 @@ class Version {
 }
 
 tasks.addRule("Pattern: bump<TYPE>Version") { String taskName ->
-    if (taskName.matches("bump(Major|Minor|Patch|)Version")) {
+    if (taskName.matches("bump(Major|Minor|Patch)Version")) {
         task(taskName) {
             doLast {
                 String type = (taskName - 'bump' - 'Version')
