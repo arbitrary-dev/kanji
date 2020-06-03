@@ -1,17 +1,17 @@
 const COLLAPSED = 'collapsed'
 const OVERLAP_THRESHOLD = 10
 
-var gif = document.createElement('img')
+let gif = document.createElement('img')
 gif.id = 'gif'
 
-var info = document.createElement('div')
+let info = document.createElement('div')
 info.id = 'info'
 
-var infoInner = document.createElement('div')
+let infoInner = document.createElement('div')
 infoInner.id = 'infoInner'
 info.appendChild(infoInner)
 
-var more = document.createElement('div')
+let more = document.createElement('div')
 more.id = 'more'
 more.textContent = 'Show more'
 
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
     document.body.appendChild(info)
 })
 
-var kanji
+let kanji
 function setKanji(kanji) {
     this.kanji = kanji
 }
@@ -34,7 +34,7 @@ function log(what) {
     console.log("[" + kanji + "] " + what)
 }
 
-var infoCollapsed
+let infoCollapsed
 function toggleInfo(e) {
     if (infoCollapsed || isOverlapping()) {
         info.classList.toggle(COLLAPSED)
@@ -53,7 +53,7 @@ if (typeof String.prototype.endsWith !== 'function') {
 }
 
 // Is this page currently visible to user
-var current
+let current
 function setCurrent(v) {
     if (current == v)
         return
@@ -76,7 +76,7 @@ function gifSrc() {
 }
 
 function restartGif(e) {
-    var src = gifSrc()
+    let src = gifSrc()
     if (!src)
         return
     if (!src.endsWith('_'))
@@ -84,7 +84,7 @@ function restartGif(e) {
     gif.src += '_'
 }
 
-var prevPath
+let prevPath
 
 function setGif(path) {
     log("setGif: " + path)
@@ -109,12 +109,12 @@ function isOverlapping() {
     log("Is overlaping? " + gifSrc() + " " + gif.style.visibility)
     if (!gifSrc() || gif.style.visibility == 'hidden')
         return false
-    var yInfo = info.offsetTop, hInfo = info.offsetHeight
-    var rectGif = gif.getBoundingClientRect()
-    var yGif = rectGif.top, wGif = rectGif.width, hGif = rectGif.height
-    var minDimGif = Math.min(wGif, hGif)
+    let yInfo = info.offsetTop, hInfo = info.offsetHeight
+    let rectGif = gif.getBoundingClientRect()
+    let yGif = rectGif.top, wGif = rectGif.width, hGif = rectGif.height
+    let minDimGif = Math.min(wGif, hGif)
     yGif = yGif + (hGif / 2) - (minDimGif / 2)
-    var overlap = Math.round(Math.min(100, Math.max(0, yInfo + hInfo - yGif) / minDimGif * 100))
+    let overlap = Math.round(Math.min(100, Math.max(0, yInfo + hInfo - yGif) / minDimGif * 100))
     log("Overlap: " + overlap + "% (" + OVERLAP_THRESHOLD + "%)")
     return overlap >= OVERLAP_THRESHOLD
 }
