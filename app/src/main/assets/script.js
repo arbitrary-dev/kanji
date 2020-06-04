@@ -35,14 +35,21 @@ function log(what) {
 }
 
 let infoCollapsed
+
 function toggleInfo(e) {
     if (infoCollapsed || isOverlapping()) {
         info.classList.toggle(COLLAPSED)
         // Fixes the issue where .glue elements of the first P become invisible
         // once .collapsed was toggled on for parent (even if it was then toggled off).
         infoInner.innerHTML = infoInner.innerHTML
-        infoCollapsed = infoCollapsed ? false : true;
+        infoCollapsed = !infoCollapsed;
     }
+}
+
+function collapseInfoOnUpdate() {
+    if (infoCollapsed == null)
+        // Toggle if not yet
+        toggleInfo()
 }
 
 // available since ECMA6
@@ -63,9 +70,6 @@ function setCurrent(v) {
             restartGif()
         if (gifSrc())
             gif.style.visibility = 'visible'
-        if (infoCollapsed == null)
-            // Toggle if not yet
-            toggleInfo()
     }
     current = v
 }
@@ -107,7 +111,7 @@ function setInfo(text) {
 
 function isOverlapping() {
     log("Is overlaping? " + gifSrc() + " " + gif.style.visibility)
-    if (!gifSrc() || gif.style.visibility == 'hidden')
+    if (!gifSrc())
         return false
     let yInfo = info.offsetTop, hInfo = info.offsetHeight
     let rectGif = gif.getBoundingClientRect()
