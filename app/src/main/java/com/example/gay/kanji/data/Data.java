@@ -194,6 +194,8 @@ public class Data {
 
     @Override
     public String toString() {
-        return (empty ? "Empty" : "") + getClass().getSimpleName() + "@" + Integer.toHexString(hashCode());
+        return (empty ? "Empty" : "")
+            + getClass().getSimpleName()
+            + "@" + Integer.toHexString(hashCode());
     }
 }

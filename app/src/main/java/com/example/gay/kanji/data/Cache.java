@@ -33,7 +33,7 @@ public class Cache {
 
     public static void put(Character kanji, Data data) {
         checkThread();
-        Log.d(TAG, "put: " + data);
+        Log.d(TAG, "「" + kanji + "」put: " + data);
         instance.put(kanji, data);
         onUpdate(kanji, data);
     }
@@ -46,7 +46,7 @@ public class Cache {
 
     public static void remove(Character kanji) {
         checkThread();
-        Log.d(TAG, "remove: " + kanji);
+        Log.d(TAG, "「" + kanji + "」remove");
         instance.remove(kanji);
     }
 

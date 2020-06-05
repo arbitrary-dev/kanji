@@ -62,10 +62,8 @@ public class KanjiActivity extends AppCompatActivity {
         Log.d(TAG, "setContentView() end");
 
         Cache.addUpdateListener(toolbarCacheListener = (kanji, data) -> {
-            if (data.isEmpty()) {
-                Log.d(TAG, "updateToolbarTitle() " + data);
-                updateToolbarTitle();
-            }
+            Log.d(TAG, "updateToolbarTitle() " + data);
+            updateToolbarTitle();
         });
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -130,11 +128,9 @@ public class KanjiActivity extends AppCompatActivity {
 
         Cache.removeUpdateListener(pagerAdapterCacheListener);
         Cache.addUpdateListener(pagerAdapterCacheListener = (kanji, data) -> {
-            if (data.isEmpty()) {
-                Log.d(TAG, "pagerAdapter.notifyDataSetChanged() data: " + data);
-                pagerAdapter.notifyDataSetChanged();
-                pagerAdapter.setCurrentItem(mViewPager.getCurrentItem());
-            }
+            Log.d(TAG, "pagerAdapter.notifyDataSetChanged() data: " + data);
+            pagerAdapter.notifyDataSetChanged();
+            pagerAdapter.setCurrentItem(mViewPager.getCurrentItem());
         });
 
         mViewPager.setAdapter(pagerAdapter);
