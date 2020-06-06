@@ -3,7 +3,6 @@ package com.example.gay.kanji;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -57,11 +56,6 @@ public class App extends Application {
 
         int type = ni.getType();
         return type == TYPE_WIFI || type == TYPE_MOBILE;
-    }
-
-    public static String getName() {
-        ApplicationInfo appInfo = instance.getApplicationContext().getApplicationInfo();
-        return instance.getPackageManager().getApplicationLabel(appInfo).toString();
     }
 
     public static InputStream openKanjiZip() throws IOException {

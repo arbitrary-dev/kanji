@@ -2,7 +2,7 @@ Kanji
 =====
 
 ![travis-ci](https://travis-ci.org/arbitrary-dev/kanji.svg?branch=master)
-[![v0.3](https://img.shields.io/badge/download-v0.3-brightgreen.svg)](https://github.com/arbitrary-dev/kanji/releases/download/v0.3/kanji-0.3.apk)
+[![v0.4](https://img.shields.io/badge/download-v0.4-brightgreen.svg)](https://github.com/arbitrary-dev/kanji/releases/download/v0.4/kanji-0.4.apk)
 
 An Android app to learn japanese writing.
 
@@ -20,3 +20,13 @@ An Android app to learn japanese writing.
 1. 平仮名・片仮名
 2. 名乗り reading
 3. [Google Play release](https://github.com/arbitrary-dev/kanji/projects/1)
+
+## Misc
+
+```
+# Tests
+./gradlew test connectedAndroidTest
+
+# Version bump
+./gradlew bump[Major|Minor|Patch]Version
+```
