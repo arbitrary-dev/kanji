@@ -33,6 +33,7 @@ class JdicRunnable extends TaskRunnable {
         synchronized (lock) {
             logd("Lookup", "on the web");
             doc = Jsoup.connect(url)
+                .validateTLSCertificates(false) // For old devices with outdated trust store
                 .data("kanjsel", "X")
                 .data("ksrchkey", kanji.toString())
                 .post();

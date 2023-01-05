@@ -35,12 +35,15 @@ class EtymologyRunnable extends TaskRunnable {
             Log.d(TAG, "Lookup " + DATA + " for「" + kanji + "」on the web");
 
             if (cookies == null) {
-                Response res = Jsoup.connect(site).method(HEAD).execute();
+                Response res = Jsoup.connect(site)
+                    .validateTLSCertificates(false) // For old devices with outdated trust store
+                    .method(HEAD)
+                    .execute();
                 cookies = res.cookies();
             }
 
-            doc = Jsoup
-                .connect(site + etymPath)
+            doc = Jsoup.connect(site + etymPath)
+                .validateTLSCertificates(false) // For old devices with outdated trust store
                 .data("chinese", kanji.toString())
                 .data("Bronze", cookies.get("Bronze"))
                 .header("Accept-Encoding", "gzip, deflate")
@@ -50,7 +53,7 @@ class EtymologyRunnable extends TaskRunnable {
                 .post();
         }
 
-        // System.out.println(TAG + " retrieveEtymology「" + kanji + "」:\n"
+        // Log.v(TAG, "retrieveEtymology「" + kanji + "」:\n"
         //     + "COOKIES" + Arrays.toString(cookies.entrySet().toArray()).replaceAll("[]\\[,] ?", "\n")
         //     + "\nDOC\n" + doc.outputSettings(doc.outputSettings().prettyPrint(true)).html());
         Elements es = doc.select(
